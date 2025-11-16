@@ -194,44 +194,86 @@ async function saveNotionConnection(
 }
 
 /**
- * Create user with email/password
+ * Create user with email/password using Supabase Auth
+ * Automatically sends email verification
  */
 export async function createEmailUser(email: string, password: string, fullName?: string) {
-  // Check if user already exists
-  const existingUser = await db.getUserByEmail(email);
+  // Use Supabase Auth to create user (handles password hashing and email verification)
+  const { data, error } = await db.getSupabaseClient().auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        full_name: fullName || email.split('@')[0],
+      },
+      emailRedirectTo: `${config.frontendUrl}/auth/verify`,
+    },
+  });
 
-  if (existingUser) {
-    throw new AppError('User with this email already exists', 409);
+  if (error) {
+    if (error.message.includes('already registered')) {
+      throw new AppError('User with this email already exists', 409);
+    }
+    throw new AppError(error.message, 400);
   }
 
-  // Use Supabase Auth to create user
-  const userId = `email_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  if (!data.user) {
+    throw new AppError('Failed to create user', 500);
+  }
+
+  // Create user record in our database
+  const userId = data.user.id;
 
   const userData = {
     id: userId,
-    email,
+    email: data.user.email!,
     full_name: fullName || email.split('@')[0],
     auth_provider: 'email' as const,
-    password_hash: password, // This will be hashed in the database layer
   };
 
-  // Create user in database
   const user = await db.upsertUser(userData);
 
-  logger.info(`Email user created: ${user.email}`);
+  logger.info(`Email user created with verification email sent: ${user.email}`);
 
-  return user;
+  return {
+    ...user,
+    emailVerificationSent: true,
+  };
 }
 
 /**
- * Validate email/password credentials
+ * Validate email/password credentials using Supabase Auth
  */
 export async function validateEmailUser(email: string, password: string) {
-  // Get user by email
+  // Use Supabase Auth to validate credentials
+  const { data, error } = await db.getSupabaseClient().auth.signInWithPassword({
+    email,
+    password,
+  });
+
+  if (error) {
+    if (error.message.includes('Email not confirmed')) {
+      throw new AppError('Please verify your email before logging in', 403);
+    }
+    throw new UnauthorizedError('Invalid email or password');
+  }
+
+  if (!data.user) {
+    throw new UnauthorizedError('Invalid email or password');
+  }
+
+  // Get user from our database
   const user = await db.getUserByEmail(email);
 
   if (!user) {
-    throw new UnauthorizedError('Invalid email or password');
+    // Create user record if it doesn't exist (edge case)
+    const userData = {
+      id: data.user.id,
+      email: data.user.email!,
+      full_name: data.user.user_metadata?.full_name || email.split('@')[0],
+      auth_provider: 'email' as const,
+    };
+    return await db.upsertUser(userData);
   }
 
   if (user.auth_provider !== 'email') {
@@ -241,16 +283,30 @@ export async function validateEmailUser(email: string, password: string) {
     );
   }
 
-  // Validate password (this should use bcrypt comparison in production)
-  const isValid = await db.validatePassword(user.id, password);
-
-  if (!isValid) {
-    throw new UnauthorizedError('Invalid email or password');
-  }
-
   logger.info(`Email user validated: ${user.email}`);
 
   return user;
+}
+
+/**
+ * Resend email verification
+ */
+export async function resendVerificationEmail(email: string) {
+  const { error } = await db.getSupabaseClient().auth.resend({
+    type: 'signup',
+    email,
+    options: {
+      emailRedirectTo: `${config.frontendUrl}/auth/verify`,
+    },
+  });
+
+  if (error) {
+    throw new AppError(error.message, 400);
+  }
+
+  logger.info(`Verification email resent to: ${email}`);
+
+  return { message: 'Verification email sent successfully' };
 }
 
 /**

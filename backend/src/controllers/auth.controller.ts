@@ -15,6 +15,7 @@ import {
   generateAuthTokens,
   createEmailUser,
   validateEmailUser,
+  resendVerificationEmail,
 } from '../services/auth.service.js';
 import { logger } from '../utils/logger.js';
 import { sendSuccess } from '../utils/response.js';
@@ -209,6 +210,26 @@ export const login = asyncHandler(
       },
       tokens,
     });
+  }
+);
+
+/**
+ * POST /api/auth/resend-verification
+ * Resend email verification
+ */
+export const resendVerification = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    if (!email) {
+      throw new AppError('Email is required', 400);
+    }
+
+    const result = await resendVerificationEmail(email);
+
+    logger.info(`Verification email resent to: ${email}`);
+
+    sendSuccess(res, result);
   }
 );
 

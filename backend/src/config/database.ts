@@ -252,4 +252,9 @@ export const db = {
 
     return data;
   },
+
+  /**
+   * Get Supabase client instance (for Auth operations)
+   */
+  getSupabaseClient,
 };

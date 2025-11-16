@@ -11,6 +11,7 @@ import {
   handleNotionCallback,
   signup,
   login,
+  resendVerification,
   logout,
 } from '../controllers/auth.controller.js';
 import { authRateLimiter } from '../middleware/rate-limit.middleware.js';
@@ -25,6 +26,7 @@ router.use(authRateLimiter);
  */
 router.post('/signup', signup);
 router.post('/login', login);
+router.post('/resend-verification', resendVerification);
 
 /**
  * Google OAuth
