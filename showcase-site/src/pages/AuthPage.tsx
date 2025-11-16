@@ -13,7 +13,6 @@ export default function AuthPage() {
   const [loading, setLoading] = useState(false);
   const [loadingNotion, setLoadingNotion] = useState(false);
   const [loadingGoogle, setLoadingGoogle] = useState(false);
-  const [loadingEmail, setLoadingEmail] = useState(false);
   const [error, setError] = useState('');
 
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
@@ -35,20 +34,17 @@ export default function AuthPage() {
   // Email Signup
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoadingEmail(true);
     setLoading(true);
     setError('');
 
     if (!email || !password) {
       setError('Email and password are required');
-      setLoadingEmail(false);
       setLoading(false);
       return;
     }
 
     if (password.length < 8) {
       setError('Password must be at least 8 characters');
-      setLoadingEmail(false);
       setLoading(false);
       return;
     }
@@ -71,7 +67,6 @@ export default function AuthPage() {
     } catch (err: any) {
       setError(err.message || 'An error occurred during signup');
     } finally {
-      setLoadingEmail(false);
       setLoading(false);
     }
   };
@@ -79,13 +74,11 @@ export default function AuthPage() {
   // Email Login
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoadingEmail(true);
     setLoading(true);
     setError('');
 
     if (!email || !password) {
       setError('Email and password are required');
-      setLoadingEmail(false);
       setLoading(false);
       return;
     }
@@ -108,7 +101,6 @@ export default function AuthPage() {
     } catch (err: any) {
       setError(err.message || 'An error occurred during login');
     } finally {
-      setLoadingEmail(false);
       setLoading(false);
     }
   };

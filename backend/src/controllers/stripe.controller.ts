@@ -22,7 +22,8 @@ import { config } from '../config/index.js';
  */
 export const createCheckout = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
-    const { plan } = req.body;
+    // TODO: Use plan parameter when service supports multiple plans
+    // const { plan } = req.body;
 
     // Generate default success and cancel URLs
     const frontendUrl = config.frontendUrl || 'http://localhost:5173';
