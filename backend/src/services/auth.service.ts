@@ -194,6 +194,66 @@ async function saveNotionConnection(
 }
 
 /**
+ * Create user with email/password
+ */
+export async function createEmailUser(email: string, password: string, fullName?: string) {
+  // Check if user already exists
+  const existingUser = await db.getUserByEmail(email);
+
+  if (existingUser) {
+    throw new AppError('User with this email already exists', 409);
+  }
+
+  // Use Supabase Auth to create user
+  const userId = `email_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+  const userData = {
+    id: userId,
+    email,
+    full_name: fullName || email.split('@')[0],
+    auth_provider: 'email' as const,
+    password_hash: password, // This will be hashed in the database layer
+  };
+
+  // Create user in database
+  const user = await db.upsertUser(userData);
+
+  logger.info(`Email user created: ${user.email}`);
+
+  return user;
+}
+
+/**
+ * Validate email/password credentials
+ */
+export async function validateEmailUser(email: string, password: string) {
+  // Get user by email
+  const user = await db.getUserByEmail(email);
+
+  if (!user) {
+    throw new UnauthorizedError('Invalid email or password');
+  }
+
+  if (user.auth_provider !== 'email') {
+    throw new AppError(
+      `This email is registered with ${user.auth_provider}. Please use ${user.auth_provider} to sign in.`,
+      400
+    );
+  }
+
+  // Validate password (this should use bcrypt comparison in production)
+  const isValid = await db.validatePassword(user.id, password);
+
+  if (!isValid) {
+    throw new UnauthorizedError('Invalid email or password');
+  }
+
+  logger.info(`Email user validated: ${user.email}`);
+
+  return user;
+}
+
+/**
  * Generate authentication tokens for user
  */
 export function generateAuthTokens(user: {

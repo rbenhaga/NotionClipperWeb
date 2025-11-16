@@ -9,6 +9,8 @@ import {
   handleGoogleCallback,
   initiateNotionAuth,
   handleNotionCallback,
+  signup,
+  login,
   logout,
 } from '../controllers/auth.controller.js';
 import { authRateLimiter } from '../middleware/rate-limit.middleware.js';
@@ -17,6 +19,12 @@ const router = Router();
 
 // Apply rate limiting to all auth routes
 router.use(authRateLimiter);
+
+/**
+ * Email/Password Authentication
+ */
+router.post('/signup', signup);
+router.post('/login', login);
 
 /**
  * Google OAuth

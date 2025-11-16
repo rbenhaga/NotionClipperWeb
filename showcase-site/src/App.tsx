@@ -4,6 +4,9 @@ import AuthPage from './pages/AuthPage';
 import PricingPage from './pages/PricingPage';
 import AuthSuccess from './pages/AuthSuccess';
 import AuthError from './pages/AuthError';
+import PrivacyPage from './pages/PrivacyPage';
+import TermsPage from './pages/TermsPage';
+import LegalPage from './pages/LegalPage';
 
 function App() {
   return (
@@ -14,6 +17,9 @@ function App() {
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/auth/success" element={<AuthSuccess />} />
         <Route path="/auth/error" element={<AuthError />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/legal" element={<LegalPage />} />
       </Routes>
     </div>
   );

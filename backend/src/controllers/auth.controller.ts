@@ -13,6 +13,8 @@ import {
   createOrUpdateGoogleUser,
   createOrUpdateNotionUser,
   generateAuthTokens,
+  createEmailUser,
+  validateEmailUser,
 } from '../services/auth.service.js';
 import { logger } from '../utils/logger.js';
 import { sendSuccess } from '../utils/response.js';
@@ -139,6 +141,74 @@ export const handleNotionCallback = asyncHandler(
     // Redirect to frontend with token
     const redirectUrl = `${getRedirectUrl()}/auth/success?token=${tokens.accessToken}`;
     res.redirect(redirectUrl);
+  }
+);
+
+/**
+ * POST /api/auth/signup
+ * Email/password signup
+ */
+export const signup = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { email, password, fullName } = req.body;
+
+    if (!email || !password) {
+      throw new AppError('Email and password are required', 400);
+    }
+
+    if (password.length < 8) {
+      throw new AppError('Password must be at least 8 characters', 400);
+    }
+
+    // Create user with email/password
+    const user = await createEmailUser(email, password, fullName);
+
+    // Generate JWT tokens
+    const tokens = generateAuthTokens(user);
+
+    logger.info(`Email signup successful for user: ${user.email}`);
+
+    sendSuccess(res, {
+      message: 'Account created successfully',
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.full_name,
+      },
+      tokens,
+    }, 201);
+  }
+);
+
+/**
+ * POST /api/auth/login
+ * Email/password login
+ */
+export const login = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      throw new AppError('Email and password are required', 400);
+    }
+
+    // Validate credentials
+    const user = await validateEmailUser(email, password);
+
+    // Generate JWT tokens
+    const tokens = generateAuthTokens(user);
+
+    logger.info(`Email login successful for user: ${user.email}`);
+
+    sendSuccess(res, {
+      message: 'Login successful',
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.full_name,
+      },
+      tokens,
+    });
   }
 );
 
