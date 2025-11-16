@@ -10,40 +10,40 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200">
-      <nav className="max-w-6xl mx-auto px-6">
-        <div className="flex items-center h-16">
+      <nav className="max-w-7xl mx-auto px-6">
+        <div className="flex items-center h-20">
           {/* Logo - Left */}
           <div className="flex-1 flex justify-start">
-            <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <NotionClipperLogo size={32} />
-              <span className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+            <Link to="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+              <NotionClipperLogo size={36} />
+              <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                 Clipper Pro
               </span>
             </Link>
           </div>
 
           {/* Desktop Navigation - Center */}
-          <div className="hidden md:flex flex-1 items-center justify-center gap-8">
-            <Link to="/" className="text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
+          <div className="hidden md:flex flex-1 items-center justify-center gap-10">
+            <Link to="/" className="text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors">
               {t('nav.home')}
             </Link>
-            <Link to="/pricing" className="text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors">
+            <Link to="/pricing" className="text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors">
               {t('nav.pricing')}
             </Link>
           </div>
 
           {/* Right: Language + Auth */}
-          <div className="hidden md:flex flex-1 items-center justify-end gap-3">
+          <div className="hidden md:flex flex-1 items-center justify-end gap-6">
             <LanguageToggle />
             <Link
               to="/auth"
-              className="text-sm font-medium text-gray-700 hover:text-purple-600 transition-colors"
+              className="text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors px-2"
             >
               {t('nav.login')}
             </Link>
             <Link
               to="/auth"
-              className="px-5 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-semibold rounded-lg hover:shadow-lg transition-all duration-200"
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-base font-bold rounded-xl hover:shadow-lg transition-all duration-200"
             >
               {t('nav.getStarted')}
             </Link>
