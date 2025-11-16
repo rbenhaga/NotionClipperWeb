@@ -66,7 +66,7 @@ export default function HomePage() {
             </div>
 
             <p className="text-sm text-gray-600 pt-2">
-              {t('cta.trial')} • 2.99€/mois • Sans engagement
+              2.99€/mois • Sans engagement
             </p>
 
             {/* Video Demo Placeholder */}
