@@ -1,0 +1,54 @@
+{
+  "hero": {
+    "title": {
+      "line1": "Capture anything",
+      "line2": "to Notion instantly"
+    },
+    "subtitle": {
+      "line1": "The ultimate tool to capture and organize your ideas in Notion.",
+      "line2": "Lightning fast, secure, and beautifully designed."
+    },
+    "cta": {
+      "primary": "Get Started Free",
+      "secondary": "View Pricing"
+    },
+    "trust": "Secure & Private • No credit card required"
+  },
+  "features": {
+    "title": "Everything you need",
+    "subtitle": "Powerful features that make saving to Notion effortless",
+    "quickCapture": {
+      "title": "Quick Capture",
+      "description": "Save content to Notion in milliseconds with our optimized capture engine"
+    },
+    "organization": {
+      "title": "Organization",
+      "description": "Automatically organize your clips with smart tags and categories"
+    },
+    "synchronization": {
+      "title": "Synchronization",
+      "description": "Access your clips from any device with real-time cloud sync"
+    }
+  },
+  "whyChoose": {
+    "title": "Why choose Clipper Pro?",
+    "lightningFast": {
+      "title": "Lightning Fast",
+      "description": "Capture content in milliseconds with optimized performance"
+    },
+    "secure": {
+      "title": "Secure & Private",
+      "description": "Your data is encrypted and never leaves your Notion workspace"
+    },
+    "cloudSync": {
+      "title": "Cloud Sync",
+      "description": "Access your clips from any device, anywhere, anytime"
+    }
+  },
+  "cta": {
+    "title": "Ready to get started?",
+    "subtitle": "Join thousands of users who save hours every week with Clipper Pro",
+    "button": "Start Free Today",
+    "trial": "No credit card required • 14-day free trial"
+  }
+}

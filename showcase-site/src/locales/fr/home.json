@@ -1,0 +1,54 @@
+{
+  "hero": {
+    "title": {
+      "line1": "Capturez tout",
+      "line2": "dans Notion instantanément"
+    },
+    "subtitle": {
+      "line1": "L'outil ultime pour capturer et organiser vos idées dans Notion.",
+      "line2": "Ultra-rapide, sécurisé et magnifiquement conçu."
+    },
+    "cta": {
+      "primary": "Commencer gratuitement",
+      "secondary": "Voir les tarifs"
+    },
+    "trust": "Sécurisé & Privé • Aucune carte bancaire requise"
+  },
+  "features": {
+    "title": "Tout ce dont vous avez besoin",
+    "subtitle": "Des fonctionnalités puissantes qui rendent la sauvegarde dans Notion sans effort",
+    "quickCapture": {
+      "title": "Capture Rapide",
+      "description": "Enregistrez du contenu dans Notion en millisecondes grâce à notre moteur de capture optimisé"
+    },
+    "organization": {
+      "title": "Organisation",
+      "description": "Organisez automatiquement vos clips avec des tags et catégories intelligents"
+    },
+    "synchronization": {
+      "title": "Synchronisation",
+      "description": "Accédez à vos clips depuis n'importe quel appareil avec la sync cloud en temps réel"
+    }
+  },
+  "whyChoose": {
+    "title": "Pourquoi choisir Clipper Pro?",
+    "lightningFast": {
+      "title": "Ultra-rapide",
+      "description": "Capturez du contenu en millisecondes avec des performances optimisées"
+    },
+    "secure": {
+      "title": "Sécurisé & Privé",
+      "description": "Vos données sont chiffrées et ne quittent jamais votre espace Notion"
+    },
+    "cloudSync": {
+      "title": "Sync Cloud",
+      "description": "Accédez à vos clips depuis n'importe quel appareil, n'importe où, n'importe quand"
+    }
+  },
+  "cta": {
+    "title": "Prêt à commencer?",
+    "subtitle": "Rejoignez des milliers d'utilisateurs qui économisent des heures chaque semaine avec Clipper Pro",
+    "button": "Commencer gratuitement",
+    "trial": "Aucune carte bancaire requise • Essai gratuit de 14 jours"
+  }
+}

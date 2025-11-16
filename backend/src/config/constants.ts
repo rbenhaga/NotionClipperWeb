@@ -24,6 +24,32 @@ export const SUBSCRIPTION_TIERS = {
   ENTERPRISE: 'enterprise',
 } as const;
 
+export const STRIPE_PLANS = {
+  PREMIUM_MONTHLY: 'premium_monthly',
+  PREMIUM_ANNUAL: 'premium_annual',
+  PREMIUM_ONETIME: 'premium_onetime',
+} as const;
+
+export const STRIPE_PRICES = {
+  PREMIUM_MONTHLY: {
+    amount: 299, // 2.99€ in cents
+    currency: 'eur',
+    interval: 'month',
+    trial_period_days: 14,
+  },
+  PREMIUM_ANNUAL: {
+    amount: 2868, // 28.68€ in cents (20% off)
+    currency: 'eur',
+    interval: 'year',
+    trial_period_days: 14,
+  },
+  PREMIUM_ONETIME: {
+    amount: null, // TBD
+    currency: 'eur',
+    interval: 'one_time',
+  },
+} as const;
+
 export const SUBSCRIPTION_STATUS = {
   ACTIVE: 'active',
   CANCELED: 'canceled',

@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, Loader2, ArrowLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { NotionClipperLogo } from '../assets/Logo.tsx';
 
 type AuthMode = 'choice' | 'signup' | 'login';
 
 export default function AuthPage() {
+  const { t } = useTranslation('auth');
   const [mode, setMode] = useState<AuthMode>('choice');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -38,13 +40,13 @@ export default function AuthPage() {
     setError('');
 
     if (!email || !password) {
-      setError('Email and password are required');
+      setError(t('errors.required'));
       setLoading(false);
       return;
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError(t('errors.passwordLength'));
       setLoading(false);
       return;
     }
@@ -59,13 +61,13 @@ export default function AuthPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Signup failed');
+        throw new Error(data.error || t('errors.signup'));
       }
 
       // Redirect to success page or dashboard
       window.location.href = `/auth/success?email=${encodeURIComponent(email)}`;
     } catch (err: any) {
-      setError(err.message || 'An error occurred during signup');
+      setError(err.message || t('errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -78,7 +80,7 @@ export default function AuthPage() {
     setError('');
 
     if (!email || !password) {
-      setError('Email and password are required');
+      setError(t('errors.required'));
       setLoading(false);
       return;
     }
@@ -93,13 +95,13 @@ export default function AuthPage() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+        throw new Error(data.error || t('errors.login'));
       }
 
       // Redirect to success page or dashboard
       window.location.href = `/auth/success?email=${encodeURIComponent(email)}`;
     } catch (err: any) {
-      setError(err.message || 'An error occurred during login');
+      setError(err.message || t('errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -134,10 +136,10 @@ export default function AuthPage() {
                 <NotionClipperLogo size={64} />
               </div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Clipper Pro
+                {t('choice.title')}
               </h1>
               <p className="text-gray-600">
-                Connect to start clipping to Notion
+                {t('choice.subtitle')}
               </p>
             </div>
 
@@ -160,7 +162,7 @@ export default function AuthPage() {
                     className="object-contain"
                   />
                 )}
-                <span>{loadingNotion ? 'Connecting...' : 'Continue with Notion'}</span>
+                <span>{loadingNotion ? t('choice.connecting') : t('choice.notion')}</span>
               </button>
 
               {/* Google OAuth */}
@@ -180,7 +182,7 @@ export default function AuthPage() {
                     <path fill="none" d="M0 0h48v48H0z"/>
                   </svg>
                 )}
-                <span>{loadingGoogle ? 'Connecting...' : 'Continue with Google'}</span>
+                <span>{loadingGoogle ? t('choice.connecting') : t('choice.google')}</span>
               </button>
 
               {/* Divider */}
@@ -189,7 +191,7 @@ export default function AuthPage() {
                   <div className="w-full border-t border-gray-300" />
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-white text-gray-500">or</span>
+                  <span className="px-4 bg-white text-gray-500">{t('choice.divider')}</span>
                 </div>
               </div>
 
@@ -198,14 +200,14 @@ export default function AuthPage() {
                 onClick={() => setMode('signup')}
                 className="w-full px-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all font-medium shadow-md hover:shadow-lg"
               >
-                Continue with Email
+                {t('choice.email')}
               </button>
 
               <button
                 onClick={() => setMode('login')}
                 className="w-full text-center text-sm text-gray-600 hover:text-gray-900 transition-colors py-2"
               >
-                Already have an account? <span className="underline font-medium">Sign In</span>
+                {t('choice.hasAccount')} <span className="underline font-medium">{t('choice.signInLink')}</span>
               </button>
             </div>
 
@@ -217,7 +219,7 @@ export default function AuthPage() {
 
             {/* Trust Badge */}
             <div className="mt-8 text-center text-xs text-gray-500">
-              🔒 Secure connection • We never share your data
+              {t('choice.trust')}
             </div>
           </div>
         </div>
@@ -255,17 +257,17 @@ export default function AuthPage() {
           <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-gray-200">
             <div className="text-center mb-6">
               <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Create Account
+                {t('signup.title')}
               </h2>
               <p className="text-gray-600">
-                Fill in your information to get started
+                {t('signup.subtitle')}
               </p>
             </div>
 
             <form onSubmit={handleSignup} className="space-y-5">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email
+                  {t('signup.email')}
                 </label>
                 <div className="relative">
                   <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -275,14 +277,14 @@ export default function AuthPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
-                    placeholder="you@example.com"
+                    placeholder={t('signup.emailPlaceholder')}
                   />
                 </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Password
+                  {t('signup.password')}
                 </label>
                 <div className="relative">
                   <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -293,7 +295,7 @@ export default function AuthPage() {
                     required
                     minLength={8}
                     className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
-                    placeholder="••••••••"
+                    placeholder={t('signup.passwordPlaceholder')}
                   />
                   <button
                     type="button"
@@ -304,7 +306,7 @@ export default function AuthPage() {
                   </button>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  Must be at least 8 characters
+                  {t('signup.passwordHint')}
                 </p>
               </div>
 
@@ -319,7 +321,7 @@ export default function AuthPage() {
                 disabled={loading}
                 className="w-full py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 shadow-md hover:shadow-lg"
               >
-                {loading ? 'Creating Account...' : 'Sign Up'}
+                {loading ? t('signup.buttonLoading') : t('signup.button')}
               </button>
 
               <button
@@ -327,7 +329,7 @@ export default function AuthPage() {
                 onClick={() => setMode('login')}
                 className="w-full text-center text-sm text-gray-600 hover:text-gray-900 transition-colors py-2"
               >
-                Already have an account? <span className="underline font-medium">Sign In</span>
+                {t('signup.hasAccount')} <span className="underline font-medium">{t('signup.signInLink')}</span>
               </button>
             </form>
           </div>
@@ -365,17 +367,17 @@ export default function AuthPage() {
         <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-gray-200">
           <div className="text-center mb-6">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Welcome Back
+              {t('login.title')}
             </h2>
             <p className="text-gray-600">
-              Sign in to continue to Clipper Pro
+              {t('login.subtitle')}
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Email
+                {t('login.email')}
               </label>
               <div className="relative">
                 <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -385,14 +387,14 @@ export default function AuthPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
-                  placeholder="you@example.com"
+                  placeholder={t('login.emailPlaceholder')}
                 />
               </div>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Password
+                {t('login.password')}
               </label>
               <div className="relative">
                 <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -402,7 +404,7 @@ export default function AuthPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl bg-white text-gray-900 focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20 outline-none transition-all"
-                  placeholder="••••••••"
+                  placeholder={t('login.passwordPlaceholder')}
                 />
                 <button
                   type="button"
@@ -425,7 +427,7 @@ export default function AuthPage() {
               disabled={loading}
               className="w-full py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all disabled:opacity-50 shadow-md hover:shadow-lg"
             >
-              {loading ? 'Signing In...' : 'Sign In'}
+              {loading ? t('login.buttonLoading') : t('login.button')}
             </button>
 
             <button
@@ -433,7 +435,7 @@ export default function AuthPage() {
               onClick={() => setMode('signup')}
               className="w-full text-center text-sm text-gray-600 hover:text-gray-900 transition-colors py-2"
             >
-              Don't have an account? <span className="underline font-medium">Sign Up</span>
+              {t('login.noAccount')} <span className="underline font-medium">{t('login.signUpLink')}</span>
             </button>
           </form>
         </div>

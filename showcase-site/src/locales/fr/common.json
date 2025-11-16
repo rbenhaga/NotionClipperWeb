@@ -1,0 +1,42 @@
+{
+  "brand": {
+    "name": "Clipper Pro",
+    "tagline": "Capturez tout, instantanément dans Notion"
+  },
+  "nav": {
+    "home": "Accueil",
+    "features": "Fonctionnalités",
+    "pricing": "Tarifs",
+    "login": "Connexion",
+    "getStarted": "Commencer"
+  },
+  "buttons": {
+    "getStarted": "Commencer gratuitement",
+    "viewPricing": "Voir les tarifs",
+    "backToHome": "Retour à l'accueil",
+    "signIn": "Se connecter",
+    "signUp": "S'inscrire",
+    "loading": "Chargement...",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "continue": "Continuer"
+  },
+  "trust": {
+    "secure": "Connexion sécurisée",
+    "noCardRequired": "Aucune carte bancaire requise",
+    "freeT rial": "Essai gratuit de 14 jours",
+    "neverShare": "Nous ne partageons jamais vos données",
+    "cancelAnytime": "Annulez à tout moment"
+  },
+  "footer": {
+    "copyright": "Tous droits réservés.",
+    "madeWith": "Fait avec amour pour les utilisateurs de Notion",
+    "links": {
+      "home": "Accueil",
+      "pricing": "Tarifs",
+      "github": "GitHub",
+      "privacy": "Confidentialité",
+      "terms": "Conditions"
+    }
+  }
+}

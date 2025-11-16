@@ -1,0 +1,80 @@
+{
+  "title": "Tarifs simples et transparents",
+  "subtitle": "Choisissez le plan qui vous convient",
+  "billing": {
+    "monthly": "Mensuel",
+    "annual": "Annuel",
+    "save": "Économisez"
+  },
+  "free": {
+    "name": "Gratuit",
+    "tagline": "Parfait pour débuter",
+    "price": "0",
+    "currency": "€",
+    "period": "/mois",
+    "features": {
+      "clips": "100 clips par mois",
+      "uploads": "10 fichiers par mois",
+      "focus": "60 minutes de mode focus",
+      "markdown": "Support Markdown basique"
+    },
+    "button": "Commencer gratuitement"
+  },
+  "premium": {
+    "name": "Premium",
+    "tagline": "Pour les utilisateurs intensifs",
+    "badge": "PLUS POPULAIRE",
+    "price": "2.99",
+    "priceAnnual": "2.39",
+    "currency": "€",
+    "period": "/mois",
+    "billedAnnually": "Facturé {price}€/an • Économisez {savings}€",
+    "features": {
+      "unlimitedClips": "Clips illimités",
+      "unlimitedUploads": "Fichiers illimités",
+      "unlimitedFocus": "Mode focus illimité",
+      "advancedMarkdown": "Markdown avancé",
+      "prioritySupport": "Support prioritaire",
+      "earlyAccess": "Accès anticipé aux nouvelles fonctionnalités"
+    },
+    "button": "Essai gratuit de 14 jours",
+    "trial": "Aucune carte bancaire requise pour l'essai"
+  },
+  "onetime": {
+    "name": "Achat Unique",
+    "tagline": "Payez une fois, utilisez à vie",
+    "badge": "MEILLEURE VALEUR",
+    "price": "À définir",
+    "currency": "€",
+    "period": "unique",
+    "features": {
+      "everything": "Toutes les fonctionnalités Premium",
+      "lifetime": "Accès à vie",
+      "updates": "Mises à jour gratuites",
+      "priority": "Support prioritaire",
+      "noSubscription": "Pas d'abonnement"
+    },
+    "button": "Acheter maintenant",
+    "comingSoon": "Bientôt disponible"
+  },
+  "trust": {
+    "trial": "Essai gratuit de 14 jours",
+    "cancel": "Annulez à tout moment",
+    "noQuestions": "Sans engagement"
+  },
+  "faq": {
+    "title": "Questions fréquentes",
+    "cancel": {
+      "question": "Puis-je annuler à tout moment?",
+      "answer": "Oui ! Vous pouvez annuler votre abonnement à tout moment. Aucune question posée, aucuns frais cachés."
+    },
+    "payment": {
+      "question": "Quels moyens de paiement acceptez-vous?",
+      "answer": "Nous acceptons toutes les cartes bancaires majeures via Stripe. Vos informations de paiement sont sécurisées et chiffrées."
+    },
+    "upgrade": {
+      "question": "Puis-je changer de plan plus tard?",
+      "answer": "Absolument ! Vous pouvez passer à Premium ou revenir au plan Gratuit à tout moment depuis les paramètres de votre compte."
+    }
+  }
+}

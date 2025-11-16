@@ -1,10 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { NotionClipperLogoWithText } from '../assets/Logo.tsx';
+import LanguageToggle from './LanguageToggle.tsx';
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useTranslation('common');
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
@@ -18,29 +21,30 @@ export default function Header() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
             <Link to="/" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
-              Home
+              {t('nav.home')}
             </Link>
             <Link to="/pricing" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
-              Pricing
+              {t('nav.pricing')}
             </Link>
             <a href="https://github.com/rbenhaga/NotionClipper" target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors">
               Download
             </a>
           </div>
 
-          {/* CTA Buttons */}
+          {/* CTA Buttons + Language Toggle */}
           <div className="hidden md:flex items-center space-x-3">
+            <LanguageToggle />
             <Link
               to="/auth"
               className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
             >
-              Sign In
+              {t('nav.login')}
             </Link>
             <Link
               to="/auth"
               className="px-5 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-semibold rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all shadow-md hover:shadow-lg"
             >
-              Get Started
+              {t('nav.getStarted')}
             </Link>
           </div>
 
@@ -62,14 +66,14 @@ export default function Header() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-base font-medium text-gray-700 hover:text-gray-900"
               >
-                Home
+                {t('nav.home')}
               </Link>
               <Link
                 to="/pricing"
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-base font-medium text-gray-700 hover:text-gray-900"
               >
-                Pricing
+                {t('nav.pricing')}
               </Link>
               <a
                 href="https://github.com/rbenhaga/NotionClipper"
@@ -80,19 +84,22 @@ export default function Header() {
                 Download
               </a>
               <div className="pt-4 flex flex-col space-y-3">
+                <div className="flex justify-center">
+                  <LanguageToggle />
+                </div>
                 <Link
                   to="/auth"
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-5 py-3 text-center text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50"
                 >
-                  Sign In
+                  {t('nav.login')}
                 </Link>
                 <Link
                   to="/auth"
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-5 py-3 text-center bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-semibold rounded-lg hover:from-purple-700 hover:to-blue-700 shadow-md"
                 >
-                  Get Started
+                  {t('nav.getStarted')}
                 </Link>
               </div>
             </div>
