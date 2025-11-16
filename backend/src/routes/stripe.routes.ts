@@ -8,23 +8,22 @@ import {
   createCheckout,
   createPortal,
 } from '../controllers/stripe.controller.js';
-import { authenticateToken } from '../middleware/auth.middleware.js';
+import { authenticateToken, authenticateOptional } from '../middleware/auth.middleware.js';
 
 const router = Router();
 
-// All Stripe routes require authentication
-router.use(authenticateToken);
-
 /**
  * Create Stripe Checkout session
- * POST /api/stripe/create-checkout
+ * POST /api/stripe/create-checkout-session
+ * Optional auth - guests can checkout too
  */
-router.post('/create-checkout', createCheckout);
+router.post('/create-checkout-session', authenticateOptional, createCheckout);
 
 /**
  * Create Stripe Customer Portal session
  * POST /api/stripe/create-portal
+ * Requires authentication
  */
-router.post('/create-portal', createPortal);
+router.post('/create-portal', authenticateToken, createPortal);
 
 export default router;

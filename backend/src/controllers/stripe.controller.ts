@@ -3,7 +3,7 @@
  * Handles Stripe payment flows and webhooks
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import {
   createCheckoutSession,
   createPortalSession,
@@ -11,34 +11,32 @@ import {
   constructWebhookEvent,
 } from '../services/stripe.service.js';
 import { logger } from '../utils/logger.js';
-import { sendSuccess, sendError } from '../utils/response.js';
+import { sendSuccess } from '../utils/response.js';
 import { asyncHandler } from '../middleware/error.middleware.js';
 import { AuthenticatedRequest, AppError } from '../types/index.js';
 import { config } from '../config/index.js';
 
 /**
- * POST /api/stripe/create-checkout
+ * POST /api/stripe/create-checkout-session
  * Create Stripe Checkout session for Premium upgrade
  */
 export const createCheckout = asyncHandler(
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    if (!req.user) {
-      throw new AppError('Unauthorized', 401);
-    }
+  async (req: AuthenticatedRequest, res: Response) => {
+    const { plan } = req.body;
 
-    const { successUrl, cancelUrl } = req.body;
+    // Generate default success and cancel URLs
+    const frontendUrl = config.frontendUrl || 'http://localhost:5173';
+    const successUrl = `${frontendUrl}/auth/success?session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${frontendUrl}/pricing`;
 
-    if (!successUrl || !cancelUrl) {
-      throw new AppError('successUrl and cancelUrl are required', 400);
-    }
+    // Use userId from token if authenticated, otherwise use 'guest'
+    const userId = req.user?.userId || 'guest';
 
-    const session = await createCheckoutSession(
-      req.user.userId,
-      successUrl,
-      cancelUrl
-    );
+    // Create checkout session via service
+    // TODO: Pass plan parameter to service when implemented
+    const session = await createCheckoutSession(userId, successUrl, cancelUrl);
 
-    logger.info(`Checkout session created for user: ${req.user.userId}`);
+    logger.info(`Checkout session created for ${userId !== 'guest' ? `user: ${userId}` : 'guest'}`);
 
     sendSuccess(res, {
       sessionId: session.sessionId,
@@ -52,7 +50,7 @@ export const createCheckout = asyncHandler(
  * Create Stripe Customer Portal session
  */
 export const createPortal = asyncHandler(
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) {
       throw new AppError('Unauthorized', 401);
     }
@@ -78,7 +76,7 @@ export const createPortal = asyncHandler(
  * Handle Stripe webhooks
  */
 export const handleStripeWebhook = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const signature = req.headers['stripe-signature'];
 
     if (!signature || typeof signature !== 'string') {

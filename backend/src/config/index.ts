@@ -47,6 +47,7 @@ export const config: AppConfig = {
   env: (process.env.NODE_ENV as 'development' | 'production' | 'test') || 'development',
   port: parseInt(process.env.PORT || '3001', 10),
   host: process.env.HOST || '0.0.0.0',
+  frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
 
   allowedOrigins: process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
