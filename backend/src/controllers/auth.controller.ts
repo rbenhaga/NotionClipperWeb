@@ -3,7 +3,7 @@
  * Handles Google and Notion OAuth authentication flows
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { config } from '../config/index.js';
 import { GOOGLE_OAUTH, NOTION_OAUTH, OAUTH_SCOPES } from '../config/constants.js';
 import {
@@ -15,7 +15,7 @@ import {
   generateAuthTokens,
 } from '../services/auth.service.js';
 import { logger } from '../utils/logger.js';
-import { sendSuccess, sendError } from '../utils/response.js';
+import { sendSuccess } from '../utils/response.js';
 import { asyncHandler } from '../middleware/error.middleware.js';
 import { AppError } from '../types/index.js';
 
@@ -24,7 +24,7 @@ import { AppError } from '../types/index.js';
  * Redirect to Google OAuth
  */
 export const initiateGoogleAuth = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response) => {
     const params = new URLSearchParams({
       client_id: config.oauth.google.clientId,
       redirect_uri: config.oauth.google.redirectUri,
@@ -46,7 +46,7 @@ export const initiateGoogleAuth = asyncHandler(
  * Handle Google OAuth callback
  */
 export const handleGoogleCallback = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { code, error } = req.query;
 
     if (error) {
@@ -83,7 +83,7 @@ export const handleGoogleCallback = asyncHandler(
  * Redirect to Notion OAuth
  */
 export const initiateNotionAuth = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response) => {
     const params = new URLSearchParams({
       client_id: config.oauth.notion.clientId,
       redirect_uri: config.oauth.notion.redirectUri,
@@ -103,7 +103,7 @@ export const initiateNotionAuth = asyncHandler(
  * Handle Notion OAuth callback
  */
 export const handleNotionCallback = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response) => {
     const { code, error } = req.query;
 
     if (error) {
@@ -147,7 +147,7 @@ export const handleNotionCallback = asyncHandler(
  * Logout user (client-side token removal)
  */
 export const logout = asyncHandler(
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (_req: Request, res: Response) => {
     // In JWT-based auth, logout is handled client-side by removing the token
     // This endpoint exists for completeness and future enhancements
 
@@ -159,9 +159,6 @@ export const logout = asyncHandler(
  * Helper: Get redirect URL based on environment
  */
 function getRedirectUrl(): string {
-  if (config.env === 'development') {
-    return 'http://localhost:3000';
-  }
-  // In production, this should be your domain
-  return process.env.FRONTEND_URL || 'http://localhost:3000';
+  // Use FRONTEND_URL from config (defaults to http://localhost:5173 in dev)
+  return config.frontendUrl || process.env.FRONTEND_URL || 'http://localhost:5173';
 }

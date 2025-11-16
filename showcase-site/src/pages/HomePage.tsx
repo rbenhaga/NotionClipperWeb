@@ -1,127 +1,216 @@
+import { Link } from 'react-router-dom';
+import { Zap, Database, Check, Sparkles, Lock, Cloud } from 'lucide-react';
 import Header from '../components/Header';
-import { Zap, Lock, Cloud, Smartphone, Image, FileText } from 'lucide-react';
+import { NotionClipperLogo } from '../assets/Logo';
 
 export default function HomePage() {
   return (
-    <div>
+    <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 overflow-hidden">
+      {/* Animated Background Blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -inset-[10px] opacity-50">
+          <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
+          <div className="absolute top-0 -right-4 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl animate-blob" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl animate-blob" style={{ animationDelay: '4s' }}></div>
+          <div className="absolute bottom-0 right-20 w-72 h-72 bg-blue-300 rounded-full mix-blend-multiply filter blur-xl animate-blob" style={{ animationDelay: '6s' }}></div>
+        </div>
+      </div>
+
       <Header />
 
       {/* Hero Section */}
-      <section className="section pt-32">
-        <div className="container-custom">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 animate-fade-in">
-              <span className="gradient-text">Capture anything</span>
+      <section className="relative pt-32 pb-20 px-4">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center space-y-8">
+            {/* Logo Animation */}
+            <div className="flex justify-center mb-6 animate-pulse">
+              <NotionClipperLogo size={96} />
+            </div>
+
+            {/* Title */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight">
+              <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Capture anything
+              </span>
               <br />
-              to Notion instantly
+              <span className="text-gray-900">
+                to Notion instantly
+              </span>
             </h1>
-            <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-10 text-balance animate-slide-up">
-              The fastest way to save content to Notion. Capture text, images, links and more from anywhere with a single shortcut.
+
+            {/* Subtitle */}
+            <p className="text-xl sm:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
+              The ultimate tool to capture and organize your ideas in Notion.
+              <br className="hidden sm:block" />
+              Lightning fast, secure, and beautifully designed.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center animate-slide-up">
-              <a href={`${import.meta.env.VITE_API_URL}/auth/google`} className="btn-primary px-8 py-4 text-lg">
-                Get Started Free
-              </a>
-              <a href="#features" className="btn-secondary px-8 py-4 text-lg">
-                Learn More
-              </a>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Link
+                to="/auth"
+                className="group relative px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
+              >
+                <span className="relative z-10">Get Started Free</span>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-700 to-blue-700 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              </Link>
+
+              <Link
+                to="/pricing"
+                className="px-8 py-4 bg-white/80 backdrop-blur-sm text-gray-900 rounded-xl font-semibold text-lg shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 border border-gray-200"
+              >
+                View Pricing
+              </Link>
+            </div>
+
+            {/* Trust Badge */}
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-600 pt-6">
+              <Lock size={16} className="text-emerald-600" />
+              <span>Secure & Private • No credit card required</span>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="section bg-gray-50 dark:bg-gray-900/50">
-        <div className="container-custom">
+      <section id="features" className="relative py-20 px-4">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Everything you need</h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400">Powerful features that make saving to Notion effortless</p>
+            <h2 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
+              Everything you need
+            </h2>
+            <p className="text-xl text-gray-700">
+              Powerful features that make saving to Notion effortless
+            </p>
           </div>
 
-          <div className="feature-grid">
-            <div className="card-hover text-center">
-              <div className="w-12 h-12 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Zap className="text-white dark:text-gray-900" size={24} />
+          {/* Feature Cards with Gradients */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1 */}
+            <div className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-200">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-50 to-blue-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                  <Zap className="text-white" size={28} />
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-gray-900">Quick Capture</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Save content to Notion in milliseconds with our optimized capture engine
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Lightning Fast</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Clip content to Notion in milliseconds with our optimized capture engine
-              </p>
             </div>
 
-            <div className="card-hover text-center">
-              <div className="w-12 h-12 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Lock className="text-white dark:text-gray-900" size={24} />
+            {/* Card 2 */}
+            <div className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-200">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                  <Database className="text-white" size={28} />
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-gray-900">Organization</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Automatically organize your clips with smart tags and categories
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Secure & Private</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Your data is encrypted and never leaves your Notion workspace
-              </p>
             </div>
 
-            <div className="card-hover text-center">
-              <div className="w-12 h-12 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Cloud className="text-white dark:text-gray-900" size={24} />
+            {/* Card 3 */}
+            <div className="group relative bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-gray-200">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                  <Check className="text-white" size={28} />
+                </div>
+                <h3 className="text-2xl font-bold mb-3 text-gray-900">Synchronization</h3>
+                <p className="text-gray-700 leading-relaxed">
+                  Access your clips from any device with real-time cloud sync
+                </p>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Cloud Sync</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Access your clips from any device, anywhere, anytime
-              </p>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="card-hover text-center">
-              <div className="w-12 h-12 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Smartphone className="text-white dark:text-gray-900" size={24} />
-              </div>
-              <h3 className="text-xl font-semibold mb-2">Multi-Platform</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Available on macOS, Windows, Linux, and browser extension
-              </p>
-            </div>
+      {/* Why Choose Section */}
+      <section className="relative py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-xl border border-gray-200">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50 rounded-3xl opacity-50"></div>
 
-            <div className="card-hover text-center">
-              <div className="w-12 h-12 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
-                <Image className="text-white dark:text-gray-900" size={24} />
+            <div className="relative z-10 space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0">
+                  <Sparkles className="w-8 h-8 text-purple-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-1">Lightning Fast</h3>
+                  <p className="text-gray-700">Capture content in milliseconds with optimized performance</p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Rich Media</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Capture images, PDFs, and documents with perfect formatting
-              </p>
-            </div>
 
-            <div className="card-hover text-center">
-              <div className="w-12 h-12 bg-gray-900 dark:bg-white rounded-xl flex items-center justify-center mx-auto mb-4">
-                <FileText className="text-white dark:text-gray-900" size={24} />
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0">
+                  <Lock className="w-8 h-8 text-blue-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-1">Secure & Private</h3>
+                  <p className="text-gray-700">Your data is encrypted and never leaves your Notion workspace</p>
+                </div>
               </div>
-              <h3 className="text-xl font-semibold mb-2">Markdown Support</h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Advanced Markdown parsing for perfect Notion formatting
-              </p>
+
+              <div className="flex items-center gap-4">
+                <div className="flex-shrink-0">
+                  <Cloud className="w-8 h-8 text-emerald-600" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-1">Cloud Sync</h3>
+                  <p className="text-gray-700">Access your clips from any device, anywhere, anytime</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="section">
-        <div className="container-custom">
-          <div className="glass rounded-4xl p-12 sm:p-16 text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to get started?</h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
-              Join thousands of users who save hours every week with Notion Clipper
-            </p>
-            <a href={`${import.meta.env.VITE_API_URL}/auth/google`} className="btn-primary px-8 py-4 text-lg">
-              Start Free Trial
-            </a>
+      <section className="relative py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="relative bg-gradient-to-br from-purple-600 to-blue-600 rounded-3xl p-12 sm:p-16 text-center shadow-2xl overflow-hidden">
+            {/* Decorative elements */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+
+            <div className="relative z-10 space-y-6">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+                Ready to get started?
+              </h2>
+              <p className="text-xl text-white/90 max-w-2xl mx-auto">
+                Join thousands of users who save hours every week with Clipper Pro
+              </p>
+              <div className="pt-4">
+                <Link
+                  to="/auth"
+                  className="inline-block px-10 py-5 bg-white text-purple-600 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-200 hover:scale-105"
+                >
+                  Start Free Today
+                </Link>
+              </div>
+              <p className="text-sm text-white/80 pt-2">
+                No credit card required • 14-day free trial
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 dark:border-gray-800 py-12">
-        <div className="container-custom">
-          <div className="text-center text-gray-600 dark:text-gray-400">
-            <p>&copy; 2025 Notion Clipper. All rights reserved.</p>
+      <footer className="relative py-12 px-4 border-t border-gray-200/50 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center text-gray-700">
+            <p className="text-sm">&copy; 2025 Clipper Pro. All rights reserved.</p>
+            <p className="text-xs text-gray-600 mt-2">
+              Built with love for Notion users everywhere
+            </p>
           </div>
         </div>
       </footer>

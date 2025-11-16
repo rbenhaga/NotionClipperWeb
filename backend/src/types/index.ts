@@ -149,6 +149,7 @@ export interface AppConfig {
   env: 'development' | 'production' | 'test';
   port: number;
   host: string;
+  frontendUrl: string;
   allowedOrigins: string[];
   supabase: {
     url: string;
