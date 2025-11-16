@@ -79,7 +79,11 @@ export const config: AppConfig = {
   stripe: {
     secretKey: process.env.STRIPE_SECRET_KEY!,
     webhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-    premiumPriceId: process.env.STRIPE_PREMIUM_PRICE_ID || '',
+    prices: {
+      monthly: process.env.STRIPE_PRICE_MONTHLY || '',
+      annual: process.env.STRIPE_PRICE_ANNUAL || '',
+      onetime: process.env.STRIPE_PRICE_ONETIME || '',
+    },
   },
 
   jwt: {

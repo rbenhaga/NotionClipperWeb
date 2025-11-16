@@ -19,11 +19,20 @@ import { config } from '../config/index.js';
 /**
  * POST /api/stripe/create-checkout-session
  * Create Stripe Checkout session for Premium upgrade
+ * Body: { plan: 'premium_monthly' | 'premium_annual' | 'premium_onetime' }
  */
 export const createCheckout = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
-    // TODO: Use plan parameter when service supports multiple plans
-    // const { plan } = req.body;
+    const { plan } = req.body;
+
+    // Validate plan parameter
+    const validPlans = ['premium_monthly', 'premium_annual', 'premium_onetime'];
+    if (!plan || !validPlans.includes(plan)) {
+      throw new AppError(
+        `Invalid plan. Must be one of: ${validPlans.join(', ')}`,
+        400
+      );
+    }
 
     // Generate default success and cancel URLs
     const frontendUrl = config.frontendUrl || 'http://localhost:5173';
@@ -34,10 +43,9 @@ export const createCheckout = asyncHandler(
     const userId = req.user?.userId || 'guest';
 
     // Create checkout session via service
-    // TODO: Pass plan parameter to service when implemented
-    const session = await createCheckoutSession(userId, successUrl, cancelUrl);
+    const session = await createCheckoutSession(userId, plan, successUrl, cancelUrl);
 
-    logger.info(`Checkout session created for ${userId !== 'guest' ? `user: ${userId}` : 'guest'}`);
+    logger.info(`Checkout session created for ${userId !== 'guest' ? `user: ${userId}` : 'guest'}, plan: ${plan}`);
 
     sendSuccess(res, {
       sessionId: session.sessionId,

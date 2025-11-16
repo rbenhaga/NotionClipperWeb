@@ -15,13 +15,45 @@ const stripe = new Stripe(config.stripe.secretKey, {
 
 /**
  * Create Stripe Checkout session for Premium upgrade
+ * @param userId - User ID
+ * @param plan - Plan type: 'premium_monthly', 'premium_annual', or 'premium_onetime'
+ * @param successUrl - Success redirect URL
+ * @param cancelUrl - Cancel redirect URL
  */
-export async function createCheckoutSession(userId: string, successUrl: string, cancelUrl: string) {
+export async function createCheckoutSession(
+  userId: string,
+  plan: 'premium_monthly' | 'premium_annual' | 'premium_onetime',
+  successUrl: string,
+  cancelUrl: string
+) {
   try {
     // Get user info
     const user = await db.getUserById(userId);
     if (!user) {
       throw new AppError('User not found', 404);
+    }
+
+    // Select correct Price ID based on plan
+    let priceId: string;
+    let mode: 'subscription' | 'payment' = 'subscription';
+
+    switch (plan) {
+      case 'premium_monthly':
+        priceId = config.stripe.prices.monthly;
+        break;
+      case 'premium_annual':
+        priceId = config.stripe.prices.annual;
+        break;
+      case 'premium_onetime':
+        priceId = config.stripe.prices.onetime;
+        mode = 'payment'; // One-time payment, not subscription
+        break;
+      default:
+        throw new AppError('Invalid plan type', 400);
+    }
+
+    if (!priceId) {
+      throw new AppError(`Price ID not configured for plan: ${plan}`, 500);
     }
 
     // Get or create Stripe customer
@@ -40,11 +72,11 @@ export async function createCheckoutSession(userId: string, successUrl: string, 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      mode: 'subscription',
+      mode,
       payment_method_types: ['card'],
       line_items: [
         {
-          price: config.stripe.premiumPriceId,
+          price: priceId,
           quantity: 1,
         },
       ],
@@ -52,10 +84,11 @@ export async function createCheckoutSession(userId: string, successUrl: string, 
       cancel_url: cancelUrl,
       metadata: {
         user_id: userId,
+        plan,
       },
     });
 
-    logger.info(`Checkout session created for user: ${userId}`);
+    logger.info(`Checkout session created for user: ${userId}, plan: ${plan}`);
 
     return {
       sessionId: session.id,

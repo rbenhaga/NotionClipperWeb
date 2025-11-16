@@ -171,7 +171,11 @@ export interface AppConfig {
   stripe: {
     secretKey: string;
     webhookSecret: string;
-    premiumPriceId: string;
+    prices: {
+      monthly: string;
+      annual: string;
+      onetime: string;
+    };
   };
   jwt: {
     secret: string;
