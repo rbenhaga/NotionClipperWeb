@@ -35,7 +35,11 @@ supabase login
 # 2. Link le projet
 supabase link --project-ref rijjtngbgahxdjflfyhi
 
-# 3. Configurer les secrets OAuth
+# 3. Configurer SERVICE_ROLE_KEY (requis pour l'Edge Function)
+# IMPORTANT: Utilisez la MÊME valeur que dans backend/.env
+supabase secrets set SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1NiIs..."
+
+# 4. Configurer les secrets OAuth
 supabase secrets set GOOGLE_CLIENT_ID="votre_google_client_id"
 supabase secrets set GOOGLE_CLIENT_SECRET="votre_google_client_secret"
 supabase secrets set NOTION_CLIENT_ID="votre_notion_client_id"
@@ -43,14 +47,21 @@ supabase secrets set NOTION_CLIENT_SECRET="votre_notion_client_secret"
 supabase secrets set STRIPE_SECRET_KEY="sk_test_..."
 supabase secrets set STRIPE_WEBHOOK_SECRET="whsec_..."
 
-# 4. Vérifier que tout est configuré
+# 5. Vérifier que tout est configuré
 supabase secrets list
+```
+
+**OU utilisez le script automatique**:
+
+```bash
+./setup-vault-secrets.sh
 ```
 
 **Via Dashboard Supabase** (alternatif):
 
 1. Allez sur https://supabase.com/dashboard/project/rijjtngbgahxdjflfyhi/settings/vault
 2. Cliquez "New Secret" pour chaque variable:
+   - `SERVICE_ROLE_KEY` ⚠️ **Même valeur que backend/.env**
    - `GOOGLE_CLIENT_ID`
    - `GOOGLE_CLIENT_SECRET`
    - `NOTION_CLIENT_ID`
@@ -59,6 +70,11 @@ supabase secrets list
    - `STRIPE_WEBHOOK_SECRET`
 
 3. Pour les Edge Functions, les secrets sont automatiquement disponibles via `Deno.env.get()`
+
+**Note importante sur SERVICE_ROLE_KEY**:
+- L'Edge Function `get-oauth-secrets` l'utilise pour authentifier les requêtes
+- Il doit être identique dans `backend/.env` ET dans Supabase Vault
+- C'est votre service_role key du dashboard Supabase
 
 ### Étape 3: Redémarrer et vérifier
 
@@ -108,6 +124,11 @@ supabase secrets list
 ### Erreur 401 "Invalid JWT"
 - ❌ Le SERVICE_ROLE_KEY dans `.env` est incorrect
 - ✅ Récupérez la vraie clé depuis le dashboard Supabase
+
+### Erreur 403 "Unauthorized"
+- ❌ `SERVICE_ROLE_KEY` n'est pas configuré dans Supabase Vault
+- ✅ Exécutez: `supabase secrets set SERVICE_ROLE_KEY="votre_clé"`
+- ⚠️ Utilisez la MÊME valeur que dans `backend/.env`
 
 ### Erreur 500 "Missing secrets"
 - ❌ Les secrets ne sont pas configurés dans Supabase Vault
