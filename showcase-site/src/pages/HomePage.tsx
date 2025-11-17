@@ -65,9 +65,6 @@ export default function HomePage() {
               </Link>
             </div>
 
-            <p className="text-sm text-gray-600 pt-2">
-              2.99€/mois • Sans engagement
-            </p>
 
             {/* Video Demo Placeholder */}
             <div className="relative mt-16 max-w-5xl mx-auto">
@@ -406,7 +403,7 @@ export default function HomePage() {
               </h2>
 
               <p className="text-xl text-gray-700 leading-relaxed">
-                Architecture robuste 8.4/10 • Toutes les fonctionnalités essentielles sont déjà implémentées et testées.
+                Toutes les fonctionnalités essentielles sont déjà implémentées et testées.
               </p>
 
               <ul className="space-y-4">
@@ -433,8 +430,8 @@ export default function HomePage() {
                     <Globe className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">OAuth sécurisé + Encryption</h4>
-                    <p className="text-gray-600">Google + Notion OAuth • Tokens AES-256-GCM • Supabase Vault</p>
+                    <h4 className="font-semibold text-gray-900">Connexion sécurisée</h4>
+                    <p className="text-gray-600">Google + Notion avec encryption des données</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -447,12 +444,6 @@ export default function HomePage() {
                   </div>
                 </li>
               </ul>
-
-              <div className="pt-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-200">
-                <p className="text-sm text-gray-700">
-                  <strong>Monorepo pnpm</strong> • React + TypeScript • Electron + Chrome extension • Supabase Edge Functions • PostgreSQL + RLS
-                </p>
-              </div>
             </div>
 
             {/* Right: Features Screenshot */}
@@ -552,7 +543,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Voice Recording + Transcription AI</h4>
-                    <p className="text-gray-600">Enregistrez des notes vocales et transcrivez avec Whisper AI (Q1 2025)</p>
+                    <p className="text-gray-600">Enregistrez des notes vocales et transcrivez avec Whisper AI</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -561,7 +552,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">OCR - Extraction de texte</h4>
-                    <p className="text-gray-600">Extrayez le texte depuis images et screenshots (Q1 2025)</p>
+                    <p className="text-gray-600">Extrayez le texte depuis images et screenshots</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -570,7 +561,7 @@ export default function HomePage() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Sync Extension ↔ Desktop</h4>
-                    <p className="text-gray-600">Synchronisation temps réel entre navigateur et desktop (Q2 2025)</p>
+                    <p className="text-gray-600">Synchronisation temps réel entre navigateur et desktop</p>
                   </div>
                 </li>
               </ul>
@@ -580,16 +571,33 @@ export default function HomePage() {
                   <strong>En étude:</strong> Web Highlights • Focus Mode • Screenshots avancés • Export multi-format
                 </p>
               </div>
-
-              <div className="pt-4">
-                <Link
-                  to="/pricing"
-                  className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  Voir les tarifs
-                </Link>
-              </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Final */}
+      <section className="relative py-24 px-6 bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
+            Prêt à optimiser votre workflow Notion ?
+          </h2>
+          <p className="text-xl text-purple-100 mb-10 max-w-2xl mx-auto">
+            Rejoignez les utilisateurs qui gagnent des heures chaque semaine avec Clipper Pro
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              to="/auth"
+              className="px-10 py-5 bg-white text-purple-600 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200"
+            >
+              Commencer maintenant
+            </Link>
+            <Link
+              to="/pricing"
+              className="px-10 py-5 bg-white/10 backdrop-blur-sm text-white border-2 border-white rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-200"
+            >
+              Voir les tarifs
+            </Link>
           </div>
         </div>
       </section>
