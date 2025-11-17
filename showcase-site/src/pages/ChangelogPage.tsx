@@ -18,196 +18,171 @@ export default function ChangelogPage() {
     {
       version: 'v1.2.0',
       date: '2025-11-17',
-      title: 'Audit de sécurité et optimisations',
+      title: 'Sécurité renforcée et optimisations',
       type: 'security' as const,
       changes: [
         {
           type: 'security',
-          title: 'Renforcement de la sécurité',
-          description: 'Correction de problèmes critiques identifiés lors de l\'audit de sécurité complet'
+          title: 'Sécurité renforcée',
+          description: 'Protection avancée de vos données personnelles et tokens d\'accès'
         },
         {
           type: 'feature',
-          title: 'Suivi des quotas amélioré',
-          description: 'Tracking précis des fichiers, minutes en mode focus et mode compact'
+          title: 'Suivi d\'utilisation amélioré',
+          description: 'Visualisez précisément votre consommation de quotas mensuel'
         },
         {
           type: 'improvement',
-          title: 'Logger de production',
-          description: 'Système de logging avec filtrage par niveau pour éviter la pollution en production'
-        },
-        {
-          type: 'fix',
-          title: 'Optimisations Edge Functions',
-          description: 'Résolution des appels redondants et amélioration des performances'
+          title: 'Performances optimisées',
+          description: 'Application plus rapide avec moins de consommation de ressources'
         }
       ]
     },
     {
       version: 'v1.1.0',
       date: '2025-11-14',
-      title: 'Système Freemium/Premium avec OAuth',
+      title: 'Abonnement Premium et Connexion simplifiée',
       type: 'feature' as const,
       changes: [
         {
           type: 'feature',
-          title: 'OAuth Google + Notion',
-          description: 'Authentification unifiée avec Google et connexion Notion sécurisée'
+          title: 'Connexion avec Google',
+          description: 'Connectez-vous simplement avec votre compte Google'
         },
         {
           type: 'feature',
-          title: 'Abonnement Premium + Stripe',
-          description: 'Système d\'abonnement complet avec quotas et intégration Stripe'
+          title: 'Abonnement Premium',
+          description: 'Système d\'abonnement mensuel avec paiement sécurisé'
         },
         {
-          type: 'feature',
-          title: 'Encryption AES-256-GCM',
-          description: 'Chiffrement des tokens côté serveur avec Supabase Vault'
+          type: 'security',
+          title: 'Chiffrement des données',
+          description: 'Vos tokens Notion sont chiffrés et stockés en toute sécurité'
         },
         {
           type: 'improvement',
-          title: 'UI Apple/Notion Design',
-          description: 'Redesign complet avec ConfigPanel minimaliste et animations premium'
+          title: 'Interface redesignée',
+          description: 'Design moderne inspiré des meilleures applications du marché'
         }
       ]
     },
     {
       version: 'v1.0.0',
       date: '2025-11-09',
-      title: 'i18n + Animations + Focus Mode',
+      title: 'Support multilingue et Mode Focus',
       type: 'feature' as const,
       changes: [
         {
           type: 'feature',
-          title: 'Système i18n complet',
-          description: 'Support de 9 langues (FR, EN, ES, DE, PT, JA, KO, AR, IT)'
+          title: '9 langues disponibles',
+          description: 'Interface en français, anglais, espagnol, allemand, portugais, japonais, coréen, arabe et italien'
         },
         {
           type: 'feature',
-          title: 'Focus Mode avec bulle flottante',
-          description: 'Mode focus avec bulle draggable et animations premium'
+          title: 'Mode Focus',
+          description: 'Travaillez sans distraction avec la bulle flottante intelligente'
         },
         {
           type: 'improvement',
-          title: 'Animations Apple-level',
-          description: 'Breathing animations, lift effects et micro-interactions fluides'
+          title: 'Animations fluides',
+          description: 'Expérience utilisateur premium avec des animations soignées'
         },
         {
           type: 'feature',
-          title: 'TOC Navigation',
-          description: 'Navigation par sections avec table des matières intelligente'
+          title: 'Navigation par sections',
+          description: 'Organisez votre contenu avec la table des matières automatique'
         }
       ]
     },
     {
       version: 'v0.8.0',
       date: '2025-10-15',
-      title: 'Extension Chrome + File Upload',
+      title: 'Extension navigateur et Upload de fichiers',
       type: 'feature' as const,
       changes: [
         {
           type: 'feature',
           title: 'Extension Chrome',
-          description: 'Extension browser complète avec capture de page web'
+          description: 'Capturez n\'importe quelle page web directement depuis votre navigateur'
         },
         {
           type: 'feature',
-          title: 'Upload de fichiers',
-          description: 'Drag & drop de fichiers avec upload Notion natif'
+          title: 'Envoi de fichiers',
+          description: 'Glissez-déposez vos fichiers pour les ajouter à Notion'
         },
         {
           type: 'feature',
-          title: 'Queue hors ligne',
-          description: 'File d\'attente avec synchronisation automatique'
+          title: 'Mode hors ligne',
+          description: 'Continuez à travailler sans connexion, tout se synchronise automatiquement'
         },
         {
           type: 'improvement',
-          title: 'UI minimaliste',
-          description: 'Interface redesignée avec mode compact'
+          title: 'Interface compacte',
+          description: 'Mode minimaliste pour gagner de l\'espace sur votre écran'
         }
       ]
     },
     {
       version: 'v0.5.0',
       date: '2025-10-03',
-      title: 'Architecture Monorepo + Adapters Pattern',
+      title: 'Architecture technique améliorée',
       type: 'feature' as const,
       changes: [
         {
-          type: 'feature',
-          title: 'Architecture Monorepo',
-          description: 'Migration complète vers pnpm workspaces avec packages partagés'
-        },
-        {
-          type: 'feature',
-          title: 'Adapters Pattern',
-          description: 'Architecture adaptateurs pour Electron et WebExtension'
+          type: 'improvement',
+          title: 'Stabilité accrue',
+          description: 'Application plus fiable avec moins de bugs'
         },
         {
           type: 'improvement',
-          title: 'Code sharing',
-          description: 'Packages core-shared, core-electron, core-web pour réutilisabilité'
-        },
-        {
-          type: 'improvement',
-          title: 'TypeScript strict',
-          description: 'Configuration TypeScript stricte sur tous les packages'
+          title: 'Code optimisé',
+          description: 'Performances améliorées sur tous les appareils'
         }
       ]
     },
     {
       version: 'v0.3.0',
       date: '2025-09-23',
-      title: 'Backend Node.js + Parser Markdown',
+      title: 'Amélioration du formatage',
       type: 'feature' as const,
       changes: [
         {
           type: 'feature',
-          title: 'Migration Python → Node.js',
-          description: 'Backend complet en Node.js avec IPC-only architecture'
+          title: 'Markdown avancé',
+          description: 'Support complet du formatage Markdown pour vos notes'
         },
         {
           type: 'feature',
-          title: 'Parser Markdown avancé',
-          description: 'Support complet du Markdown avec @tryfabric/martian et conversion HTML intelligente'
-        },
-        {
-          type: 'feature',
-          title: 'Clipboard intelligent',
-          description: 'Détection automatique du type de contenu avec EventEmitter'
+          title: 'Détection intelligente',
+          description: 'Reconnaît automatiquement le type de contenu que vous copiez'
         },
         {
           type: 'improvement',
-          title: 'Notion API 2025',
-          description: 'Migration vers Notion API 2025-09-03 avec data_source_id'
+          title: 'Compatibilité Notion',
+          description: 'Support des dernières fonctionnalités de l\'API Notion'
         }
       ]
     },
     {
       version: 'v0.1.0',
       date: '2025-06-30',
-      title: 'Premier prototype fonctionnel',
+      title: 'Première version',
       type: 'feature' as const,
       changes: [
         {
           type: 'feature',
-          title: 'Capture de presse-papiers',
-          description: 'Système de base pour capturer le contenu copié'
+          title: 'Capture automatique',
+          description: 'Détecte automatiquement quand vous copiez du contenu'
         },
         {
           type: 'feature',
           title: 'Envoi vers Notion',
-          description: 'Intégration initiale avec l\'API Notion'
+          description: 'Envoyez votre contenu directement dans vos pages Notion'
         },
         {
           type: 'feature',
-          title: 'Interface Electron',
-          description: 'Application desktop avec React + Vite'
-        },
-        {
-          type: 'feature',
-          title: 'Onboarding',
-          description: 'Flux d\'onboarding initial pour configuration Notion'
+          title: 'Application desktop',
+          description: 'Interface moderne et facile à utiliser'
         }
       ]
     }
