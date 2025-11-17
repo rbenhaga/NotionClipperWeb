@@ -1,4 +1,9 @@
-import { supabase } from '../lib/supabase';
+/**
+ * Subscription Service
+ * Handles subscription and usage management via backend VPS
+ */
+
+import { authService } from './auth.service';
 
 export type SubscriptionTier = 'free' | 'premium' | 'grace_period';
 export type SubscriptionStatus = 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid';
@@ -68,24 +73,23 @@ const TIER_QUOTAS: Record<SubscriptionTier, Quotas> = {
   },
 };
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 class SubscriptionService {
   /**
    * Get current user's subscription
    */
   async getCurrentSubscription(): Promise<Subscription | null> {
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session) return null;
+    const token = authService.getToken();
+    if (!token) return null;
 
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const response = await fetch(`${supabaseUrl}/functions/v1/get-subscription`, {
-        method: 'POST',
+      const response = await fetch(`${API_URL}/user/subscription`, {
+        method: 'GET',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ userId: session.user.id }),
       });
 
       if (!response.ok) {
@@ -93,7 +97,7 @@ class SubscriptionService {
       }
 
       const data = await response.json();
-      return data.subscription;
+      return data.subscription || data;
     } catch (error) {
       console.error('Error fetching subscription:', error);
       return null;
@@ -102,31 +106,16 @@ class SubscriptionService {
 
   /**
    * Get usage records for current month
+   * Note: This endpoint might not exist yet in backend, will return null for now
    */
   async getCurrentUsage(): Promise<UsageRecord | null> {
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session) return null;
+    const token = authService.getToken();
+    if (!token) return null;
 
     try {
-      const now = new Date();
-      const year = now.getFullYear();
-      const month = now.getMonth() + 1;
-
-      const { data, error } = await supabase
-        .from('usage_records')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .eq('year', year)
-        .eq('month', month)
-        .single();
-
-      if (error) {
-        // No usage record yet this month
-        return null;
-      }
-
-      return data;
+      // TODO: Add endpoint in backend for usage
+      // For now, return null
+      return null;
     } catch (error) {
       console.error('Error fetching usage:', error);
       return null;
@@ -144,23 +133,19 @@ class SubscriptionService {
    * Create Stripe checkout session for Premium upgrade
    */
   async createCheckoutSession(returnUrl?: string): Promise<string> {
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session) {
+    const token = authService.getToken();
+    if (!token) {
       throw new Error('Not authenticated');
     }
 
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const response = await fetch(`${supabaseUrl}/functions/v1/create-checkout`, {
+      const response = await fetch(`${API_URL}/stripe/create-checkout-session`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
-          userId: session.user.id,
-          email: session.user.email,
           returnUrl: returnUrl || window.location.origin,
         }),
       });
@@ -182,22 +167,20 @@ class SubscriptionService {
    * Create Stripe Customer Portal session for managing subscription
    */
   async createPortalSession(returnUrl?: string): Promise<string> {
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session) {
+    const token = authService.getToken();
+    if (!token) {
       throw new Error('Not authenticated');
     }
 
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const response = await fetch(`${supabaseUrl}/functions/v1/create-portal-session`, {
+      const response = await fetch(`${API_URL}/stripe/create-portal`, {
         method: 'POST',
         headers: {
+          'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
         },
         body: JSON.stringify({
-          return_url: returnUrl || window.location.origin,
+          returnUrl: returnUrl || window.location.origin,
         }),
       });
 

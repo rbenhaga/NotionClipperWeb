@@ -1,5 +1,7 @@
-import { supabase } from '../lib/supabase';
-import type { User, Session } from '@supabase/supabase-js';
+/**
+ * Authentication Service
+ * Handles OAuth flows via backend VPS and JWT token management
+ */
 
 export interface UserProfile {
   id: string;
@@ -12,220 +14,159 @@ export interface UserProfile {
 }
 
 export interface AuthUser {
-  user: User;
-  session: Session;
+  user: {
+    id: string;
+    email: string;
+  };
   profile?: UserProfile;
 }
 
+export interface AuthTokens {
+  accessToken: string;
+  tokenType: string;
+  expiresIn: string;
+}
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
 class AuthService {
   /**
-   * Get current session
-   */
-  async getSession(): Promise<Session | null> {
-    const { data: { session } } = await supabase.auth.getSession();
-    return session;
-  }
-
-  /**
-   * Get current user with profile
+   * Get current authenticated user from localStorage JWT
    */
   async getCurrentUser(): Promise<AuthUser | null> {
-    const { data: { session } } = await supabase.auth.getSession();
+    const token = this.getToken();
+    if (!token) return null;
 
-    if (!session) return null;
-
-    // Fetch user profile from Edge Function
-    const profile = await this.getUserProfile(session.user.id);
-
-    return {
-      user: session.user,
-      session,
-      profile: profile || undefined,
-    };
-  }
-
-  /**
-   * Get user profile from database
-   */
-  async getUserProfile(userId: string): Promise<UserProfile | null> {
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const { data: { session } } = await supabase.auth.getSession();
+      // Decode JWT to get user info (simple base64 decode, no verification needed client-side)
+      const payload = JSON.parse(atob(token.split('.')[1]));
 
-      if (!session) return null;
-
-      const response = await fetch(`${supabaseUrl}/functions/v1/get-user-profile`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
+      return {
+        user: {
+          id: payload.userId,
+          email: payload.email,
         },
-        body: JSON.stringify({ userId }),
-      });
-
-      if (!response.ok) {
-        // User doesn't exist yet, will be created on first action
-        return null;
-      }
-
-      const data = await response.json();
-      return data.profile;
+      };
     } catch (error) {
-      console.error('Error fetching user profile:', error);
+      console.error('Error decoding JWT:', error);
+      this.clearToken();
       return null;
     }
   }
 
   /**
-   * Sign in with Google OAuth
+   * Get stored auth token from localStorage
    */
-  async signInWithGoogle(redirectTo: string): Promise<void> {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
-        },
-      },
-    });
-
-    if (error) {
-      throw error;
-    }
+  getToken(): string | null {
+    return localStorage.getItem('auth_token');
   }
 
   /**
-   * Sign in with Notion OAuth (custom flow)
-   * Returns the authorization URL to redirect to
+   * Store auth token in localStorage
    */
-  initiateNotionOAuth(redirectUri: string): string {
-    const notionClientId = import.meta.env.VITE_NOTION_CLIENT_ID;
-
-    if (!notionClientId) {
-      throw new Error('VITE_NOTION_CLIENT_ID is not configured');
-    }
-
-    // Generate random state for CSRF protection
-    const state = this.generateState();
-    sessionStorage.setItem('notion_oauth_state', state);
-    sessionStorage.setItem('notion_oauth_redirect', redirectUri);
-
-    // Build Notion OAuth URL
-    const params = new URLSearchParams({
-      client_id: notionClientId,
-      response_type: 'code',
-      owner: 'user',
-      redirect_uri: redirectUri,
-      state,
-    });
-
-    return `https://api.notion.com/v1/oauth/authorize?${params.toString()}`;
+  setToken(token: string): void {
+    localStorage.setItem('auth_token', token);
   }
 
   /**
-   * Handle Notion OAuth callback
-   * Exchanges code for token via Edge Function
+   * Clear auth token from localStorage
    */
-  async handleNotionCallback(code: string, state: string): Promise<{ userId: string; workspace: any }> {
-    // Verify state
-    const savedState = sessionStorage.getItem('notion_oauth_state');
-    if (!savedState || savedState !== state) {
-      throw new Error('Invalid state parameter - possible CSRF attack');
-    }
+  clearToken(): void {
+    localStorage.removeItem('auth_token');
+  }
 
-    // Get redirect URI from session
-    const redirectUri = sessionStorage.getItem('notion_oauth_redirect') || window.location.origin;
+  /**
+   * Check if user is authenticated
+   */
+  isAuthenticated(): boolean {
+    return !!this.getToken();
+  }
 
-    // Clear session storage
-    sessionStorage.removeItem('notion_oauth_state');
-    sessionStorage.removeItem('notion_oauth_redirect');
+  /**
+   * Initiate Google OAuth flow
+   * Redirects to backend VPS which handles the OAuth flow
+   */
+  initiateGoogleOAuth(): void {
+    window.location.href = `${API_URL}/auth/google`;
+  }
 
-    // Call Edge Function to exchange code for token
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const response = await fetch(`${supabaseUrl}/functions/v1/notion-oauth`, {
+  /**
+   * Initiate Notion OAuth flow
+   * Redirects to backend VPS which handles the OAuth flow
+   */
+  initiateNotionOAuth(): void {
+    window.location.href = `${API_URL}/auth/notion`;
+  }
+
+  /**
+   * Sign up with email and password
+   */
+  async signUpWithEmail(email: string, password: string, fullName?: string): Promise<AuthTokens> {
+    const response = await fetch(`${API_URL}/auth/signup`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        code,
-        redirectUri,
-      }),
+      body: JSON.stringify({ email, password, fullName }),
     });
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to complete Notion OAuth');
+      throw new Error(error.message || 'Failed to sign up');
     }
 
     const data = await response.json();
 
-    // Create Supabase session for this user
-    // The Edge Function should have created the user, now we sign them in
-    await this.createSupabaseSession(data.userId);
-
-    return {
-      userId: data.userId,
-      workspace: data.workspace,
-    };
-  }
-
-  /**
-   * Create Supabase auth session after Notion OAuth
-   * This is a workaround since Notion OAuth is custom
-   */
-  private async createSupabaseSession(userId: string): Promise<void> {
-    // For now, we'll use a custom session approach
-    // You'll need to implement a custom Edge Function that creates a session token
-    // Or use Supabase's admin API to create a session
-
-    // Store userId in localStorage for now (not ideal but works for demo)
-    localStorage.setItem('clipper_user_id', userId);
-  }
-
-  /**
-   * Handle Google OAuth callback
-   * Supabase handles this automatically, just need to create/update user profile
-   */
-  async handleGoogleCallback(): Promise<void> {
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session) {
-      throw new Error('No session found after Google OAuth');
+    // Store token
+    if (data.tokens?.accessToken) {
+      this.setToken(data.tokens.accessToken);
     }
 
-    // Call create-user Edge Function to ensure user profile exists
-    await this.ensureUserProfile(session.user);
+    return data.tokens;
   }
 
   /**
-   * Ensure user profile exists in database
+   * Sign in with email and password
    */
-  private async ensureUserProfile(user: User): Promise<void> {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const { data: { session } } = await supabase.auth.getSession();
+  async signInWithEmail(email: string, password: string): Promise<AuthTokens> {
+    const response = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
-    if (!session) return;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to sign in');
+    }
 
-    try {
-      await fetch(`${supabaseUrl}/functions/v1/create-user`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify({
-          email: user.email,
-          userId: user.id,
-          fullName: user.user_metadata?.full_name || user.user_metadata?.name,
-          avatarUrl: user.user_metadata?.avatar_url || user.user_metadata?.picture,
-        }),
-      });
-    } catch (error) {
-      console.error('Error creating user profile:', error);
-      // Don't throw - user can still use the app
+    const data = await response.json();
+
+    // Store token
+    if (data.tokens?.accessToken) {
+      this.setToken(data.tokens.accessToken);
+    }
+
+    return data.tokens;
+  }
+
+  /**
+   * Resend verification email
+   */
+  async resendVerificationEmail(email: string): Promise<void> {
+    const response = await fetch(`${API_URL}/auth/resend-verification`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to resend verification email');
     }
   }
 
@@ -233,34 +174,31 @@ class AuthService {
    * Sign out
    */
   async signOut(): Promise<void> {
-    const { error } = await supabase.auth.signOut();
-    localStorage.removeItem('clipper_user_id');
-
-    if (error) {
-      throw error;
+    try {
+      // Call backend logout endpoint (optional, mainly for logging)
+      const token = this.getToken();
+      if (token) {
+        await fetch(`${API_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
+      // Always clear local token
+      this.clearToken();
     }
   }
 
   /**
-   * Listen to auth state changes
+   * Handle OAuth success callback
+   * Extracts token from URL and stores it
    */
-  onAuthStateChange(callback: (session: Session | null) => void): () => void {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      callback(session);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }
-
-  /**
-   * Generate random state for OAuth CSRF protection
-   */
-  private generateState(): string {
-    const array = new Uint8Array(32);
-    crypto.getRandomValues(array);
-    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  handleOAuthCallback(token: string): void {
+    this.setToken(token);
   }
 }
 
