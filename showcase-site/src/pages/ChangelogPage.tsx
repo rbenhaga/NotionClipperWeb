@@ -3,9 +3,11 @@ import {
   Sparkles,
   Shield,
   Zap,
-  Database,
   Check,
-  AlertCircle
+  AlertCircle,
+  GitCommit,
+  Calendar,
+  Code
 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -244,26 +246,26 @@ export default function ChangelogPage() {
           <div className="mt-16 grid sm:grid-cols-3 gap-6">
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200 text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-xl mb-3">
-                <Sparkles className="w-6 h-6 text-purple-600" />
+                <GitCommit className="w-6 h-6 text-purple-600" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">15+</div>
-              <div className="text-sm text-gray-600">Fonctionnalités</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">150+</div>
+              <div className="text-sm text-gray-600">Commits</div>
             </div>
 
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200 text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl mb-3">
-                <Shield className="w-6 h-6 text-blue-600" />
+                <Calendar className="w-6 h-6 text-blue-600" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">9/10</div>
-              <div className="text-sm text-gray-600">Score de sécurité</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">4</div>
+              <div className="text-sm text-gray-600">Jours de développement</div>
             </div>
 
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200 text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-xl mb-3">
-                <Database className="w-6 h-6 text-indigo-600" />
+                <Code className="w-6 h-6 text-indigo-600" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">3</div>
-              <div className="text-sm text-gray-600">Versions majeures</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">8k+</div>
+              <div className="text-sm text-gray-600">Lignes de code</div>
             </div>
           </div>
         </div>
