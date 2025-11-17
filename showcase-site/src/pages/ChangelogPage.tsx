@@ -17,7 +17,7 @@ export default function ChangelogPage() {
   const releases = [
     {
       version: 'v1.2.0',
-      date: '2025-11-16',
+      date: '2025-11-17',
       title: 'Audit de sécurité et optimisations',
       type: 'security' as const,
       changes: [
@@ -46,76 +46,168 @@ export default function ChangelogPage() {
     {
       version: 'v1.1.0',
       date: '2025-11-14',
-      title: 'Système Freemium/Premium',
-      type: 'feature' as const,
-      changes: [
-        {
-          type: 'feature',
-          title: 'Abonnement Premium',
-          description: 'Système d\'abonnement avec quotas et gestion Stripe'
-        },
-        {
-          type: 'feature',
-          title: 'Affichage professionnel des quotas',
-          description: 'Interface utilisateur pour suivre l\'utilisation et les limites'
-        },
-        {
-          type: 'improvement',
-          title: 'ConfigPanel minimaliste',
-          description: 'Redesign du panneau de configuration inspiré d\'Apple/Notion'
-        },
-        {
-          type: 'security',
-          title: 'Sécurisation du tracking',
-          description: 'Restrictions de la file d\'attente hors ligne pour éviter les abus'
-        }
-      ]
-    },
-    {
-      version: 'v1.0.0',
-      date: '2025-11-13',
-      title: 'Lancement initial - Système d\'authentification complet',
+      title: 'Système Freemium/Premium avec OAuth',
       type: 'feature' as const,
       changes: [
         {
           type: 'feature',
           title: 'OAuth Google + Notion',
-          description: 'Authentification sécurisée avec Google et connexion Notion'
+          description: 'Authentification unifiée avec Google et connexion Notion sécurisée'
+        },
+        {
+          type: 'feature',
+          title: 'Abonnement Premium + Stripe',
+          description: 'Système d\'abonnement complet avec quotas et intégration Stripe'
         },
         {
           type: 'feature',
           title: 'Encryption AES-256-GCM',
-          description: 'Chiffrement des tokens Notion côté serveur avec Supabase Vault'
+          description: 'Chiffrement des tokens côté serveur avec Supabase Vault'
+        },
+        {
+          type: 'improvement',
+          title: 'UI Apple/Notion Design',
+          description: 'Redesign complet avec ConfigPanel minimaliste et animations premium'
+        }
+      ]
+    },
+    {
+      version: 'v1.0.0',
+      date: '2025-11-09',
+      title: 'i18n + Animations + Focus Mode',
+      type: 'feature' as const,
+      changes: [
+        {
+          type: 'feature',
+          title: 'Système i18n complet',
+          description: 'Support de 9 langues (FR, EN, ES, DE, PT, JA, KO, AR, IT)'
         },
         {
           type: 'feature',
-          title: 'Capture automatique du presse-papiers',
-          description: 'Détection intelligente du contenu copié (texte, images, liens)'
+          title: 'Focus Mode avec bulle flottante',
+          description: 'Mode focus avec bulle draggable et animations premium'
+        },
+        {
+          type: 'improvement',
+          title: 'Animations Apple-level',
+          description: 'Breathing animations, lift effects et micro-interactions fluides'
+        },
+        {
+          type: 'feature',
+          title: 'TOC Navigation',
+          description: 'Navigation par sections avec table des matières intelligente'
+        }
+      ]
+    },
+    {
+      version: 'v0.8.0',
+      date: '2025-10-15',
+      title: 'Extension Chrome + File Upload',
+      type: 'feature' as const,
+      changes: [
+        {
+          type: 'feature',
+          title: 'Extension Chrome',
+          description: 'Extension browser complète avec capture de page web'
+        },
+        {
+          type: 'feature',
+          title: 'Upload de fichiers',
+          description: 'Drag & drop de fichiers avec upload Notion natif'
+        },
+        {
+          type: 'feature',
+          title: 'Queue hors ligne',
+          description: 'File d\'attente avec synchronisation automatique'
+        },
+        {
+          type: 'improvement',
+          title: 'UI minimaliste',
+          description: 'Interface redesignée avec mode compact'
+        }
+      ]
+    },
+    {
+      version: 'v0.5.0',
+      date: '2025-10-03',
+      title: 'Architecture Monorepo + Adapters Pattern',
+      type: 'feature' as const,
+      changes: [
+        {
+          type: 'feature',
+          title: 'Architecture Monorepo',
+          description: 'Migration complète vers pnpm workspaces avec packages partagés'
+        },
+        {
+          type: 'feature',
+          title: 'Adapters Pattern',
+          description: 'Architecture adaptateurs pour Electron et WebExtension'
+        },
+        {
+          type: 'improvement',
+          title: 'Code sharing',
+          description: 'Packages core-shared, core-electron, core-web pour réutilisabilité'
+        },
+        {
+          type: 'improvement',
+          title: 'TypeScript strict',
+          description: 'Configuration TypeScript stricte sur tous les packages'
+        }
+      ]
+    },
+    {
+      version: 'v0.3.0',
+      date: '2025-09-23',
+      title: 'Backend Node.js + Parser Markdown',
+      type: 'feature' as const,
+      changes: [
+        {
+          type: 'feature',
+          title: 'Migration Python → Node.js',
+          description: 'Backend complet en Node.js avec IPC-only architecture'
         },
         {
           type: 'feature',
           title: 'Parser Markdown avancé',
-          description: 'Conversion automatique en blocs Notion natifs avec support complet du formatage'
+          description: 'Support complet du Markdown avec @tryfabric/martian et conversion HTML intelligente'
         },
         {
           type: 'feature',
-          title: 'Mode hors ligne',
-          description: 'File d\'attente locale avec synchronisation automatique au retour de la connexion'
+          title: 'Clipboard intelligent',
+          description: 'Détection automatique du type de contenu avec EventEmitter'
+        },
+        {
+          type: 'improvement',
+          title: 'Notion API 2025',
+          description: 'Migration vers Notion API 2025-09-03 avec data_source_id'
+        }
+      ]
+    },
+    {
+      version: 'v0.1.0',
+      date: '2025-06-30',
+      title: 'Premier prototype fonctionnel',
+      type: 'feature' as const,
+      changes: [
+        {
+          type: 'feature',
+          title: 'Capture de presse-papiers',
+          description: 'Système de base pour capturer le contenu copié'
         },
         {
           type: 'feature',
-          title: 'Multi-workspaces',
-          description: 'Support de plusieurs espaces de travail Notion'
+          title: 'Envoi vers Notion',
+          description: 'Intégration initiale avec l\'API Notion'
         },
         {
           type: 'feature',
-          title: 'Interface i18n',
-          description: 'Support français et anglais avec traductions complètes'
+          title: 'Interface Electron',
+          description: 'Application desktop avec React + Vite'
         },
         {
           type: 'feature',
-          title: 'Auto-reconnexion',
-          description: 'Système de reconnexion automatique pour les utilisateurs récurrents'
+          title: 'Onboarding',
+          description: 'Flux d\'onboarding initial pour configuration Notion'
         }
       ]
     }
@@ -248,7 +340,7 @@ export default function ChangelogPage() {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-xl mb-3">
                 <GitCommit className="w-6 h-6 text-purple-600" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">150+</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">421+</div>
               <div className="text-sm text-gray-600">Commits</div>
             </div>
 
@@ -256,15 +348,15 @@ export default function ChangelogPage() {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-xl mb-3">
                 <Calendar className="w-6 h-6 text-blue-600" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">4</div>
-              <div className="text-sm text-gray-600">Jours de développement</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">5</div>
+              <div className="text-sm text-gray-600">Mois de développement</div>
             </div>
 
             <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-gray-200 text-center">
               <div className="inline-flex items-center justify-center w-12 h-12 bg-indigo-100 rounded-xl mb-3">
                 <Code className="w-6 h-6 text-indigo-600" />
               </div>
-              <div className="text-3xl font-bold text-gray-900 mb-1">8k+</div>
+              <div className="text-3xl font-bold text-gray-900 mb-1">50k+</div>
               <div className="text-sm text-gray-600">Lignes de code</div>
             </div>
           </div>
