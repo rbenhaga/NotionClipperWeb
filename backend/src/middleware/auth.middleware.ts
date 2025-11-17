@@ -29,7 +29,7 @@ function extractToken(authHeader?: string): string | null {
  */
 export async function authenticateToken(
   req: AuthenticatedRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
@@ -66,7 +66,7 @@ export async function authenticateToken(
  */
 export async function authenticateOptional(
   req: AuthenticatedRequest,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
@@ -92,7 +92,7 @@ export async function authenticateOptional(
  */
 export function generateToken(payload: Omit<AuthTokenPayload, 'iat' | 'exp'>): string {
   return jwt.sign(payload, config.jwt.secret, {
-    expiresIn: config.jwt.expiresIn,
+    expiresIn: config.jwt.expiresIn as jwt.SignOptions['expiresIn'],
   });
 }
 

@@ -40,7 +40,7 @@ app.use(generalRateLimiter);
 // ============================================
 
 // Health check (before rate limiting)
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),

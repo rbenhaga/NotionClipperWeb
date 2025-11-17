@@ -4,7 +4,7 @@
  */
 
 import { config } from '../config/index.js';
-import { GOOGLE_OAUTH, NOTION_OAUTH, OAUTH_SCOPES } from '../config/constants.js';
+import { GOOGLE_OAUTH, NOTION_OAUTH } from '../config/constants.js';
 import { db } from '../config/database.js';
 import { generateToken } from '../middleware/auth.middleware.js';
 import { logger } from '../utils/logger.js';
@@ -40,7 +40,7 @@ export async function exchangeGoogleCode(code: string): Promise<GoogleTokenRespo
     throw new UnauthorizedError('Failed to exchange Google authorization code');
   }
 
-  return response.json();
+  return response.json() as Promise<GoogleTokenResponse>;
 }
 
 /**
@@ -57,7 +57,7 @@ export async function getGoogleUserInfo(accessToken: string): Promise<GoogleOAut
     throw new UnauthorizedError('Failed to fetch Google user info');
   }
 
-  return response.json();
+  return response.json() as Promise<GoogleOAuthProfile>;
 }
 
 /**
@@ -87,7 +87,7 @@ export async function exchangeNotionCode(code: string): Promise<NotionOAuthRespo
     throw new UnauthorizedError('Failed to exchange Notion authorization code');
   }
 
-  return response.json();
+  return response.json() as Promise<NotionOAuthResponse>;
 }
 
 /**

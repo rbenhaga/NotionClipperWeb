@@ -3,7 +3,7 @@
  * Handles user profile and subscription endpoints
  */
 
-import { Response, NextFunction } from 'express';
+import { Response } from 'express';
 import { db } from '../config/database.js';
 import { logger } from '../utils/logger.js';
 import { sendSuccess, sendNotFound } from '../utils/response.js';
@@ -15,7 +15,7 @@ import { AuthenticatedRequest, AppError } from '../types/index.js';
  * Get current user profile
  */
 export const getProfile = asyncHandler(
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) {
       throw new AppError('Unauthorized', 401);
     }
@@ -28,7 +28,7 @@ export const getProfile = asyncHandler(
 
     logger.debug(`Profile fetched for user: ${req.user.userId}`);
 
-    sendSuccess(res, {
+    return sendSuccess(res, {
       id: user.id,
       email: user.email,
       full_name: user.full_name,
@@ -44,7 +44,7 @@ export const getProfile = asyncHandler(
  * Get current user subscription
  */
 export const getSubscription = asyncHandler(
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) {
       throw new AppError('Unauthorized', 401);
     }
@@ -69,7 +69,7 @@ export const getSubscription = asyncHandler(
 
     logger.debug(`Subscription fetched for user: ${req.user.userId}`);
 
-    sendSuccess(res, {
+    return sendSuccess(res, {
       id: subscription.id,
       tier: subscription.tier,
       status: subscription.status,
@@ -84,7 +84,7 @@ export const getSubscription = asyncHandler(
  * Get Notion workspace connection
  */
 export const getNotionConnection = asyncHandler(
-  async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+  async (req: AuthenticatedRequest, res: Response) => {
     if (!req.user) {
       throw new AppError('Unauthorized', 401);
     }
@@ -98,7 +98,7 @@ export const getNotionConnection = asyncHandler(
     logger.debug(`Notion connection fetched for user: ${req.user.userId}`);
 
     // Don't send encrypted token to client
-    sendSuccess(res, {
+    return sendSuccess(res, {
       workspace_id: connection.workspace_id,
       workspace_name: connection.workspace_name,
       is_active: connection.is_active,

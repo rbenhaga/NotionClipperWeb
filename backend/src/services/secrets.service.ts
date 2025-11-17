@@ -44,11 +44,11 @@ export async function getSecrets(): Promise<SecretsCache> {
     });
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = await response.json() as { error?: string };
       throw new Error(error.error || 'Failed to fetch secrets');
     }
 
-    const secrets = await response.json();
+    const secrets = await response.json() as Omit<SecretsCache, 'lastFetched'>;
 
     // Update cache
     secretsCache = {

@@ -7,7 +7,7 @@ import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../types/index.js';
 import { HTTP_STATUS } from '../config/constants.js';
 import { sendError } from '../utils/response.js';
-import { logError, logger } from '../utils/logger.js';
+import { logError } from '../utils/logger.js';
 import { isDevelopment } from '../config/index.js';
 
 /**
@@ -18,7 +18,7 @@ export function errorHandler(
   err: Error | AppError,
   req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ): void {
   // Log error
   logError(err, {
@@ -92,7 +92,7 @@ export function errorHandler(
 /**
  * 404 Not Found handler
  */
-export function notFoundHandler(req: Request, res: Response, next: NextFunction): void {
+export function notFoundHandler(req: Request, res: Response, _next: NextFunction): void {
   sendError(
     res,
     `Route not found: ${req.method} ${req.url}`,

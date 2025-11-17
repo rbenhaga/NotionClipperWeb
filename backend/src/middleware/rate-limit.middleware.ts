@@ -22,7 +22,7 @@ export const generalRateLimiter = rateLimit({
     logger.warn(`Rate limit exceeded for IP: ${req.ip}`);
     sendRateLimitExceeded(res);
   },
-  skip: (req) => {
+  skip: (_req) => {
     // Skip rate limiting in development (optional)
     return config.env === 'development';
   },

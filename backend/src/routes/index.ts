@@ -14,7 +14,7 @@ import usageRoutes from './usage.routes.js';
 const router = Router();
 
 // Health check (public)
-router.get('/health', (req, res) => {
+router.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
