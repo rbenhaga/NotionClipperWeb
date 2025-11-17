@@ -395,7 +395,7 @@ export default function HomePage() {
             <div className="space-y-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold">
                 <Sparkles className="w-4 h-4" />
-                <span>Production Ready</span>
+                <span>Disponible maintenant</span>
               </div>
 
               <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">
@@ -566,10 +566,22 @@ export default function HomePage() {
                 </li>
               </ul>
 
-              <div className="pt-4 p-4 bg-gradient-to-r from-pink-50 to-purple-50 rounded-xl border border-pink-200">
-                <p className="text-sm text-gray-700">
-                  <strong>En étude:</strong> Web Highlights • Focus Mode • Screenshots avancés • Export multi-format
-                </p>
+              <div className="pt-6">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">Également en préparation</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-200">
+                    <p className="text-sm font-semibold text-gray-900">🌐 Web Highlights</p>
+                  </div>
+                  <div className="p-3 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+                    <p className="text-sm font-semibold text-gray-900">🎯 Focus Mode</p>
+                  </div>
+                  <div className="p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+                    <p className="text-sm font-semibold text-gray-900">📸 Screenshots avancés</p>
+                  </div>
+                  <div className="p-3 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg border border-emerald-200">
+                    <p className="text-sm font-semibold text-gray-900">📤 Export multi-format</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

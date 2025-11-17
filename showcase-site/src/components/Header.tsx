@@ -30,13 +30,16 @@ export default function Header() {
             <Link to="/pricing" className="text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors">
               {t('nav.pricing')}
             </Link>
+            <Link to="/changelog" className="text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors">
+              Changelog
+            </Link>
           </div>
 
           {/* Right: Language + Auth */}
           <div className="hidden md:flex flex-1 items-center justify-end gap-6">
             <LanguageToggle />
             <Link
-              to="/auth"
+              to="/pricing"
               className="text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors px-2"
             >
               {t('nav.login')}
@@ -84,10 +87,17 @@ export default function Header() {
               >
                 {t('nav.pricing')}
               </Link>
+              <Link
+                to="/changelog"
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-sm font-medium text-gray-700 hover:text-purple-600"
+              >
+                Changelog
+              </Link>
               <div className="pt-3 flex flex-col gap-3 border-t border-gray-200">
                 <LanguageToggle />
                 <Link
-                  to="/auth"
+                  to="/pricing"
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-sm font-medium text-gray-700 hover:text-purple-600 text-center"
                 >
