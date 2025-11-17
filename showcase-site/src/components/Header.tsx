@@ -45,7 +45,7 @@ export default function Header() {
               {t('nav.login')}
             </Link>
             <Link
-              to="/auth"
+              to="/pricing"
               className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-base font-bold rounded-xl hover:shadow-lg transition-all duration-200"
             >
               {t('nav.getStarted')}
@@ -104,7 +104,7 @@ export default function Header() {
                   {t('nav.login')}
                 </Link>
                 <Link
-                  to="/auth"
+                  to="/pricing"
                   onClick={() => setMobileMenuOpen(false)}
                   className="px-5 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-semibold rounded-lg text-center"
                 >
