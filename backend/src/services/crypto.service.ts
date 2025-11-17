@@ -6,10 +6,16 @@
 import crypto from 'crypto';
 import { logger } from '../utils/logger.js';
 
-const ENCRYPTION_KEY = process.env.TOKEN_ENCRYPTION_KEY;
-
-if (!ENCRYPTION_KEY) {
-  throw new Error('TOKEN_ENCRYPTION_KEY not configured in environment');
+/**
+ * Get encryption key from environment
+ * Throws error if not configured
+ */
+function getEncryptionKey(): string {
+  const key = process.env.TOKEN_ENCRYPTION_KEY;
+  if (!key) {
+    throw new Error('TOKEN_ENCRYPTION_KEY not configured in environment');
+  }
+  return key;
 }
 
 /**
@@ -19,7 +25,7 @@ if (!ENCRYPTION_KEY) {
 export async function encryptToken(token: string): Promise<string> {
   try {
     // Decode base64 encryption key
-    const keyBuffer = Buffer.from(ENCRYPTION_KEY!, 'base64');
+    const keyBuffer = Buffer.from(getEncryptionKey(), 'base64');
 
     // Generate random IV (12 bytes for GCM)
     const iv = crypto.randomBytes(12);
@@ -52,7 +58,7 @@ export async function encryptToken(token: string): Promise<string> {
 export async function decryptToken(encryptedToken: string): Promise<string> {
   try {
     // Decode base64 encryption key
-    const keyBuffer = Buffer.from(ENCRYPTION_KEY!, 'base64');
+    const keyBuffer = Buffer.from(getEncryptionKey(), 'base64');
 
     // Decode encrypted data
     const combined = Buffer.from(encryptedToken, 'base64');

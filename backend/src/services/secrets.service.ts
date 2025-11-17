@@ -35,6 +35,9 @@ export async function getSecrets(): Promise<SecretsCache> {
     // Call Supabase Edge Function to get secrets
     const edgeFunctionUrl = `${config.supabase.url}/functions/v1/get-oauth-secrets`;
 
+    logger.info(`Calling Edge Function: ${edgeFunctionUrl}`);
+    logger.debug(`Using SERVICE_ROLE_KEY: ${config.supabase.serviceRoleKey.substring(0, 20)}...`);
+
     const response = await fetch(edgeFunctionUrl, {
       method: 'GET',
       headers: {
@@ -43,12 +46,45 @@ export async function getSecrets(): Promise<SecretsCache> {
       },
     });
 
+    logger.info(`Edge Function response status: ${response.status} ${response.statusText}`);
+
     if (!response.ok) {
-      const error = await response.json() as { error?: string };
-      throw new Error(error.error || 'Failed to fetch secrets');
+      // Try to get error details
+      const responseText = await response.text();
+      logger.error(`Edge Function error response (${response.status}): ${responseText}`);
+
+      let errorMessage = 'Failed to fetch secrets';
+      try {
+        const errorJson = JSON.parse(responseText) as { error?: string };
+        errorMessage = errorJson.error || errorMessage;
+      } catch {
+        // Response is not JSON, use text as error
+        errorMessage = responseText || errorMessage;
+      }
+
+      throw new Error(`HTTP ${response.status}: ${errorMessage}`);
     }
 
     const secrets = await response.json() as Omit<SecretsCache, 'lastFetched'>;
+
+    // Verify we got all expected secrets
+    const expectedSecrets = [
+      'GOOGLE_CLIENT_ID',
+      'GOOGLE_CLIENT_SECRET',
+      'NOTION_CLIENT_ID',
+      'NOTION_CLIENT_SECRET',
+      'STRIPE_SECRET_KEY',
+      'STRIPE_WEBHOOK_SECRET',
+    ];
+
+    const missingSecrets = expectedSecrets.filter(
+      (key) => !secrets[key as keyof typeof secrets]
+    );
+
+    if (missingSecrets.length > 0) {
+      logger.warn(`Edge Function returned empty values for: ${missingSecrets.join(', ')}`);
+      logger.warn('These secrets need to be configured in Supabase Vault');
+    }
 
     // Update cache
     secretsCache = {
@@ -57,6 +93,9 @@ export async function getSecrets(): Promise<SecretsCache> {
     };
 
     logger.info('Secrets successfully fetched from Supabase Vault');
+    logger.info(`  Google Client ID: ${secrets.GOOGLE_CLIENT_ID?.substring(0, 20) || '(empty)'}...`);
+    logger.info(`  Notion Client ID: ${secrets.NOTION_CLIENT_ID?.substring(0, 20) || '(empty)'}...`);
+    logger.info(`  Stripe Secret Key: ${secrets.STRIPE_SECRET_KEY?.substring(0, 20) || '(empty)'}...`);
 
     return secretsCache;
   } catch (error) {
