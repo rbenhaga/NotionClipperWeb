@@ -39,7 +39,7 @@ export default function Header() {
           <div className="hidden md:flex flex-1 items-center justify-end gap-6">
             <LanguageToggle />
             <Link
-              to="/pricing"
+              to="/auth"
               className="text-base font-semibold text-gray-700 hover:text-purple-600 transition-colors px-2"
             >
               {t('nav.login')}
@@ -97,7 +97,7 @@ export default function Header() {
               <div className="pt-3 flex flex-col gap-3 border-t border-gray-200">
                 <LanguageToggle />
                 <Link
-                  to="/pricing"
+                  to="/auth"
                   onClick={() => setMobileMenuOpen(false)}
                   className="text-sm font-medium text-gray-700 hover:text-purple-600 text-center"
                 >
