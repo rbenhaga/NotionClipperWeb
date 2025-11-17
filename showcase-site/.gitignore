@@ -34,3 +34,8 @@ dist-ssr
 
 # Vite
 .vite
+
+# Environment variables
+.env
+.env.local
+.env.production

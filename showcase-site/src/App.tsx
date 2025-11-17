@@ -1,6 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
+import AuthCallbackPage from './pages/AuthCallbackPage';
+import NotionCallbackPage from './pages/NotionCallbackPage';
+import DashboardPage from './pages/DashboardPage';
 import PricingPage from './pages/PricingPage';
 import ChangelogPage from './pages/ChangelogPage';
 import AuthSuccess from './pages/AuthSuccess';
@@ -17,6 +20,9 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/auth/callback" element={<AuthCallbackPage />} />
+        <Route path="/auth/callback/notion" element={<NotionCallbackPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/pricing" element={<PricingPage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
         <Route path="/auth/success" element={<AuthSuccess />} />
