@@ -6,14 +6,22 @@
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import { config } from './config/index.js';
+import { config, initializeSecrets } from './config/index.js';
 import { logger, morganStream } from './utils/logger.js';
 import { corsMiddleware } from './middleware/cors.middleware.js';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
 import { generalRateLimiter } from './middleware/rate-limit.middleware.js';
 import routes from './routes/index.js';
 
-const app = express();
+/**
+ * Start the server
+ * Loads secrets from Supabase Vault before starting
+ */
+async function startServer() {
+  // Load secrets from Supabase Vault
+  await initializeSecrets();
+
+  const app = express();
 
 // ============================================
 // MIDDLEWARE
@@ -62,45 +70,52 @@ app.use(notFoundHandler);
 // Global error handler (must be last)
 app.use(errorHandler);
 
-// ============================================
-// SERVER START
-// ============================================
+  // ============================================
+  // SERVER START
+  // ============================================
 
-const server = app.listen(config.port, config.host, () => {
-  logger.info(`🚀 Server started successfully`);
-  logger.info(`   Environment: ${config.env}`);
-  logger.info(`   URL: http://${config.host}:${config.port}`);
-  logger.info(`   Health check: http://${config.host}:${config.port}/health`);
-  logger.info(`   API endpoints: http://${config.host}:${config.port}/api`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', () => {
-  logger.info('SIGTERM received, shutting down gracefully');
-  server.close(() => {
-    logger.info('Server closed');
-    process.exit(0);
+  const server = app.listen(config.port, config.host, () => {
+    logger.info(`🚀 Server started successfully`);
+    logger.info(`   Environment: ${config.env}`);
+    logger.info(`   URL: http://${config.host}:${config.port}`);
+    logger.info(`   Health check: http://${config.host}:${config.port}/health`);
+    logger.info(`   API endpoints: http://${config.host}:${config.port}/api`);
   });
-});
 
-process.on('SIGINT', () => {
-  logger.info('SIGINT received, shutting down gracefully');
-  server.close(() => {
-    logger.info('Server closed');
-    process.exit(0);
+  // Graceful shutdown
+  process.on('SIGTERM', () => {
+    logger.info('SIGTERM received, shutting down gracefully');
+    server.close(() => {
+      logger.info('Server closed');
+      process.exit(0);
+    });
   });
-});
 
-// Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
-  logger.error('Uncaught exception:', error);
+  process.on('SIGINT', () => {
+    logger.info('SIGINT received, shutting down gracefully');
+    server.close(() => {
+      logger.info('Server closed');
+      process.exit(0);
+    });
+  });
+
+  // Handle uncaught exceptions
+  process.on('uncaughtException', (error) => {
+    logger.error('Uncaught exception:', error);
+    process.exit(1);
+  });
+
+  // Handle unhandled promise rejections
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled rejection at:', promise, 'reason:', reason);
+    process.exit(1);
+  });
+
+  return app;
+}
+
+// Start the server
+startServer().catch((error) => {
+  console.error('❌ Failed to start server:', error);
   process.exit(1);
 });
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (reason, promise) => {
-  logger.error('Unhandled rejection at:', promise, 'reason:', reason);
-  process.exit(1);
-});
-
-export default app;
