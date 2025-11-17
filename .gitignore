@@ -31,3 +31,6 @@ Thumbs.db
 .pm2/
 pids/
 *.pid
+
+# Supabase
+supabase/.temp/
