@@ -3,6 +3,7 @@
  * Handles OAuth flows and user authentication
  */
 
+import crypto from 'crypto';
 import { config } from '../config/index.js';
 import { GOOGLE_OAUTH, NOTION_OAUTH } from '../config/constants.js';
 import { db } from '../config/database.js';
@@ -94,7 +95,24 @@ export async function exchangeNotionCode(code: string): Promise<NotionOAuthRespo
  * Create or update user from Google OAuth
  */
 export async function createOrUpdateGoogleUser(profile: GoogleOAuthProfile) {
-  const userId = `google_${profile.id}`;
+  // Check if user exists by email first
+  const existingUser = await db.getUserByEmail(profile.email);
+
+  if (existingUser) {
+    logger.info(`Updating existing user: ${existingUser.id}`);
+    // User exists, update their profile
+    return db.upsertUser({
+      id: existingUser.id,
+      email: profile.email,
+      full_name: profile.name || existingUser.full_name,
+      avatar_url: profile.picture || existingUser.avatar_url,
+      auth_provider: existingUser.auth_provider, // Keep original provider
+    });
+  }
+
+  // User doesn't exist, create new user with UUID
+  const userId = crypto.randomUUID();
+  logger.info(`Creating new Google user: ${userId}`);
 
   const userData = {
     id: userId,
@@ -104,20 +122,6 @@ export async function createOrUpdateGoogleUser(profile: GoogleOAuthProfile) {
     auth_provider: 'google' as const,
   };
 
-  // Check if user exists by email (for account linking)
-  const existingUser = await db.getUserByEmail(profile.email);
-
-  if (existingUser && existingUser.id !== userId) {
-    logger.info(`Linking Google account to existing user: ${existingUser.id}`);
-    // User exists with different provider, link accounts
-    return db.upsertUser({
-      ...existingUser,
-      full_name: profile.name || existingUser.full_name,
-      avatar_url: profile.picture || existingUser.avatar_url,
-    });
-  }
-
-  // Create or update Google user
   return db.upsertUser(userData);
 }
 
@@ -128,15 +132,31 @@ export async function createOrUpdateNotionUser(
   oauthResponse: NotionOAuthResponse,
   email?: string
 ) {
-  const workspaceId = oauthResponse.workspace_id;
-  const userId = `notion_${workspaceId}`;
-
   // Extract email from owner if available
   const ownerEmail = email || oauthResponse.owner?.user?.person?.email;
 
   if (!ownerEmail) {
     throw new AppError('Email is required for Notion authentication', 400);
   }
+
+  // Check if user exists by email first
+  const existingUser = await db.getUserByEmail(ownerEmail);
+
+  if (existingUser) {
+    logger.info(`Updating existing user: ${existingUser.id}`);
+    // User exists, update their profile
+    return db.upsertUser({
+      id: existingUser.id,
+      email: ownerEmail,
+      full_name: oauthResponse.owner?.user?.name || existingUser.full_name,
+      avatar_url: oauthResponse.owner?.user?.avatar_url || existingUser.avatar_url,
+      auth_provider: existingUser.auth_provider, // Keep original provider
+    });
+  }
+
+  // User doesn't exist, create new user with UUID
+  const userId = crypto.randomUUID();
+  logger.info(`Creating new Notion user: ${userId}`);
 
   const userData = {
     id: userId,
@@ -146,28 +166,13 @@ export async function createOrUpdateNotionUser(
     auth_provider: 'notion' as const,
   };
 
-  // Check if user exists by email (for account linking)
-  const existingUser = await db.getUserByEmail(ownerEmail);
-
-  if (existingUser && existingUser.id !== userId) {
-    logger.info(`Linking Notion workspace to existing user: ${existingUser.id}`);
-    // User exists with different provider, save Notion connection
-    await saveNotionConnection(
-      existingUser.id,
-      workspaceId,
-      oauthResponse.workspace_name || 'My Workspace',
-      oauthResponse.access_token
-    );
-    return existingUser;
-  }
-
-  // Create or update Notion user
+  // Create Notion user
   const user = await db.upsertUser(userData);
 
   // Save Notion connection
   await saveNotionConnection(
     userId,
-    workspaceId,
+    oauthResponse.workspace_id,
     oauthResponse.workspace_name || 'My Workspace',
     oauthResponse.access_token
   );
