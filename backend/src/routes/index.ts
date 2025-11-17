@@ -8,6 +8,8 @@ import authRoutes from './auth.routes.js';
 import stripeRoutes from './stripe.routes.js';
 import userRoutes from './user.routes.js';
 import webhookRoutes from './webhook.routes.js';
+import notionRoutes from './notion.routes.js';
+import usageRoutes from './usage.routes.js';
 
 const router = Router();
 
@@ -25,5 +27,7 @@ router.use('/auth', authRoutes);
 router.use('/stripe', stripeRoutes);
 router.use('/user', userRoutes);
 router.use('/webhooks', webhookRoutes);
+router.use('/notion', notionRoutes);
+router.use('/usage', usageRoutes);
 
 export default router;

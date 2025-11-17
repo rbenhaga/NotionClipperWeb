@@ -202,7 +202,9 @@ export const db = {
     userId: string,
     workspaceId: string,
     workspaceName: string,
-    encryptedToken: string
+    encryptedToken: string,
+    workspaceIcon?: string,
+    isActive: boolean = true
   ) {
     const supabase = getSupabaseClient();
 
@@ -213,8 +215,9 @@ export const db = {
           user_id: userId,
           workspace_id: workspaceId,
           workspace_name: workspaceName,
+          workspace_icon: workspaceIcon,
           access_token_encrypted: encryptedToken,
-          is_active: true,
+          is_active: isActive,
           updated_at: new Date().toISOString(),
         },
         {
@@ -251,6 +254,150 @@ export const db = {
     }
 
     return data;
+  },
+
+  /**
+   * Get connection by workspace ID
+   */
+  async getConnectionByWorkspace(workspaceId: string) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('notion_connections')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+      .eq('is_active', true)
+      .maybeSingle();
+
+    if (error) {
+      logger.error('Database error fetching connection by workspace:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
+   * Get subscription by user ID
+   */
+  async getSubscriptionByUserId(userId: string) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      logger.error('Database error fetching subscription:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
+   * Upsert subscription (for Stripe webhooks)
+   */
+  async upsertSubscription(subscriptionData: any) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .upsert(
+        {
+          ...subscriptionData,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: 'user_id',
+        }
+      )
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Database error upserting subscription:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
+   * Increment usage counter via RPC
+   */
+  async incrementUsageCounter(
+    userId: string,
+    feature: 'clips' | 'files' | 'focus_mode_minutes' | 'compact_mode_minutes',
+    increment: number = 1
+  ) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase.rpc('increment_usage_counter', {
+      p_user_id: userId,
+      p_feature: feature,
+      p_increment: increment,
+    });
+
+    if (error) {
+      logger.error('Database error incrementing usage counter:', error);
+      throw error;
+    }
+
+    // RPC with RETURNS TABLE returns an array
+    return Array.isArray(data) ? data[0] : data;
+  },
+
+  /**
+   * Get current usage for user
+   */
+  async getCurrentUsage(userId: string, year: number, month: number) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('usage_records')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('year', year)
+      .eq('month', month)
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      logger.error('Database error fetching usage:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
+   * Log usage event
+   */
+  async logUsageEvent(eventData: {
+    userId: string;
+    subscriptionId: string;
+    usageRecordId: string;
+    eventType: string;
+    feature: string;
+    metadata: any;
+  }) {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase.from('usage_events').insert({
+      user_id: eventData.userId,
+      subscription_id: eventData.subscriptionId,
+      usage_record_id: eventData.usageRecordId,
+      event_type: eventData.eventType,
+      feature: eventData.feature,
+      metadata: eventData.metadata || {},
+    });
+
+    if (error) {
+      logger.error('Database error logging usage event:', error);
+      throw error;
+    }
   },
 
   /**
