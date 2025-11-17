@@ -35,7 +35,7 @@ export const createCheckout = asyncHandler(
     }
 
     // Generate default success and cancel URLs
-    const frontendUrl = config.frontendUrl || 'http://localhost:5173';
+    const frontendUrl = config.frontendUrl || 'http://localhost:3000';
     const successUrl = `${frontendUrl}/auth/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${frontendUrl}/pricing`;
 

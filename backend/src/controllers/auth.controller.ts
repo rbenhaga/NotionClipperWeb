@@ -251,5 +251,5 @@ export const logout = asyncHandler(
  */
 function getRedirectUrl(): string {
   // Use FRONTEND_URL from config (defaults to http://localhost:5173 in dev)
-  return config.frontendUrl || process.env.FRONTEND_URL || 'http://localhost:5173';
+  return config.frontendUrl || process.env.FRONTEND_URL || 'http://localhost:300';
 }
