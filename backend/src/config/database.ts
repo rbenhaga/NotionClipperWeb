@@ -19,10 +19,19 @@ export function getSupabaseClient(): SupabaseClient {
       throw new Error('Supabase configuration is missing');
     }
 
+    // Create client with service_role key to bypass RLS
     supabaseClient = createClient(url, serviceRoleKey, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
+      },
+      db: {
+        schema: 'public',
+      },
+      global: {
+        headers: {
+          'apikey': serviceRoleKey,
+        },
       },
     });
 
