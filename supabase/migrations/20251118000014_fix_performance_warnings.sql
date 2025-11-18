@@ -134,23 +134,42 @@ CREATE POLICY "Users can delete own connections"
   USING (user_id = (select auth.uid()));
 
 -- ============================================
--- PART 3: Remove duplicate indexes
+-- PART 3: Remove duplicate indexes (keep UNIQUE constraints!)
 -- ============================================
 
--- notion_connections: Keep the more descriptive names
-DROP INDEX IF EXISTS public.notion_connections_user_id_idx;
-DROP INDEX IF EXISTS public.notion_connections_workspace_id_idx;
-DROP INDEX IF EXISTS public.notion_connections_user_id_workspace_id_key;
+-- Note: Some "indexes" are actually UNIQUE constraints that auto-create indexes
+-- We drop duplicate indexes but preserve UNIQUE constraints
 
--- subscriptions: Keep the more descriptive names
-DROP INDEX IF EXISTS public.subscriptions_stripe_customer_id_idx;
-DROP INDEX IF EXISTS public.subscriptions_user_id_idx;
+-- notion_connections: Remove duplicate simple indexes
+-- Keep: idx_notion_connections_user_id, idx_notion_connections_workspace_id (from migration 002)
+-- Keep: notion_connections_unique_user_workspace (UNIQUE constraint we created)
+DROP INDEX IF EXISTS public.notion_connections_user_id_idx CASCADE;
+DROP INDEX IF EXISTS public.notion_connections_workspace_id_idx CASCADE;
 
--- usage_records: Keep the more descriptive name
-DROP INDEX IF EXISTS public.usage_records_user_id_idx;
+-- If there's a duplicate UNIQUE constraint, drop it (keep our named one)
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'notion_connections_user_id_workspace_id_key'
+      AND conrelid = 'public.notion_connections'::regclass
+  ) THEN
+    ALTER TABLE public.notion_connections DROP CONSTRAINT notion_connections_user_id_workspace_id_key;
+  END IF;
+END $$;
 
--- user_profiles: Keep the more descriptive name
-DROP INDEX IF EXISTS public.user_profiles_email_idx;
+-- subscriptions: Remove duplicate indexes
+-- Keep: idx_subscriptions_user_id (manual), subscriptions_user_id_key (UNIQUE constraint)
+DROP INDEX IF EXISTS public.subscriptions_stripe_customer_id_idx CASCADE;
+DROP INDEX IF EXISTS public.subscriptions_user_id_idx CASCADE;
+
+-- usage_records: Remove duplicate indexes
+-- Keep: idx_usage_records_user_id
+DROP INDEX IF EXISTS public.usage_records_user_id_idx CASCADE;
+
+-- user_profiles: Remove duplicate indexes
+-- Keep: idx_user_profiles_email
+DROP INDEX IF EXISTS public.user_profiles_email_idx CASCADE;
 
 -- ============================================
 -- Success message
