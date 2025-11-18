@@ -146,7 +146,7 @@ export async function createOrUpdateGoogleUser(profile: GoogleOAuthProfile) {
   // Create default free subscription for new user
   await db.upsertSubscription({
     user_id: authUser.user.id,
-    tier: 'free',
+    tier: 'FREE',
     status: 'active',
   });
 
@@ -231,7 +231,7 @@ export async function createOrUpdateNotionUser(
   // Create default free subscription for new user
   await db.upsertSubscription({
     user_id: userId,
-    tier: 'free',
+    tier: 'FREE',
     status: 'active',
   });
 

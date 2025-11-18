@@ -79,16 +79,19 @@ export interface NotionOAuthResponse {
 // ============================================
 
 export enum SubscriptionTier {
-  FREE = 'free',
-  PREMIUM = 'premium',
-  ENTERPRISE = 'enterprise',
+  FREE = 'FREE',
+  PREMIUM = 'PREMIUM',
+  GRACE_PERIOD = 'GRACE_PERIOD',
 }
 
 export enum SubscriptionStatus {
   ACTIVE = 'active',
-  CANCELED = 'canceled',
-  PAST_DUE = 'past_due',
   TRIALING = 'trialing',
+  PAST_DUE = 'past_due',
+  CANCELED = 'canceled',
+  UNPAID = 'unpaid',
+  INCOMPLETE = 'incomplete',
+  INCOMPLETE_EXPIRED = 'incomplete_expired',
 }
 
 export interface Subscription {
@@ -98,11 +101,65 @@ export interface Subscription {
   status: SubscriptionStatus;
   stripe_customer_id?: string;
   stripe_subscription_id?: string;
+  stripe_price_id?: string;
   current_period_start: Date;
   current_period_end: Date;
-  cancel_at_period_end?: boolean;
+  cancel_at?: Date;
+  canceled_at?: Date;
+  grace_period_ends_at?: Date;
+  metadata?: Record<string, any>;
   created_at: Date;
   updated_at: Date;
+}
+
+// ============================================
+// USAGE TRACKING TYPES
+// ============================================
+
+export interface UsageRecord {
+  id: string;
+  user_id: string;
+  subscription_id: string;
+  period_start: Date;
+  period_end: Date;
+  year: number;
+  month: number;
+  clips_count: number;
+  files_count: number;
+  focus_mode_minutes: number;
+  compact_mode_minutes: number;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export enum UsageEventType {
+  CLIP_SENT = 'clip_sent',
+  FILE_UPLOADED = 'file_uploaded',
+  FOCUS_MODE_STARTED = 'focus_mode_started',
+  FOCUS_MODE_ENDED = 'focus_mode_ended',
+  COMPACT_MODE_STARTED = 'compact_mode_started',
+  COMPACT_MODE_ENDED = 'compact_mode_ended',
+  QUOTA_EXCEEDED = 'quota_exceeded',
+  SUBSCRIPTION_UPGRADED = 'subscription_upgraded',
+  SUBSCRIPTION_DOWNGRADED = 'subscription_downgraded',
+}
+
+export enum UsageFeature {
+  CLIPS = 'clips',
+  FILES = 'files',
+  FOCUS_MODE_MINUTES = 'focus_mode_minutes',
+  COMPACT_MODE_MINUTES = 'compact_mode_minutes',
+}
+
+export interface UsageEvent {
+  id: string;
+  user_id: string;
+  subscription_id?: string;
+  usage_record_id: string;
+  event_type: UsageEventType;
+  feature: UsageFeature;
+  metadata?: Record<string, any>;
+  created_at: Date;
 }
 
 export interface StripeWebhookEvent {

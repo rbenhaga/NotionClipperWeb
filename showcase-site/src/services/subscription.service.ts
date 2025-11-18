@@ -5,7 +5,7 @@
 
 import { authService } from './auth.service';
 
-export type SubscriptionTier = 'free' | 'premium' | 'grace_period';
+export type SubscriptionTier = 'FREE' | 'PREMIUM' | 'GRACE_PERIOD';
 export type SubscriptionStatus = 'active' | 'trialing' | 'past_due' | 'canceled' | 'unpaid';
 
 export interface Subscription {
@@ -19,9 +19,10 @@ export interface Subscription {
   current_period_start?: string;
   current_period_end?: string;
   trial_end?: string;
-  is_grace_period: boolean;
+  grace_period_ends_at?: string;
   cancel_at?: string;
   canceled_at?: string;
+  metadata?: Record<string, any>;
   created_at: string;
   updated_at: string;
 }
@@ -50,21 +51,21 @@ export interface Quotas {
 
 // Quotas par tier (must match server-side constants)
 const TIER_QUOTAS: Record<SubscriptionTier, Quotas> = {
-  free: {
+  FREE: {
     clips: 50, // 50 clips per month
     files: 10,
     words_per_clip: 1000,
     focus_mode_minutes: 60,
     compact_mode_minutes: 60,
   },
-  premium: {
+  PREMIUM: {
     clips: Number.MAX_SAFE_INTEGER, // Unlimited
     files: Number.MAX_SAFE_INTEGER,
     words_per_clip: Number.MAX_SAFE_INTEGER,
     focus_mode_minutes: Number.MAX_SAFE_INTEGER,
     compact_mode_minutes: Number.MAX_SAFE_INTEGER,
   },
-  grace_period: {
+  GRACE_PERIOD: {
     clips: 50, // Same as free tier
     files: 10,
     words_per_clip: 1000,
@@ -222,7 +223,7 @@ class SubscriptionService {
     }
 
     // Premium users have unlimited access
-    if (subscription.tier === 'premium') {
+    if (subscription.tier === 'PREMIUM') {
       return { allowed: true };
     }
 

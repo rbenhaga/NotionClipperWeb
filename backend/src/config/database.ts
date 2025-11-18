@@ -193,7 +193,7 @@ export const db = {
    */
   async upsertSubscription(subscriptionData: {
     user_id: string;
-    tier?: string;
+    tier?: 'FREE' | 'PREMIUM' | 'GRACE_PERIOD';
     status?: string;
     stripe_customer_id?: string;
     stripe_subscription_id?: string;
@@ -204,13 +204,17 @@ export const db = {
   }) {
     const supabase = getSupabaseClient();
 
+    // Normalize tier to uppercase
+    const normalizedData = {
+      ...subscriptionData,
+      tier: subscriptionData.tier ? subscriptionData.tier.toUpperCase() as 'FREE' | 'PREMIUM' | 'GRACE_PERIOD' : 'FREE',
+      updated_at: new Date().toISOString(),
+    };
+
     const { data, error } = await supabase
       .from('subscriptions')
       .upsert(
-        {
-          ...subscriptionData,
-          updated_at: new Date().toISOString(),
-        },
+        normalizedData,
         {
           onConflict: 'user_id',
         }
@@ -432,17 +436,17 @@ export const db = {
    */
   async logUsageEvent(eventData: {
     userId: string;
-    subscriptionId: string;
+    subscriptionId?: string;
     usageRecordId: string;
-    eventType: string;
-    feature: string;
+    eventType: 'clip_sent' | 'file_uploaded' | 'focus_mode_started' | 'focus_mode_ended' | 'compact_mode_started' | 'compact_mode_ended' | 'quota_exceeded' | 'subscription_upgraded' | 'subscription_downgraded';
+    feature: 'clips' | 'files' | 'focus_mode_minutes' | 'compact_mode_minutes';
     metadata?: any;
   }) {
     const supabase = getSupabaseClient();
 
     const { error } = await supabase.from('usage_events').insert({
       user_id: eventData.userId,
-      subscription_id: eventData.subscriptionId,
+      subscription_id: eventData.subscriptionId || null,
       usage_record_id: eventData.usageRecordId,
       event_type: eventData.eventType,
       feature: eventData.feature,
@@ -453,6 +457,63 @@ export const db = {
       logger.error('Database error logging usage event:', error);
       throw error;
     }
+  },
+
+  /**
+   * Get usage events for a user
+   */
+  async getUserUsageEvents(userId: string, limit: number = 100, offset: number = 0) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('usage_events')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      logger.error('Database error fetching usage events:', error);
+      throw error;
+    }
+
+    return data || [];
+  },
+
+  /**
+   * Get usage events by type
+   */
+  async getUsageEventsByType(
+    userId: string,
+    eventType: string,
+    startDate?: Date,
+    endDate?: Date
+  ) {
+    const supabase = getSupabaseClient();
+
+    let query = supabase
+      .from('usage_events')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('event_type', eventType)
+      .order('created_at', { ascending: false });
+
+    if (startDate) {
+      query = query.gte('created_at', startDate.toISOString());
+    }
+
+    if (endDate) {
+      query = query.lte('created_at', endDate.toISOString());
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      logger.error('Database error fetching usage events by type:', error);
+      throw error;
+    }
+
+    return data || [];
   },
 
   // ============================================
