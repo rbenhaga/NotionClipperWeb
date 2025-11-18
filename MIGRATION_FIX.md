@@ -14,24 +14,28 @@ HINT: Use DROP FUNCTION increment_usage_counter(uuid,text,integer) first.
 
 ---
 
-## ✅ Solution : 7 Migrations de Fix
+## ✅ Solution : 8 Migrations de Fix
 
-J'ai créé 7 migrations correctives :
+J'ai créé 8 migrations correctives (les obsolètes ont été supprimées) :
 
 ```
 supabase/migrations/
 ├── 20251118000006_fix_rpc_functions.sql              ✅ Fix fonction RPC
 ├── 20251118000007_fix_notion_connections_column.sql  ✅ Nettoyer colonnes redondantes
-├── 20251118000008_add_missing_constraints.sql        ⚠️  Peut échouer si index existe
 ├── 20251118000009_add_constraints_safe.sql           ✅ Version SAFE (recommandée)
 ├── 20251118000010_fix_rpc_ambiguity.sql              ✅ Fix ambiguité colonnes
 ├── 20251118000011_fix_security_warnings.sql          🔒 Fix warnings sécurité
-└── 20251118000012_cleanup_old_functions.sql          🧹 Nettoyer fonctions obsolètes
+├── 20251118000012_cleanup_old_functions.sql          🧹 Nettoyer fonctions obsolètes
+└── 20251118000013_fix_last_check_quota.sql           🔒 Drop dernière fonction check_quota
 ```
 
+**Migrations obsolètes supprimées** :
+- ~~20251118000008_add_missing_constraints.sql~~ (remplacée par 009)
+- ~~20251117_fix_user_profiles_rls.sql~~ (ancien schéma)
+
 **IMPORTANT** :
-- Utilisez la migration **009** au lieu de 008 si vous avez des erreurs "relation already exists"
-- Migrations **011 + 012** corrigent TOUS les warnings de sécurité Supabase (voir SECURITY_FIX.md)
+- Migrations **011 + 012 + 013** corrigent TOUS les warnings de sécurité Supabase
+- Voir **supabase/migrations/README.md** pour la documentation complète
 
 ---
 
@@ -77,6 +81,9 @@ supabase/migrations/
 
 # 12. CLEANUP: Remove old obsolete functions
 20251118000012_cleanup_old_functions.sql
+
+# 13. FIX: Drop last check_quota function
+20251118000013_fix_last_check_quota.sql
 ```
 
 ---
@@ -101,12 +108,15 @@ supabase/migrations/
 
 # 5. Cleanup old functions
 20251118000012_cleanup_old_functions.sql  # Remove obsolete functions
+
+# 6. Fix last check_quota
+20251118000013_fix_last_check_quota.sql  # Drop last check_quota variant
 ```
 
 **Recommandations** :
-- Utilisez toujours **009** au lieu de 008 car elle est idempotente
-- Migrations **011 + 012** sont **CRITIQUES** pour la sécurité en production
-- Migration **012** nettoie les anciennes fonctions de l'ancien schéma
+- Migrations **011 + 012 + 013** sont **CRITIQUES** pour la sécurité en production
+- Migration **013** supprime la dernière fonction check_quota obsolète
+- Voir **supabase/migrations/README.md** pour la documentation complète
 
 ---
 
@@ -132,10 +142,11 @@ DROP FUNCTION IF EXISTS public.get_usage_analytics CASCADE;
 4. **Migration 010** : Copier/coller le contenu de `20251118000010_fix_rpc_ambiguity.sql`
 5. **Migration 011** : Copier/coller le contenu de `20251118000011_fix_security_warnings.sql` 🔒
 6. **Migration 012** : Copier/coller le contenu de `20251118000012_cleanup_old_functions.sql` 🧹
+7. **Migration 013** : Copier/coller le contenu de `20251118000013_fix_last_check_quota.sql` 🔒
 
 Cliquer **RUN** après chaque migration.
 
-**IMPORTANT** : Après migration 012, activez "Leaked Password Protection" dans Auth Settings (voir SECURITY_FIX.md).
+**IMPORTANT** : Après migration 013, activez "Leaked Password Protection" dans Auth Settings (voir SECURITY_FIX.md).
 
 ---
 

@@ -12,13 +12,14 @@ Supabase a détecté **17 warnings de sécurité** :
 
 ---
 
-## 🎯 Solution : Migrations 011 + 012 + Configuration Manuelle
+## 🎯 Solution : Migrations 011 + 012 + 013 + Configuration Manuelle
 
 ### Partie 1 : Migrations SQL (Automatique)
 
 **Fichiers** :
 - `supabase/migrations/20251118000011_fix_security_warnings.sql`
 - `supabase/migrations/20251118000012_cleanup_old_functions.sql`
+- `supabase/migrations/20251118000013_fix_last_check_quota.sql`
 
 Ces migrations corrigent **16/17 warnings** automatiquement :
 
@@ -27,8 +28,10 @@ Ces migrations corrigent **16/17 warnings** automatiquement :
 - 5 trigger functions (update_updated_at_column, create_default_subscription_on_signup, etc.)
 
 ✅ **Search Path Mutable (Migration 012)** : Nettoie les anciennes fonctions obsolètes et recrée avec `SET search_path` :
-- Supprime : update_updated_at, create_free_subscription_for_new_user, handle_new_user, check_quota
+- Supprime : update_updated_at, create_free_subscription_for_new_user, handle_new_user
 - Recrée : encrypt_token, decrypt_token, set_default_workspace, set_first_workspace_as_default
+
+✅ **Search Path Mutable (Migration 013)** : Supprime toutes les variantes de check_quota (obsolète)
 
 ✅ **Extension in Public** : Déplace pg_trgm de `public` → `extensions` schema
 
@@ -88,7 +91,16 @@ Ces migrations corrigent **16/17 warnings** automatiquement :
      ✅ Migration 012 completed successfully!
      ✅ Removed: 8 obsolete functions
      ✅ Fixed: 4 functions with SET search_path
-     ✅ All security warnings should be resolved!
+     ```
+
+4. **Appliquer migration 013** :
+   - Copier/coller : `supabase/migrations/20251118000013_fix_last_check_quota.sql`
+   - Cliquer **RUN**
+   - Vérifier les messages :
+     ```
+     ✅ Migration 013 completed successfully!
+     ✅ Removed: All remaining check_quota variants
+     ✅ All function security warnings resolved!
      ```
 
 ---
