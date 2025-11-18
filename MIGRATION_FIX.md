@@ -14,16 +14,19 @@ HINT: Use DROP FUNCTION increment_usage_counter(uuid,text,integer) first.
 
 ---
 
-## ✅ Solution : 3 Migrations de Fix
+## ✅ Solution : 4 Migrations de Fix
 
-J'ai créé 3 migrations correctives :
+J'ai créé 4 migrations correctives :
 
 ```
 supabase/migrations/
 ├── 20251118000006_fix_rpc_functions.sql              ✅ Fix fonction RPC
 ├── 20251118000007_fix_notion_connections_column.sql  ✅ Nettoyer colonnes redondantes
-└── 20251118000008_add_missing_constraints.sql        ✅ Ajouter contraintes manquantes
+├── 20251118000008_add_missing_constraints.sql        ⚠️  Peut échouer si index existe
+└── 20251118000009_add_constraints_safe.sql           ✅ Version SAFE (recommandée)
 ```
+
+**IMPORTANT** : Utilisez la migration **009** au lieu de 008 si vous avez des erreurs "relation already exists".
 
 ---
 
@@ -66,14 +69,21 @@ supabase/migrations/
 
 ### Option B : Base de données existante (avec erreur déjà rencontrée)
 
-**Si vous avez déjà appliqué les migrations 000-005 et eu l'erreur sur 003** :
+**Si vous avez déjà appliqué les migrations 000-005 et eu des erreurs** :
 
 ```bash
-# 1. Appliquer les 3 migrations de fix dans l'ordre
+# 1. Appliquer les migrations de fix dans l'ordre
 20251118000006_fix_rpc_functions.sql   # Drop + Recréer RPC functions
 20251118000007_fix_notion_connections_column.sql  # Nettoyer colonne
-20251118000008_add_missing_constraints.sql  # Ajouter contraintes
+
+# 2. Pour les contraintes, utilisez la version SAFE :
+20251118000009_add_constraints_safe.sql  # ✅ VERSION SAFE (recommandée)
+
+# OU si vous n'avez pas d'indexes existants :
+20251118000008_add_missing_constraints.sql  # ⚠️  Peut échouer
 ```
+
+**Recommandation** : Utilisez toujours **009** car elle est idempotente et gère tous les cas.
 
 ---
 
