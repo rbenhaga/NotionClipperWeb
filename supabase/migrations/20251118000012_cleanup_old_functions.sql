@@ -27,9 +27,16 @@ DROP FUNCTION IF EXISTS public.check_quota(uuid) CASCADE;
 -- PART 2: Fix or recreate crypto functions with proper search_path
 -- ============================================
 
--- Drop old versions
+-- Drop ALL possible versions of these functions
 DROP FUNCTION IF EXISTS public.encrypt_token(text) CASCADE;
+DROP FUNCTION IF EXISTS public.encrypt_token(bytea) CASCADE;
+DROP FUNCTION IF EXISTS public.encrypt_token(text, text) CASCADE;
+DROP FUNCTION IF EXISTS public.encrypt_token CASCADE;
+
 DROP FUNCTION IF EXISTS public.decrypt_token(text) CASCADE;
+DROP FUNCTION IF EXISTS public.decrypt_token(bytea) CASCADE;
+DROP FUNCTION IF EXISTS public.decrypt_token(text, text) CASCADE;
+DROP FUNCTION IF EXISTS public.decrypt_token CASCADE;
 
 -- Recreate with proper search_path
 CREATE OR REPLACE FUNCTION public.encrypt_token(p_token text)
@@ -87,9 +94,14 @@ GRANT EXECUTE ON FUNCTION public.decrypt_token TO service_role;
 -- PART 3: Fix or recreate workspace functions with proper search_path
 -- ============================================
 
--- Drop old versions
+-- Drop ALL possible versions of these functions
 DROP FUNCTION IF EXISTS public.set_default_workspace(uuid, uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.set_default_workspace(text, text) CASCADE;
+DROP FUNCTION IF EXISTS public.set_default_workspace CASCADE;
+
 DROP FUNCTION IF EXISTS public.set_first_workspace_as_default(uuid) CASCADE;
+DROP FUNCTION IF EXISTS public.set_first_workspace_as_default(text) CASCADE;
+DROP FUNCTION IF EXISTS public.set_first_workspace_as_default CASCADE;
 
 -- Recreate with proper search_path
 CREATE OR REPLACE FUNCTION public.set_default_workspace(
