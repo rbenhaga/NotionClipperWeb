@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ComparisonTable from '../components/ComparisonTable';
 import { NotionClipperLogo } from '../assets/Logo';
 
 export default function HomePage() {
@@ -92,6 +93,13 @@ export default function HomePage() {
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full blur-3xl opacity-30 animate-pulse" style={{ animationDelay: '1s' }}></div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Comparison Table Section */}
+      <section className="relative py-20 px-6 bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30">
+        <div className="max-w-6xl mx-auto">
+          <ComparisonTable variant="condensed" />
         </div>
       </section>
 

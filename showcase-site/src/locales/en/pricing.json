@@ -10,10 +10,10 @@
     "name": "Free",
     "tagline": "Perfect to get started",
     "price": "0",
-    "currency": "€",
+    "currency": "$",
     "period": "/month",
     "features": {
-      "clips": "100 clips per month",
+      "clips": "50 clips per month",
       "uploads": "10 file uploads per month",
       "focus": "60 minutes focus mode",
       "markdown": "Basic Markdown support"
@@ -24,11 +24,11 @@
     "name": "Premium",
     "tagline": "For power users",
     "badge": "MOST POPULAR",
-    "price": "2.99",
-    "priceAnnual": "2.39",
-    "currency": "€",
+    "price": "5.99",
+    "priceAnnual": "4.92",
+    "currency": "$",
     "period": "/month",
-    "billedAnnually": "Billed {price}€/year • Save {savings}€",
+    "billedAnnually": "Billed ${price}/year • Save ${savings}",
     "features": {
       "unlimitedClips": "Unlimited clips",
       "unlimitedUploads": "Unlimited file uploads",

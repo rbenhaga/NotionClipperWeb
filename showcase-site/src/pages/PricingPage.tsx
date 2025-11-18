@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Check } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import ComparisonTable from '../components/ComparisonTable';
 
 export default function PricingPage() {
   const { t } = useTranslation('pricing');
@@ -46,8 +47,8 @@ export default function PricingPage() {
     }
   };
 
-  const monthlyPrice = 2.99;
-  const annualPrice = 28.68;
+  const monthlyPrice = 5.99;
+  const annualPrice = 59.00; // $4.92/mo when billed annually
   const annualSavings = (monthlyPrice * 12 - annualPrice);
 
   return (
@@ -253,6 +254,11 @@ export default function PricingPage() {
                 {t('onetime.comingSoon')}
               </button>
             </div>
+          </div>
+
+          {/* Comparison Table Section */}
+          <div className="mt-24">
+            <ComparisonTable variant="full" />
           </div>
 
           {/* FAQ Section */}

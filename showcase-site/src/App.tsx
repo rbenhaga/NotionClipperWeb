@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage';
 import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
 import PricingPage from './pages/PricingPage';
+import ComparePage from './pages/ComparePage';
 import ChangelogPage from './pages/ChangelogPage';
 import AuthSuccess from './pages/AuthSuccess';
 import AuthError from './pages/AuthError';
@@ -20,6 +21,7 @@ function App() {
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/compare" element={<ComparePage />} />
         <Route path="/changelog" element={<ChangelogPage />} />
         <Route path="/auth/success" element={<AuthSuccess />} />
         <Route path="/auth/error" element={<AuthError />} />

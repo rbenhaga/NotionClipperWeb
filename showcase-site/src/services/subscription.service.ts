@@ -51,7 +51,7 @@ export interface Quotas {
 // Quotas par tier (must match server-side constants)
 const TIER_QUOTAS: Record<SubscriptionTier, Quotas> = {
   free: {
-    clips: 100,
+    clips: 50, // 50 clips per month
     files: 10,
     words_per_clip: 1000,
     focus_mode_minutes: 60,
@@ -65,7 +65,7 @@ const TIER_QUOTAS: Record<SubscriptionTier, Quotas> = {
     compact_mode_minutes: Number.MAX_SAFE_INTEGER,
   },
   grace_period: {
-    clips: 100,
+    clips: 50, // Same as free tier
     files: 10,
     words_per_clip: 1000,
     focus_mode_minutes: 60,
@@ -106,16 +106,27 @@ class SubscriptionService {
 
   /**
    * Get usage records for current month
-   * Note: This endpoint might not exist yet in backend, will return null for now
+   * Uses the get_current_quota RPC function from the optimized backend
    */
   async getCurrentUsage(): Promise<UsageRecord | null> {
     const token = authService.getToken();
     if (!token) return null;
 
     try {
-      // TODO: Add endpoint in backend for usage
-      // For now, return null
-      return null;
+      const response = await fetch(`${API_URL}/user/usage/current`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch usage');
+      }
+
+      const data = await response.json();
+      return data.usage || data;
     } catch (error) {
       console.error('Error fetching usage:', error);
       return null;
