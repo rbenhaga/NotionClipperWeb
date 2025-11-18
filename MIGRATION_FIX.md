@@ -14,9 +14,9 @@ HINT: Use DROP FUNCTION increment_usage_counter(uuid,text,integer) first.
 
 ---
 
-## ✅ Solution : 8 Migrations de Fix
+## ✅ Solution : 9 Migrations de Fix
 
-J'ai créé 8 migrations correctives (les obsolètes ont été supprimées) :
+J'ai créé 9 migrations correctives (les obsolètes ont été supprimées) :
 
 ```
 supabase/migrations/
@@ -26,7 +26,8 @@ supabase/migrations/
 ├── 20251118000010_fix_rpc_ambiguity.sql              ✅ Fix ambiguité colonnes
 ├── 20251118000011_fix_security_warnings.sql          🔒 Fix warnings sécurité
 ├── 20251118000012_cleanup_old_functions.sql          🧹 Nettoyer fonctions obsolètes
-└── 20251118000013_fix_last_check_quota.sql           🔒 Drop dernière fonction check_quota
+├── 20251118000013_fix_last_check_quota.sql           🔒 Drop dernière fonction check_quota
+└── 20251118000014_fix_performance_warnings.sql       ⚡ Fix warnings performance
 ```
 
 **Migrations obsolètes supprimées** :
@@ -35,7 +36,9 @@ supabase/migrations/
 
 **IMPORTANT** :
 - Migrations **011 + 012 + 013** corrigent TOUS les warnings de sécurité Supabase
+- Migration **014** corrige TOUS les warnings de performance Supabase (25 warnings)
 - Voir **supabase/migrations/README.md** pour la documentation complète
+- Voir **PERFORMANCE_FIX.md** pour le guide détaillé des optimisations
 
 ---
 
@@ -84,6 +87,9 @@ supabase/migrations/
 
 # 13. FIX: Drop last check_quota function
 20251118000013_fix_last_check_quota.sql
+
+# 14. PERF: Fix performance warnings
+20251118000014_fix_performance_warnings.sql
 ```
 
 ---
@@ -111,12 +117,16 @@ supabase/migrations/
 
 # 6. Fix last check_quota
 20251118000013_fix_last_check_quota.sql  # Drop last check_quota variant
+
+# 7. Fix performance warnings
+20251118000014_fix_performance_warnings.sql  # Optimize RLS + remove duplicate indexes
 ```
 
 **Recommandations** :
 - Migrations **011 + 012 + 013** sont **CRITIQUES** pour la sécurité en production
-- Migration **013** supprime la dernière fonction check_quota obsolète
+- Migration **014** est **RECOMMANDÉE** pour la performance en production (25 warnings)
 - Voir **supabase/migrations/README.md** pour la documentation complète
+- Voir **PERFORMANCE_FIX.md** pour les détails des optimisations
 
 ---
 
@@ -143,10 +153,13 @@ DROP FUNCTION IF EXISTS public.get_usage_analytics CASCADE;
 5. **Migration 011** : Copier/coller le contenu de `20251118000011_fix_security_warnings.sql` 🔒
 6. **Migration 012** : Copier/coller le contenu de `20251118000012_cleanup_old_functions.sql` 🧹
 7. **Migration 013** : Copier/coller le contenu de `20251118000013_fix_last_check_quota.sql` 🔒
+8. **Migration 014** : Copier/coller le contenu de `20251118000014_fix_performance_warnings.sql` ⚡
 
 Cliquer **RUN** après chaque migration.
 
-**IMPORTANT** : Après migration 013, activez "Leaked Password Protection" dans Auth Settings (voir SECURITY_FIX.md).
+**IMPORTANT** :
+- Après migration 013, activez "Leaked Password Protection" dans Auth Settings (voir SECURITY_FIX.md)
+- Après migration 014, tous les warnings performance seront résolus (voir PERFORMANCE_FIX.md)
 
 ---
 
