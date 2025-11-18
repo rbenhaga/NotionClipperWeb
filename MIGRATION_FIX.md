@@ -14,19 +14,23 @@ HINT: Use DROP FUNCTION increment_usage_counter(uuid,text,integer) first.
 
 ---
 
-## ✅ Solution : 4 Migrations de Fix
+## ✅ Solution : 6 Migrations de Fix
 
-J'ai créé 4 migrations correctives :
+J'ai créé 6 migrations correctives :
 
 ```
 supabase/migrations/
 ├── 20251118000006_fix_rpc_functions.sql              ✅ Fix fonction RPC
 ├── 20251118000007_fix_notion_connections_column.sql  ✅ Nettoyer colonnes redondantes
 ├── 20251118000008_add_missing_constraints.sql        ⚠️  Peut échouer si index existe
-└── 20251118000009_add_constraints_safe.sql           ✅ Version SAFE (recommandée)
+├── 20251118000009_add_constraints_safe.sql           ✅ Version SAFE (recommandée)
+├── 20251118000010_fix_rpc_ambiguity.sql              ✅ Fix ambiguité colonnes
+└── 20251118000011_fix_security_warnings.sql          🔒 Fix warnings sécurité
 ```
 
-**IMPORTANT** : Utilisez la migration **009** au lieu de 008 si vous avez des erreurs "relation already exists".
+**IMPORTANT** :
+- Utilisez la migration **009** au lieu de 008 si vous avez des erreurs "relation already exists"
+- Migration **011** corrige les warnings de sécurité Supabase (voir SECURITY_FIX.md)
 
 ---
 
@@ -62,7 +66,13 @@ supabase/migrations/
 20251118000007_fix_notion_connections_column.sql
 
 # 9. FIX: Add constraints
-20251118000008_add_missing_constraints.sql
+20251118000009_add_constraints_safe.sql
+
+# 10. FIX: Fix column ambiguity in RPC
+20251118000010_fix_rpc_ambiguity.sql
+
+# 11. FIX: Security warnings (search_path, pg_trgm)
+20251118000011_fix_security_warnings.sql
 ```
 
 ---
@@ -79,11 +89,16 @@ supabase/migrations/
 # 2. Pour les contraintes, utilisez la version SAFE :
 20251118000009_add_constraints_safe.sql  # ✅ VERSION SAFE (recommandée)
 
-# OU si vous n'avez pas d'indexes existants :
-20251118000008_add_missing_constraints.sql  # ⚠️  Peut échouer
+# 3. Fix column ambiguity
+20251118000010_fix_rpc_ambiguity.sql  # Fix ON CONFLICT ambiguity
+
+# 4. Fix security warnings
+20251118000011_fix_security_warnings.sql  # Fix search_path + pg_trgm
 ```
 
-**Recommandation** : Utilisez toujours **009** car elle est idempotente et gère tous les cas.
+**Recommandations** :
+- Utilisez toujours **009** au lieu de 008 car elle est idempotente
+- Migration **011** est **CRITIQUE** pour la sécurité en production
 
 ---
 
@@ -99,15 +114,19 @@ DROP FUNCTION IF EXISTS public.check_quota_limit CASCADE;
 DROP FUNCTION IF EXISTS public.get_usage_analytics CASCADE;
 ```
 
-### Étape 2 : Appliquer les 3 migrations de fix
+### Étape 2 : Appliquer les migrations de fix
 
 **Dans Supabase Dashboard → SQL Editor** :
 
 1. **Migration 006** : Copier/coller le contenu de `20251118000006_fix_rpc_functions.sql`
 2. **Migration 007** : Copier/coller le contenu de `20251118000007_fix_notion_connections_column.sql`
-3. **Migration 008** : Copier/coller le contenu de `20251118000008_add_missing_constraints.sql`
+3. **Migration 009** : Copier/coller le contenu de `20251118000009_add_constraints_safe.sql`
+4. **Migration 010** : Copier/coller le contenu de `20251118000010_fix_rpc_ambiguity.sql`
+5. **Migration 011** : Copier/coller le contenu de `20251118000011_fix_security_warnings.sql` 🔒
 
 Cliquer **RUN** après chaque migration.
+
+**IMPORTANT** : Après migration 011, activez "Leaked Password Protection" dans Auth Settings (voir SECURITY_FIX.md).
 
 ---
 
@@ -256,6 +275,11 @@ open http://localhost:3001/api/auth/google
 - [ ] 4 RPC functions existent et sont exécutables
 - [ ] `notion_connections` n'a qu'une seule colonne token (encrypted)
 - [ ] Contrainte UNIQUE sur `usage_records(user_id, year, month)`
+- [ ] ON CONFLICT utilise le nom de contrainte (pas de colonnes)
+- [ ] Toutes les fonctions ont `SET search_path = public, pg_catalog` 🔒
+- [ ] Extension pg_trgm dans schema `extensions` (pas `public`) 🔒
+- [ ] Leaked Password Protection activée dans Auth Settings 🔒
+- [ ] 0 warnings Supabase sécurité (attendre 5-10 min après migration) 🔒
 - [ ] Backend démarre sans erreurs (`pnpm dev`)
 - [ ] Test OAuth fonctionne
 - [ ] Test usage tracking fonctionne
