@@ -429,54 +429,63 @@ END;
 $$;
 
 -- ============================================
--- PART 3: Recreate triggers (CASCADE dropped them)
+-- PART 3: Recreate triggers (CASCADE should have dropped them, but ensure with IF NOT EXISTS)
 -- ============================================
 
 -- Trigger: update_updated_at_column
+DROP TRIGGER IF EXISTS update_user_profiles_updated_at ON public.user_profiles;
 CREATE TRIGGER update_user_profiles_updated_at
   BEFORE UPDATE ON public.user_profiles
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_subscriptions_updated_at ON public.subscriptions;
 CREATE TRIGGER update_subscriptions_updated_at
   BEFORE UPDATE ON public.subscriptions
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_usage_records_updated_at ON public.usage_records;
 CREATE TRIGGER update_usage_records_updated_at
   BEFORE UPDATE ON public.usage_records
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_usage_events_updated_at ON public.usage_events;
 CREATE TRIGGER update_usage_events_updated_at
   BEFORE UPDATE ON public.usage_events
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_notion_connections_updated_at ON public.notion_connections;
 CREATE TRIGGER update_notion_connections_updated_at
   BEFORE UPDATE ON public.notion_connections
   FOR EACH ROW
   EXECUTE FUNCTION public.update_updated_at_column();
 
 -- Trigger: create_default_subscription_on_signup
+DROP TRIGGER IF EXISTS trigger_create_default_subscription ON public.user_profiles;
 CREATE TRIGGER trigger_create_default_subscription
   AFTER INSERT ON public.user_profiles
   FOR EACH ROW
   EXECUTE FUNCTION public.create_default_subscription_on_signup();
 
 -- Trigger: update_last_activity_timestamps
+DROP TRIGGER IF EXISTS trigger_update_last_activity ON public.usage_records;
 CREATE TRIGGER trigger_update_last_activity
   AFTER INSERT OR UPDATE ON public.usage_records
   FOR EACH ROW
   EXECUTE FUNCTION public.update_last_activity_timestamps();
 
 -- Trigger: sync_user_to_auth_users
+DROP TRIGGER IF EXISTS trigger_sync_user_to_auth ON public.user_profiles;
 CREATE TRIGGER trigger_sync_user_to_auth
   AFTER INSERT ON public.user_profiles
   FOR EACH ROW
   EXECUTE FUNCTION public.sync_user_to_auth_users();
 
 -- Trigger: prevent_subscription_tier_downgrade
+DROP TRIGGER IF EXISTS trigger_prevent_tier_downgrade ON public.subscriptions;
 CREATE TRIGGER trigger_prevent_tier_downgrade
   BEFORE UPDATE ON public.subscriptions
   FOR EACH ROW
