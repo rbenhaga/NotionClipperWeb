@@ -21,7 +21,7 @@ Ce dossier contient toutes les migrations de la base de données PostgreSQL/Supa
 | **004** | `20251118000004_create_triggers.sql` | Crée 5 triggers pour automation |
 | **005** | `20251118000005_create_rls_policies.sql` | Configure RLS (13 policies) |
 
-### Phase 2 : Corrections (006-013)
+### Phase 2 : Corrections (006-010)
 
 | Migration | Fichier | Description | Priorité |
 |-----------|---------|-------------|----------|
@@ -29,9 +29,20 @@ Ce dossier contient toutes les migrations de la base de données PostgreSQL/Supa
 | **007** | `20251118000007_fix_notion_connections_column.sql` | Nettoie colonne access_token | ✅ Requis |
 | **009** | `20251118000009_add_constraints_safe.sql` | Ajoute contraintes (idempotent) | ✅ Requis |
 | **010** | `20251118000010_fix_rpc_ambiguity.sql` | Fix ambiguité ON CONFLICT | ✅ Requis |
+
+### Phase 3 : Sécurité (011-013)
+
+| Migration | Fichier | Description | Priorité |
+|-----------|---------|-------------|----------|
 | **011** | `20251118000011_fix_security_warnings.sql` | Fix 15 warnings search_path + pg_trgm | 🔒 Sécurité |
 | **012** | `20251118000012_cleanup_old_functions.sql` | Nettoie 8 fonctions obsolètes | 🔒 Sécurité |
 | **013** | `20251118000013_fix_last_check_quota.sql` | Drop dernière fonction check_quota | 🔒 Sécurité |
+
+### Phase 4 : Performance (014)
+
+| Migration | Fichier | Description | Priorité |
+|-----------|---------|-------------|----------|
+| **014** | `20251118000014_fix_performance_warnings.sql` | Fix RLS policies + indexes dupliqués | ⚡ Performance |
 
 ---
 
@@ -58,6 +69,9 @@ Pour une nouvelle base de données, appliquer dans l'ordre :
 20251118000011_fix_security_warnings.sql
 20251118000012_cleanup_old_functions.sql
 20251118000013_fix_last_check_quota.sql
+
+# Phase 4 : Performance
+20251118000014_fix_performance_warnings.sql
 ```
 
 ---
@@ -120,6 +134,29 @@ Pour une nouvelle base de données, appliquer dans l'ordre :
 1. Dashboard → Authentication → Settings
 2. Activer "Check passwords against leaked database"
 3. Activer "Prevent sign-up if leaked"
+
+---
+
+## ⚡ Performance
+
+### Migration 014 : Optimisations Performance
+
+**Problème** : 25 warnings Supabase Performance Linter
+- 13x Auth RLS Initialization Plan ❌
+- 5x Multiple Permissive Policies ❌
+- 7x Duplicate Index ❌
+
+**Solution** :
+- Migration 014 : Fix RLS policies avec `(select auth.uid())`
+- Migration 014 : Supprime policies dupliquées
+- Migration 014 : Supprime 7 indexes redondants
+
+**Résultat** : 0 warnings performance ✅
+
+**Optimisations** :
+1. **Auth RLS** : `auth.uid()` évalué 1 seule fois au lieu de N fois (1 par ligne)
+2. **Policies** : 1 seule policy par action/rôle (pas de doublons)
+3. **Indexes** : Suppression de 7 indexes redondants (performances write améliorées)
 
 ---
 
