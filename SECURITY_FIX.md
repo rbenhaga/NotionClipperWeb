@@ -12,17 +12,23 @@ Supabase a détecté **17 warnings de sécurité** :
 
 ---
 
-## 🎯 Solution : Migration 011 + Configuration Manuelle
+## 🎯 Solution : Migrations 011 + 012 + Configuration Manuelle
 
-### Partie 1 : Migration SQL (Automatique)
+### Partie 1 : Migrations SQL (Automatique)
 
-**Fichier** : `supabase/migrations/20251118000011_fix_security_warnings.sql`
+**Fichiers** :
+- `supabase/migrations/20251118000011_fix_security_warnings.sql`
+- `supabase/migrations/20251118000012_cleanup_old_functions.sql`
 
-Cette migration corrige **16/17 warnings** automatiquement :
+Ces migrations corrigent **16/17 warnings** automatiquement :
 
-✅ **Search Path Mutable** : Ajoute `SET search_path = public, pg_catalog` à :
+✅ **Search Path Mutable (Migration 011)** : Ajoute `SET search_path = public, pg_catalog` à :
 - 4 RPC functions (increment_usage_counter, get_current_quota, check_quota_limit, get_usage_analytics)
 - 5 trigger functions (update_updated_at_column, create_default_subscription_on_signup, etc.)
+
+✅ **Search Path Mutable (Migration 012)** : Nettoie les anciennes fonctions obsolètes et recrée avec `SET search_path` :
+- Supprime : update_updated_at, create_free_subscription_for_new_user, handle_new_user, check_quota
+- Recrée : encrypt_token, decrypt_token, set_default_workspace, set_first_workspace_as_default
 
 ✅ **Extension in Public** : Déplace pg_trgm de `public` → `extensions` schema
 
@@ -64,20 +70,26 @@ Cette migration corrige **16/17 warnings** automatiquement :
    Dashboard → SQL Editor → New Query
    ```
 
-2. **Copier/coller le contenu de** :
-   ```
-   supabase/migrations/20251118000011_fix_security_warnings.sql
-   ```
+2. **Appliquer migration 011** :
+   - Copier/coller : `supabase/migrations/20251118000011_fix_security_warnings.sql`
+   - Cliquer **RUN**
+   - Vérifier les messages :
+     ```
+     ✅ Migration 011 completed successfully!
+     ✅ Fixed: search_path for 15 functions
+     ✅ Fixed: pg_trgm extension moved to extensions schema
+     ```
 
-3. **Cliquer sur "RUN"**
-
-4. **Vérifier les messages** :
-   ```
-   ✅ Migration 011 completed successfully!
-   ✅ Fixed: search_path for 15 functions
-   ✅ Fixed: pg_trgm extension moved to extensions schema
-   ⚠️  MANUAL: Enable leaked password protection in Auth settings
-   ```
+3. **Appliquer migration 012** :
+   - Copier/coller : `supabase/migrations/20251118000012_cleanup_old_functions.sql`
+   - Cliquer **RUN**
+   - Vérifier les messages :
+     ```
+     ✅ Migration 012 completed successfully!
+     ✅ Removed: 8 obsolete functions
+     ✅ Fixed: 4 functions with SET search_path
+     ✅ All security warnings should be resolved!
+     ```
 
 ---
 

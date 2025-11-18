@@ -14,9 +14,9 @@ HINT: Use DROP FUNCTION increment_usage_counter(uuid,text,integer) first.
 
 ---
 
-## ✅ Solution : 6 Migrations de Fix
+## ✅ Solution : 7 Migrations de Fix
 
-J'ai créé 6 migrations correctives :
+J'ai créé 7 migrations correctives :
 
 ```
 supabase/migrations/
@@ -25,12 +25,13 @@ supabase/migrations/
 ├── 20251118000008_add_missing_constraints.sql        ⚠️  Peut échouer si index existe
 ├── 20251118000009_add_constraints_safe.sql           ✅ Version SAFE (recommandée)
 ├── 20251118000010_fix_rpc_ambiguity.sql              ✅ Fix ambiguité colonnes
-└── 20251118000011_fix_security_warnings.sql          🔒 Fix warnings sécurité
+├── 20251118000011_fix_security_warnings.sql          🔒 Fix warnings sécurité
+└── 20251118000012_cleanup_old_functions.sql          🧹 Nettoyer fonctions obsolètes
 ```
 
 **IMPORTANT** :
 - Utilisez la migration **009** au lieu de 008 si vous avez des erreurs "relation already exists"
-- Migration **011** corrige les warnings de sécurité Supabase (voir SECURITY_FIX.md)
+- Migrations **011 + 012** corrigent TOUS les warnings de sécurité Supabase (voir SECURITY_FIX.md)
 
 ---
 
@@ -73,6 +74,9 @@ supabase/migrations/
 
 # 11. FIX: Security warnings (search_path, pg_trgm)
 20251118000011_fix_security_warnings.sql
+
+# 12. CLEANUP: Remove old obsolete functions
+20251118000012_cleanup_old_functions.sql
 ```
 
 ---
@@ -94,11 +98,15 @@ supabase/migrations/
 
 # 4. Fix security warnings
 20251118000011_fix_security_warnings.sql  # Fix search_path + pg_trgm
+
+# 5. Cleanup old functions
+20251118000012_cleanup_old_functions.sql  # Remove obsolete functions
 ```
 
 **Recommandations** :
 - Utilisez toujours **009** au lieu de 008 car elle est idempotente
-- Migration **011** est **CRITIQUE** pour la sécurité en production
+- Migrations **011 + 012** sont **CRITIQUES** pour la sécurité en production
+- Migration **012** nettoie les anciennes fonctions de l'ancien schéma
 
 ---
 
@@ -123,10 +131,11 @@ DROP FUNCTION IF EXISTS public.get_usage_analytics CASCADE;
 3. **Migration 009** : Copier/coller le contenu de `20251118000009_add_constraints_safe.sql`
 4. **Migration 010** : Copier/coller le contenu de `20251118000010_fix_rpc_ambiguity.sql`
 5. **Migration 011** : Copier/coller le contenu de `20251118000011_fix_security_warnings.sql` 🔒
+6. **Migration 012** : Copier/coller le contenu de `20251118000012_cleanup_old_functions.sql` 🧹
 
 Cliquer **RUN** après chaque migration.
 
-**IMPORTANT** : Après migration 011, activez "Leaked Password Protection" dans Auth Settings (voir SECURITY_FIX.md).
+**IMPORTANT** : Après migration 012, activez "Leaked Password Protection" dans Auth Settings (voir SECURITY_FIX.md).
 
 ---
 
