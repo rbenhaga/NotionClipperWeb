@@ -13,7 +13,8 @@ DO $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint
-    WHERE conname = 'usage_records_unique_user_month'
+    WHERE conrelid = 'public.usage_records'::regclass
+      AND conname = 'usage_records_unique_user_month'
   ) THEN
     ALTER TABLE public.usage_records
       ADD CONSTRAINT usage_records_unique_user_month
@@ -30,7 +31,8 @@ BEGIN
   -- Add unique constraint on email if not exists
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint
-    WHERE conname = 'user_profiles_email_unique'
+    WHERE conrelid = 'public.user_profiles'::regclass
+      AND conname = 'user_profiles_email_unique'
   ) THEN
     ALTER TABLE public.user_profiles
       ADD CONSTRAINT user_profiles_email_unique
@@ -40,7 +42,8 @@ BEGIN
   -- Add email validation constraint if not exists
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint
-    WHERE conname = 'user_profiles_email_valid'
+    WHERE conrelid = 'public.user_profiles'::regclass
+      AND conname = 'user_profiles_email_valid'
   ) THEN
     ALTER TABLE public.user_profiles
       ADD CONSTRAINT user_profiles_email_valid
@@ -56,7 +59,8 @@ DO $$
 BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint
-    WHERE conname = 'usage_records_year_check'
+    WHERE conrelid = 'public.usage_records'::regclass
+      AND conname = 'usage_records_year_check'
   ) THEN
     ALTER TABLE public.usage_records
       ADD CONSTRAINT usage_records_year_check
