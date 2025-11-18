@@ -1,6 +1,5 @@
 /**
- * Supabase Database Configuration (OPTIMIZED)
- * Refactored for the new 5-table schema with RPC functions
+ * Supabase Database Configuration
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
@@ -36,20 +35,16 @@ export function getSupabaseClient(): SupabaseClient {
       },
     });
 
-    logger.info('✅ Supabase client initialized successfully');
+    logger.info('Supabase client initialized successfully');
   }
 
   return supabaseClient;
 }
 
 /**
- * Database helper functions (Optimized for new schema)
+ * Database helper functions
  */
 export const db = {
-  // ============================================
-  // USER_PROFILES
-  // ============================================
-
   /**
    * Get user by ID
    */
@@ -124,10 +119,6 @@ export const db = {
     return data;
   },
 
-  // ============================================
-  // SUBSCRIPTIONS
-  // ============================================
-
   /**
    * Get user subscription
    */
@@ -138,9 +129,10 @@ export const db = {
       .from('subscriptions')
       .select('*')
       .eq('user_id', userId)
-      .maybeSingle();
+      .single();
 
     if (error && error.code !== 'PGRST116') {
+      // PGRST116 = no rows returned
       logger.error('Database error fetching subscription:', error);
       throw error;
     }
@@ -149,22 +141,46 @@ export const db = {
   },
 
   /**
-   * Update subscription (for Stripe webhooks)
+   * Create subscription (called by trigger, but can be used manually)
+   */
+  async createSubscription(userId: string, tier: 'free' | 'premium' = 'free') {
+    const supabase = getSupabaseClient();
+
+    const now = new Date();
+    const periodEnd = new Date(now);
+    periodEnd.setMonth(periodEnd.getMonth() + 1);
+
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .insert({
+        user_id: userId,
+        tier,
+        status: 'active',
+        current_period_start: now.toISOString(),
+        current_period_end: periodEnd.toISOString(),
+      })
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Database error creating subscription:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
+   * Update subscription
    */
   async updateSubscription(
     userId: string,
     updates: {
-      tier?: 'free' | 'premium' | 'grace_period';
-      status?: string;
+      tier?: 'free' | 'premium';
+      status?: 'active' | 'canceled' | 'past_due';
       stripe_customer_id?: string;
       stripe_subscription_id?: string;
-      stripe_price_id?: string;
-      current_period_start?: Date;
       current_period_end?: Date;
-      cancel_at?: Date | null;
-      canceled_at?: Date | null;
-      grace_period_ends_at?: Date | null;
-      is_grace_period?: boolean;
       cancel_at_period_end?: boolean;
     }
   ) {
@@ -178,7 +194,7 @@ export const db = {
       })
       .eq('user_id', userId)
       .select()
-      .maybeSingle();
+      .single();
 
     if (error) {
       logger.error('Database error updating subscription:', error);
@@ -189,49 +205,7 @@ export const db = {
   },
 
   /**
-   * Upsert subscription (for Stripe webhooks)
-   */
-  async upsertSubscription(subscriptionData: {
-    user_id: string;
-    tier?: string;
-    status?: string;
-    stripe_customer_id?: string;
-    stripe_subscription_id?: string;
-    stripe_price_id?: string;
-    current_period_start?: Date;
-    current_period_end?: Date;
-    metadata?: any;
-  }) {
-    const supabase = getSupabaseClient();
-
-    const { data, error } = await supabase
-      .from('subscriptions')
-      .upsert(
-        {
-          ...subscriptionData,
-          updated_at: new Date().toISOString(),
-        },
-        {
-          onConflict: 'user_id',
-        }
-      )
-      .select()
-      .single();
-
-    if (error) {
-      logger.error('Database error upserting subscription:', error);
-      throw error;
-    }
-
-    return data;
-  },
-
-  // ============================================
-  // NOTION_CONNECTIONS
-  // ============================================
-
-  /**
-   * Save Notion connection (with encrypted token)
+   * Save Notion connection (encrypted token)
    */
   async saveNotionConnection(
     userId: string,
@@ -271,7 +245,7 @@ export const db = {
   },
 
   /**
-   * Get Notion connection for user
+   * Get Notion connection
    */
   async getNotionConnection(userId: string) {
     const supabase = getSupabaseClient();
@@ -312,13 +286,56 @@ export const db = {
     return data;
   },
 
-  // ============================================
-  // USAGE TRACKING (RPC Functions)
-  // ============================================
+  /**
+   * Get subscription by user ID
+   */
+  async getSubscriptionByUserId(userId: string) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      logger.error('Database error fetching subscription:', error);
+      throw error;
+    }
+
+    return data;
+  },
 
   /**
-   * Increment usage counter via RPC function
-   * This is the PRIMARY method for tracking usage
+   * Upsert subscription (for Stripe webhooks)
+   */
+  async upsertSubscription(subscriptionData: any) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .upsert(
+        {
+          ...subscriptionData,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: 'user_id',
+        }
+      )
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Database error upserting subscription:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
+   * Increment usage counter via RPC
    */
   async incrementUsageCounter(
     userId: string,
@@ -334,75 +351,16 @@ export const db = {
     });
 
     if (error) {
-      logger.error('RPC error incrementing usage counter:', error);
+      logger.error('Database error incrementing usage counter:', error);
       throw error;
     }
 
-    // RPC returns array with single row
-    return Array.isArray(data) && data.length > 0 ? data[0] : null;
+    // RPC with RETURNS TABLE returns an array
+    return Array.isArray(data) ? data[0] : data;
   },
 
   /**
-   * Get current quota and usage via RPC function
-   */
-  async getCurrentQuota(userId: string) {
-    const supabase = getSupabaseClient();
-
-    const { data, error } = await supabase.rpc('get_current_quota', {
-      p_user_id: userId,
-    });
-
-    if (error) {
-      logger.error('RPC error getting current quota:', error);
-      throw error;
-    }
-
-    return Array.isArray(data) && data.length > 0 ? data[0] : null;
-  },
-
-  /**
-   * Check if user has reached quota limit via RPC function
-   */
-  async checkQuotaLimit(
-    userId: string,
-    feature: 'clips' | 'files' | 'focus_mode_minutes' | 'compact_mode_minutes'
-  ) {
-    const supabase = getSupabaseClient();
-
-    const { data, error } = await supabase.rpc('check_quota_limit', {
-      p_user_id: userId,
-      p_feature: feature,
-    });
-
-    if (error) {
-      logger.error('RPC error checking quota limit:', error);
-      throw error;
-    }
-
-    return Array.isArray(data) && data.length > 0 ? data[0] : null;
-  },
-
-  /**
-   * Get usage analytics via RPC function
-   */
-  async getUsageAnalytics(userId: string, months: number = 6) {
-    const supabase = getSupabaseClient();
-
-    const { data, error } = await supabase.rpc('get_usage_analytics', {
-      p_user_id: userId,
-      p_months: months,
-    });
-
-    if (error) {
-      logger.error('RPC error getting usage analytics:', error);
-      throw error;
-    }
-
-    return data || [];
-  },
-
-  /**
-   * Get current month usage (direct query - fallback if RPC not available)
+   * Get current usage for user
    */
   async getCurrentUsage(userId: string, year: number, month: number) {
     const supabase = getSupabaseClient();
@@ -423,10 +381,6 @@ export const db = {
     return data;
   },
 
-  // ============================================
-  // USAGE EVENTS
-  // ============================================
-
   /**
    * Log usage event
    */
@@ -436,7 +390,7 @@ export const db = {
     usageRecordId: string;
     eventType: string;
     feature: string;
-    metadata?: any;
+    metadata: any;
   }) {
     const supabase = getSupabaseClient();
 
@@ -454,10 +408,6 @@ export const db = {
       throw error;
     }
   },
-
-  // ============================================
-  // UTILITY
-  // ============================================
 
   /**
    * Get Supabase client instance (for Auth operations)

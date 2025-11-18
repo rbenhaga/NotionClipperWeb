@@ -189,9 +189,13 @@ async function saveNotionConnection(
   workspaceName: string,
   accessToken: string
 ) {
-  // TODO: Encrypt token before saving
-  // For now, save as-is (should match encryption logic from Edge Functions)
-  const encryptedToken = accessToken; // Replace with actual encryption
+  // Import crypto service for token encryption
+  const { encryptToken } = await import('../services/crypto.service.js');
+
+  // Encrypt token before saving (AES-256-GCM)
+  const encryptedToken = await encryptToken(accessToken);
+
+  logger.info('Notion token encrypted successfully');
 
   await db.saveNotionConnection(userId, workspaceId, workspaceName, encryptedToken);
 
