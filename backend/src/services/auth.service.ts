@@ -110,19 +110,49 @@ export async function createOrUpdateGoogleUser(profile: GoogleOAuthProfile) {
     });
   }
 
-  // User doesn't exist, create new user with UUID
-  const userId = crypto.randomUUID();
-  logger.info(`Creating new Google user: ${userId}`);
+  // User doesn't exist, create in auth.users first using Supabase Admin API
+  logger.info(`Creating new Google user via Supabase Auth`);
 
+  const { data: authUser, error: authError } = await db.getSupabaseClient().auth.admin.createUser({
+    email: profile.email,
+    email_confirm: true, // Auto-confirm email for OAuth users
+    user_metadata: {
+      full_name: profile.name,
+      avatar_url: profile.picture,
+      auth_provider: 'google',
+    },
+  });
+
+  if (authError) {
+    logger.error('Failed to create auth user:', authError);
+    throw new AppError(`Failed to create user: ${authError.message}`, 500);
+  }
+
+  if (!authUser.user) {
+    throw new AppError('Failed to create user', 500);
+  }
+
+  // Now create user profile with the auth.users ID
   const userData = {
-    id: userId,
+    id: authUser.user.id,
     email: profile.email,
     full_name: profile.name,
     avatar_url: profile.picture,
     auth_provider: 'google' as const,
   };
 
-  return db.upsertUser(userData);
+  const user = await db.upsertUser(userData);
+
+  // Create default free subscription for new user
+  await db.upsertSubscription({
+    user_id: authUser.user.id,
+    tier: 'free',
+    status: 'active',
+  });
+
+  logger.info(`Free subscription created for new Google user: ${authUser.user.id}`);
+
+  return user;
 }
 
 /**
@@ -144,6 +174,15 @@ export async function createOrUpdateNotionUser(
 
   if (existingUser) {
     logger.info(`Updating existing user: ${existingUser.id}`);
+
+    // Save/update Notion connection for existing user
+    await saveNotionConnection(
+      existingUser.id,
+      oauthResponse.workspace_id,
+      oauthResponse.workspace_name || 'My Workspace',
+      oauthResponse.access_token
+    );
+
     // User exists, update their profile
     return db.upsertUser({
       id: existingUser.id,
@@ -154,9 +193,29 @@ export async function createOrUpdateNotionUser(
     });
   }
 
-  // User doesn't exist, create new user with UUID
-  const userId = crypto.randomUUID();
-  logger.info(`Creating new Notion user: ${userId}`);
+  // User doesn't exist, create in auth.users first using Supabase Admin API
+  logger.info(`Creating new Notion user via Supabase Auth`);
+
+  const { data: authUser, error: authError } = await db.getSupabaseClient().auth.admin.createUser({
+    email: ownerEmail,
+    email_confirm: true, // Auto-confirm email for OAuth users
+    user_metadata: {
+      full_name: oauthResponse.workspace_name || oauthResponse.owner?.user?.name,
+      avatar_url: oauthResponse.workspace_icon || oauthResponse.owner?.user?.avatar_url,
+      auth_provider: 'notion',
+    },
+  });
+
+  if (authError) {
+    logger.error('Failed to create auth user:', authError);
+    throw new AppError(`Failed to create user: ${authError.message}`, 500);
+  }
+
+  if (!authUser.user) {
+    throw new AppError('Failed to create user', 500);
+  }
+
+  const userId = authUser.user.id;
 
   const userData = {
     id: userId,
@@ -166,8 +225,17 @@ export async function createOrUpdateNotionUser(
     auth_provider: 'notion' as const,
   };
 
-  // Create Notion user
+  // Create Notion user profile
   const user = await db.upsertUser(userData);
+
+  // Create default free subscription for new user
+  await db.upsertSubscription({
+    user_id: userId,
+    tier: 'free',
+    status: 'active',
+  });
+
+  logger.info(`Free subscription created for new Notion user: ${userId}`);
 
   // Save Notion connection
   await saveNotionConnection(
