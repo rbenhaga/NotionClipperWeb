@@ -43,8 +43,7 @@ export default function HomePage() {
             {/* BETA Badge */}
             <div className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg mb-6">
               <Sparkles className="w-5 h-5" />
-              <span className="font-bold text-sm">EARLY ACCESS BETA</span>
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">Limited to 1000 users</span>
+              <span className="font-bold text-sm">NOW IN BETA</span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight max-w-4xl mx-auto">
@@ -107,98 +106,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Transparency - Build in Public Section */}
-      <section className="relative py-20 px-6 bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-xl p-8 md:p-10">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-md">
-                <Heart className="w-6 h-6 text-white" fill="white" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-bold text-gray-900">Building in Public</h3>
-                <p className="text-sm text-gray-600">Transparence totale sur le développement</p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <p className="text-gray-700 leading-relaxed">
-                Je suis <span className="font-semibold text-purple-700">un étudiant français en économie</span> qui construit ce projet en solo (avec l'aide d'outils IA).
-                Les coûts d'API, d'hébergement et d'outils de développement représentent <span className="font-bold text-purple-700">~500$/mois</span>.
-              </p>
-
-              <p className="text-gray-700 leading-relaxed">
-                Cette beta est une opportunité de <span className="font-semibold">tester gratuitement</span> ou de <span className="font-semibold">soutenir le projet dès le début</span> avec des prix verrouillés à vie.
-              </p>
-
-              {/* Progress Bars */}
-              <div className="space-y-6 pt-4">
-                {/* Beta Users Progress */}
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="font-bold text-gray-900">Beta Testers</p>
-                      <p className="text-xs text-gray-600">Objectif: Atteindre 1000 utilisateurs beta</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                        0<span className="text-base text-gray-500">/1000</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-purple-600 to-blue-600 transition-all duration-500"
-                      style={{ width: '0%' }}
-                    />
-                  </div>
-                </div>
-
-                {/* MRR Progress */}
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="font-bold text-gray-900">Monthly Runway</p>
-                      <p className="text-xs text-gray-600">Objectif: Couvrir les coûts d'infrastructure</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                        $0<span className="text-base text-gray-500">/$500</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-green-600 to-emerald-600 transition-all duration-500"
-                      style={{ width: '0%' }}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* CTA to Pricing */}
-              <div className="pt-6 border-t border-gray-200">
-                <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                  <div className="text-center sm:text-left">
-                    <p className="text-sm font-semibold text-gray-900 mb-1">
-                      Prêt à rejoindre l'aventure ?
-                    </p>
-                    <p className="text-xs text-gray-600">
-                      3 options: Beta gratuite, Early Supporter $1.99/mo, ou Pay What You Want
-                    </p>
-                  </div>
-                  <Link
-                    to="/pricing"
-                    className="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
-                  >
-                    Voir les options beta
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Current Status - Known Issues Section */}
       <section className="relative py-20 px-6">
@@ -226,27 +133,23 @@ export default function HomePage() {
               <ul className="space-y-3">
                 <li className="flex items-start gap-2 text-gray-700">
                   <CheckCircle className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                  <span>OAuth Google + Notion (fixé le 18/11/2025)</span>
+                  <span>OAuth Google + Notion authentication</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-700">
                   <CheckCircle className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                  <span>Backend optimisé (11 tables → 5 tables)</span>
+                  <span>Optimized database architecture</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-700">
                   <CheckCircle className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                  <span>Base de données sécurisée (0 warnings)</span>
+                  <span>Secure database with encryption</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-700">
                   <CheckCircle className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                  <span>Système de quotas et usage tracking</span>
+                  <span>Usage quotas and tracking system</span>
                 </li>
                 <li className="flex items-start gap-2 text-gray-700">
                   <CheckCircle className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                  <span>RPC functions pour performance optimale</span>
-                </li>
-                <li className="flex items-start gap-2 text-gray-700">
-                  <CheckCircle className="w-4 h-4 text-green-600 mt-1 flex-shrink-0" />
-                  <span>Integration Stripe pour paiements</span>
+                  <span>Stripe payment integration</span>
                 </li>
               </ul>
             </div>
@@ -282,52 +185,42 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Coming Soon */}
+          {/* Coming Soon - Roadmap */}
           <div className="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200/50 shadow-lg p-6">
             <div className="flex items-center gap-2 mb-4">
               <Info className="w-6 h-6 text-blue-600" />
-              <h3 className="text-xl font-bold text-gray-900">🚀 Prochaines 2 semaines</h3>
+              <h3 className="text-xl font-bold text-gray-900">🚀 Coming Soon</h3>
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="flex items-start gap-2 text-gray-700">
                 <Info className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold">Extension Chrome v1.0</p>
-                  <p className="text-sm text-gray-600">Publication Chrome Web Store</p>
+                  <p className="font-semibold">Chrome Extension v1.0</p>
+                  <p className="text-sm text-gray-600">Public release on Chrome Web Store</p>
                 </div>
               </div>
               <div className="flex items-start gap-2 text-gray-700">
                 <Info className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold">Desktop App Beta</p>
-                  <p className="text-sm text-gray-600">Test privé macOS + Windows</p>
+                  <p className="font-semibold">Desktop App (Windows)</p>
+                  <p className="text-sm text-gray-600">Windows version in development</p>
                 </div>
               </div>
               <div className="flex items-start gap-2 text-gray-700">
                 <Info className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">Voice Recording</p>
-                  <p className="text-sm text-gray-600">Enregistrement + transcription AI</p>
+                  <p className="text-sm text-gray-600">Record notes with AI transcription</p>
                 </div>
               </div>
               <div className="flex items-start gap-2 text-gray-700">
                 <Info className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
                 <div>
                   <p className="font-semibold">OCR Text Extraction</p>
-                  <p className="text-sm text-gray-600">Extraction texte depuis images</p>
+                  <p className="text-sm text-gray-600">Extract text from images</p>
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* Last Updated */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-gray-500">
-              Dernière mise à jour: <span className="font-semibold">18 Novembre 2025</span> •
-              <a href="https://github.com/votre-repo" className="text-purple-600 hover:text-purple-700 ml-1">
-                Voir changelog complet →
-              </a>
-            </p>
           </div>
         </div>
       </section>

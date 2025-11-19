@@ -52,7 +52,7 @@ export interface Quotas {
 // Quotas par tier (must match server-side constants)
 const TIER_QUOTAS: Record<SubscriptionTier, Quotas> = {
   FREE: {
-    clips: 50, // 50 clips per month
+    clips: 100, // 100 clips per month
     files: 10,
     words_per_clip: 1000,
     focus_mode_minutes: 60,
@@ -66,7 +66,7 @@ const TIER_QUOTAS: Record<SubscriptionTier, Quotas> = {
     compact_mode_minutes: Number.MAX_SAFE_INTEGER,
   },
   GRACE_PERIOD: {
-    clips: 50, // Same as free tier
+    clips: 100, // Same as free tier
     files: 10,
     words_per_clip: 1000,
     focus_mode_minutes: 60,
@@ -114,7 +114,7 @@ class SubscriptionService {
     if (!token) return null;
 
     try {
-      const response = await fetch(`${API_URL}/user/usage/current`, {
+      const response = await fetch(`${API_URL}/usage/current`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -158,7 +158,7 @@ class SubscriptionService {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          returnUrl: returnUrl || window.location.origin,
+          plan: 'premium_monthly', // Default to monthly plan
         }),
       });
 
