@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import {
   Zap,
   Sparkles,
@@ -22,7 +21,6 @@ import SocialProof from '../components/SocialProof';
 import { NotionClipperLogo } from '../assets/Logo';
 
 export default function HomePage() {
-  const { t } = useTranslation('home');
 
   return (
     <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
