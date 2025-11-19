@@ -1,111 +1,168 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ComparisonTable from '../components/ComparisonTable';
+import { containerVariants, itemVariants } from '../lib/animations';
+import { Badge } from '../components/ui';
+import { Zap, Shield, TrendingUp } from 'lucide-react';
 
 export default function ComparePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
 
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl sm:text-5xl font-bold mb-4 text-gray-900">
-              Compare Notion Clippers
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Not sure which clipper is right for you? Here's an honest, detailed comparison of all major Notion clipper tools on the market.
-            </p>
-          </div>
+      {/* Hero Section */}
+      <motion.section
+        className="pt-32 pb-12 px-6"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <div className="max-w-5xl mx-auto text-center">
+          <motion.div variants={itemVariants} className="flex justify-center mb-6">
+            <Badge variant="secondary" size="lg">
+              <Shield className="w-4 h-4" />
+              <span>Honest Comparison</span>
+            </Badge>
+          </motion.div>
 
-          {/* Comparison Table */}
-          <ComparisonTable variant="full" />
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl sm:text-6xl font-bold mb-6 text-gray-900 dark:text-white"
+          >
+            Compare Notion Clippers
+          </motion.h1>
 
-          {/* CTA Section */}
-          <div className="mt-16 text-center bg-gradient-to-br from-purple-100 via-blue-100 to-indigo-100 rounded-2xl p-12 border-2 border-purple-200">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              Ready to try Clipper Pro?
-            </h2>
-            <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
-              Join users who save hours every week with the only clipper that works offline.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/auth"
-                className="px-10 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
-              >
-                Start Free Trial
-              </Link>
-              <Link
-                to="/pricing"
-                className="px-10 py-4 bg-white text-gray-900 rounded-xl font-bold text-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-200"
-              >
-                View Pricing
-              </Link>
-            </div>
-            <p className="mt-4 text-sm text-gray-600">50 clips/month free • No credit card required</p>
-          </div>
-
-          {/* Trust Indicators */}
-          <div className="mt-16 grid md:grid-cols-3 gap-8">
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md border border-gray-200 text-center">
-              <div className="text-4xl font-bold text-purple-600 mb-2">44%</div>
-              <div className="text-gray-900 font-semibold mb-1">Faster Performance</div>
-              <div className="text-sm text-gray-600">Compared to official clipper</div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md border border-gray-200 text-center">
-              <div className="text-4xl font-bold text-blue-600 mb-2">100%</div>
-              <div className="text-gray-900 font-semibold mb-1">Offline Support</div>
-              <div className="text-sm text-gray-600">Only clipper with queue sync</div>
-            </div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md border border-gray-200 text-center">
-              <div className="text-4xl font-bold text-indigo-600 mb-2">$5.99</div>
-              <div className="text-gray-900 font-semibold mb-1">Best Value</div>
-              <div className="text-sm text-gray-600">Desktop app + extension + analytics</div>
-            </div>
-          </div>
-
-          {/* FAQ Section */}
-          <div className="mt-24 max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold text-center mb-10 text-gray-900">
-              Frequently Asked Questions
-            </h2>
-            <div className="space-y-4">
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-2 text-lg">Why is Clipper Pro different from the official Notion Web Clipper?</h3>
-                <p className="text-gray-600">
-                  Clipper Pro is the only clipper with a desktop app and offline mode. Unlike the official clipper which requires an internet connection, Clipper Pro queues your clips locally and syncs them when you're back online. Plus, we offer usage analytics and work 44% faster.
-                </p>
-              </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-2 text-lg">How does Clipper Pro compare to "Save to Notion"?</h3>
-                <p className="text-gray-600">
-                  While "Save to Notion" is a great browser extension, Clipper Pro goes further with a native desktop app, offline support, and usage statistics dashboard. We're also priced the same at $5.99/mo but offer more features.
-                </p>
-              </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-2 text-lg">What about "Copy to Notion"?</h3>
-                <p className="text-gray-600">
-                  "Copy to Notion" has excellent ratings (4.7★) and is slightly cheaper ($3.75-9/mo), but lacks a desktop app, offline mode, and analytics. If you primarily need a browser extension, it's a solid choice. If you want a complete solution with desktop support and analytics, Clipper Pro is better.
-                </p>
-              </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-2 text-lg">Can I switch from another clipper to Clipper Pro?</h3>
-                <p className="text-gray-600">
-                  Yes! Clipper Pro is fully compatible with Notion's API and won't affect your existing clips. You can use it alongside other clippers or switch completely. Your Notion workspace and data remain unchanged.
-                </p>
-              </div>
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-sm border border-gray-200">
-                <h3 className="font-semibold text-gray-900 mb-2 text-lg">Is the free tier really unlimited?</h3>
-                <p className="text-gray-600">
-                  Our free tier offers 50 clips per month, which resets every month. The official Notion clipper and "Save to Notion" offer truly unlimited clips for free, so if you need more than 50 clips/month without paying, those might be better options. However, they don't offer offline mode or analytics.
-                </p>
-              </div>
-            </div>
-          </div>
+          <motion.p
+            variants={itemVariants}
+            className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto"
+          >
+            Not sure which clipper is right for you? Here's an honest comparison.
+          </motion.p>
         </div>
+      </motion.section>
+
+      {/* Key Differentiators */}
+      <section className="pb-16 px-6">
+        <motion.div
+          className="max-w-6xl mx-auto grid md:grid-cols-3 gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
+          <motion.div variants={itemVariants} className="card text-center p-6">
+            <Zap className="w-10 h-10 text-purple-600 dark:text-purple-400 mx-auto mb-3" />
+            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">44%</div>
+            <div className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Faster</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400">vs. official clipper</div>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="card text-center p-6">
+            <Shield className="w-10 h-10 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
+            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">100%</div>
+            <div className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Offline</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400">Only clipper with queue</div>
+          </motion.div>
+
+          <motion.div variants={itemVariants} className="card text-center p-6">
+            <TrendingUp className="w-10 h-10 text-indigo-600 dark:text-indigo-400 mx-auto mb-3" />
+            <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">$2.99</div>
+            <div className="text-sm font-semibold text-gray-900 dark:text-white mb-1">Beta Price</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400">Locked in forever</div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Comparison Table */}
+      <section className="pb-20 px-6">
+        <div className="max-w-6xl mx-auto">
+          <ComparisonTable variant="full" />
+        </div>
+      </section>
+
+      {/* FAQ Section - Simplified */}
+      <section className="py-20 px-6 bg-white dark:bg-gray-900">
+        <div className="max-w-3xl mx-auto">
+          <motion.h2
+            className="text-4xl font-bold text-center mb-12 text-gray-900 dark:text-white"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            Common Questions
+          </motion.h2>
+
+          <motion.div
+            className="space-y-4"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <motion.div variants={itemVariants} className="card p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                Why is Clipper Pro different from the official Notion Web Clipper?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Clipper Pro is the only clipper with offline mode. The official clipper requires internet.
+                We queue clips locally and sync when you're back online. Plus, 44% faster performance and usage analytics.
+              </p>
+            </motion.div>
+
+            <motion.div variants={itemVariants} className="card p-6">
+              <h3 className="font-bold text-gray-900 dark:text-white mb-2">
+                Can I switch from another clipper?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Yes! Fully compatible with Notion's API. Use it alongside other clippers or switch completely.
+                Your existing workspace and clips remain unchanged.
+              </p>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 px-6">
+        <motion.div
+          className="max-w-4xl mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600 rounded-3xl p-16 shadow-apple-2xl text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
+
+            <div className="relative z-10">
+              <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
+                Ready to try Clipper Pro?
+              </h2>
+              <p className="text-xl text-purple-100 mb-10 max-w-2xl mx-auto">
+                The only clipper that works offline. Lock in $2.99/mo forever.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link
+                  to="/auth"
+                  className="inline-flex items-center justify-center px-10 py-5 bg-white text-purple-600 rounded-2xl font-bold text-lg shadow-apple-xl hover:scale-105 transition-all"
+                >
+                  Start Free Trial
+                </Link>
+                <Link
+                  to="/pricing"
+                  className="inline-flex items-center justify-center px-10 py-5 bg-white/10 backdrop-blur-sm text-white border-2 border-white rounded-2xl font-bold text-lg hover:bg-white/20 transition-all"
+                >
+                  View Pricing
+                </Link>
+              </div>
+              <p className="text-sm text-purple-200 mt-6">
+                No credit card • Cancel anytime
+              </p>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       <Footer />
