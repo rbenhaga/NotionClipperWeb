@@ -41,7 +41,7 @@ export const trackUsage = asyncHandler(
     logger.info(`[track-usage] Tracking ${feature} for user ${userId}, increment: ${increment}`);
 
     // Get or create subscription
-    const subscription = await db.getSubscriptionByUserId(userId);
+    const subscription = await db.getSubscription(userId);
 
     if (!subscription) {
       logger.info('[track-usage] No subscription found, returning default');
@@ -58,14 +58,14 @@ export const trackUsage = asyncHandler(
     // Log usage event if metadata provided
     if (metadata && usageRecord) {
       try {
-        const eventTypeMap: Record<UsageFeature, string> = {
+        const eventTypeMap: Record<UsageFeature, 'clip_sent' | 'file_uploaded' | 'focus_mode_started' | 'focus_mode_ended' | 'compact_mode_started' | 'compact_mode_ended' | 'quota_exceeded' | 'subscription_upgraded' | 'subscription_downgraded'> = {
           clips: 'clip_sent',
           files: 'file_uploaded',
-          focus_mode_minutes: 'focus_mode_used',
-          compact_mode_minutes: 'compact_mode_used',
+          focus_mode_minutes: 'focus_mode_started',
+          compact_mode_minutes: 'compact_mode_started',
         };
 
-        const eventType = eventTypeMap[feature as UsageFeature] || 'unknown';
+        const eventType = eventTypeMap[feature as UsageFeature];
 
         await db.logUsageEvent({
           userId,
@@ -119,5 +119,46 @@ export const getCurrentUsage = asyncHandler(
         month,
       },
     });
+  }
+);
+
+/**
+ * POST /api/usage/check-quota
+ * Check if user has reached quota limit for a specific feature
+ */
+export const checkQuota = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { userId, feature } = req.body;
+
+    if (!userId) {
+      throw new AppError('userId is required', 400);
+    }
+
+    const validFeatures: UsageFeature[] = [
+      'clips',
+      'files',
+      'focus_mode_minutes',
+      'compact_mode_minutes',
+    ];
+
+    if (!feature || !validFeatures.includes(feature)) {
+      throw new AppError(
+        `Invalid feature. Must be one of: ${validFeatures.join(', ')}`,
+        400
+      );
+    }
+
+    logger.info(`[check-quota] Checking quota for user ${userId}, feature: ${feature}`);
+
+    // Check quota via RPC
+    const quotaCheck = await db.checkQuotaLimit(userId, feature);
+
+    if (!quotaCheck) {
+      throw new AppError('Failed to check quota', 500);
+    }
+
+    logger.info(`[check-quota] Result: ${quotaCheck.allowed ? 'ALLOWED' : 'DENIED'} - ${quotaCheck.reason}`);
+
+    sendSuccess(res, quotaCheck);
   }
 );

@@ -4,7 +4,7 @@
  */
 
 import { Router } from 'express';
-import { trackUsage, getCurrentUsage } from '../controllers/usage.controller.js';
+import { trackUsage, getCurrentUsage, checkQuota } from '../controllers/usage.controller.js';
 import { authenticateToken } from '../middleware/auth.middleware.js';
 import { generalRateLimiter } from '../middleware/rate-limit.middleware.js';
 
@@ -23,5 +23,12 @@ router.post('/track', generalRateLimiter, trackUsage);
  * Requires JWT authentication
  */
 router.get('/current', authenticateToken, generalRateLimiter, getCurrentUsage);
+
+/**
+ * POST /api/usage/check-quota
+ * Check if user has reached quota limit for a specific feature
+ * Body: { userId: string, feature: 'clips' | 'files' | 'focus_mode_minutes' | 'compact_mode_minutes' }
+ */
+router.post('/check-quota', generalRateLimiter, checkQuota);
 
 export default router;

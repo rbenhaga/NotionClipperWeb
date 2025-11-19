@@ -3,7 +3,6 @@
  * Handles OAuth flows and user authentication
  */
 
-import crypto from 'crypto';
 import { config } from '../config/index.js';
 import { GOOGLE_OAUTH, NOTION_OAUTH } from '../config/constants.js';
 import { db } from '../config/database.js';
