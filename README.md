@@ -5,23 +5,23 @@
 
 ---
 
-## ✅ Configuration
+## ✅ Configuration Complète
 
-### Supabase Vault (Recommandé)
-Tous les secrets sont chargés depuis Supabase Vault:
-- OAuth (Google + Notion)
-- Stripe (Secret Key + Price IDs)
-- Token Encryption Key
+### Supabase Vault ✅
+Tous les secrets chargés depuis Supabase Vault:
+- OAuth (Google + Notion) ✅
+- Stripe (Secret Key + Price IDs) ✅
+- Token Encryption Key ✅
 
-**Voir**: `SUPABASE_VAULT_SETUP.md` pour configuration (10 min)
+**Backup local**: `.secrets.local` (gitignored)
 
-### Features
-- ✅ Toggle Monthly/Annual avec badge -20%
-- ✅ Email auth (signup/login)
-- ✅ OAuth Google + Notion
-- ✅ i18n FR/EN complet
-- ✅ RLS policies Supabase fixées
-- ✅ Secrets depuis Supabase Vault
+### Features ✅
+- Toggle Monthly/Annual avec badge -20%
+- Email auth (signup/login)
+- OAuth Google + Notion
+- i18n FR/EN complet
+- RLS policies Supabase fixées
+- Secrets depuis Supabase Vault
 
 ---
 
@@ -56,11 +56,23 @@ NotionClipperWeb/
 │   ├── src/
 │   └── .env
 ├── supabase/
-│   ├── functions/        # Edge Function (get-oauth-secrets)
+│   ├── functions/        # Edge Function (get-oauth-secrets) ✅
 │   └── migrations/       # RLS policies ✅
-├── SUPABASE_VAULT_SETUP.md  # Guide configuration Vault
+├── .secrets.local        # Backup encryption key (gitignored)
+├── SUPABASE_VAULT_SETUP.md
 └── CHANGELOG.md
 ```
+
+---
+
+## 🔐 Secrets Management
+
+**Tous les secrets dans Supabase Vault**:
+- Centralisé et sécurisé
+- Facile à mettre à jour
+- Backup local dans `.secrets.local`
+
+**Voir**: `SUPABASE_VAULT_SETUP.md` pour configuration
 
 ---
 

@@ -17,6 +17,14 @@ export default function PricingPage() {
       return;
     }
 
+    // Check if user is authenticated
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      // Redirect to auth page with return URL
+      window.location.href = '/auth?redirect=/pricing';
+      return;
+    }
+
     setLoading(true);
     try {
       const stripePlan = billingPeriod === 'monthly' ? 'premium_monthly' : 'premium_annual';
@@ -25,6 +33,7 @@ export default function PricingPage() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           plan: stripePlan,
@@ -42,7 +51,8 @@ export default function PricingPage() {
       }
     } catch (error) {
       console.error('Subscription error:', error);
-      alert('Failed to start subscription. Please try again.');
+      alert('Please sign in first to subscribe.');
+      window.location.href = '/auth?redirect=/pricing';
     } finally {
       setLoading(false);
     }
