@@ -6,7 +6,7 @@
 import { config } from '../config/index.js';
 import { logger } from '../utils/logger.js';
 
-interface SecretsCache {
+export interface SecretsCache {
   GOOGLE_CLIENT_ID: string;
   GOOGLE_CLIENT_SECRET: string;
   NOTION_CLIENT_ID: string;
