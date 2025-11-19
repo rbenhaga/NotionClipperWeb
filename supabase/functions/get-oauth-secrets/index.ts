@@ -47,6 +47,8 @@ serve(async (req) => {
       NOTION_CLIENT_SECRET: Deno.env.get('NOTION_CLIENT_SECRET'),
       STRIPE_SECRET_KEY: Deno.env.get('STRIPE_SECRET_KEY'),
       STRIPE_WEBHOOK_SECRET: Deno.env.get('STRIPE_WEBHOOK_SECRET'),
+      TOKEN_ENCRYPTION_KEY: Deno.env.get('TOKEN_ENCRYPTION_KEY'),
+      STRIPE_PREMIUM_PRICE_ID: Deno.env.get('STRIPE_PREMIUM_PRICE_ID'),
     };
 
     // Verify all secrets are present

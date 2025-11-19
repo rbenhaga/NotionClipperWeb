@@ -208,7 +208,7 @@ export default function DashboardPage() {
                       ? 'bg-yellow-100 text-yellow-800'
                       : 'bg-gray-100 text-gray-800'
                   }`}>
-                    {subscription.tier.toUpperCase()}
+                    {subscription.tier?.toUpperCase() || 'FREE'}
                   </div>
 
                   {/* Status */}

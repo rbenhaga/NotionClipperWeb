@@ -6,12 +6,10 @@ import {
   Chrome,
   Monitor,
   Mic,
-  ScanText,
   RefreshCw,
   Image as ImageIcon,
   Globe,
   Video,
-  Rocket,
   Heart,
   AlertCircle,
   CheckCircle,
@@ -20,6 +18,7 @@ import {
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ComparisonTable from '../components/ComparisonTable';
+import SocialProof from '../components/SocialProof';
 import { NotionClipperLogo } from '../assets/Logo';
 
 export default function HomePage() {
@@ -43,22 +42,23 @@ export default function HomePage() {
             {/* BETA Badge */}
             <div className="inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg mb-6">
               <Sparkles className="w-5 h-5" />
-              <span className="font-bold text-sm">EARLY ACCESS BETA</span>
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">Limited to 1000 users</span>
+              <span className="font-bold text-sm">🧪 BETA - Help Us Build It</span>
             </div>
 
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight max-w-4xl mx-auto">
-              <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                {t('hero.title.line1')}
+              <span className="text-gray-900">
+                Save to Notion.
               </span>
               <br />
-              <span className="text-gray-900">
-                {t('hero.title.line2')}
+              <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Even Offline.
               </span>
             </h1>
 
             <p className="text-xl sm:text-2xl text-gray-700 leading-relaxed max-w-3xl mx-auto">
-              {t('hero.subtitle.line1')} {t('hero.subtitle.line2')}
+              The only Notion clipper with a real offline queue.
+              <br />
+              No more <span className="font-bold text-red-600">"go online"</span> errors. Ever.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
@@ -66,16 +66,19 @@ export default function HomePage() {
                 to="/auth"
                 className="group relative px-10 py-5 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-200"
               >
-                <span className="relative z-10">{t('hero.cta.primary')}</span>
+                <span className="relative z-10">Start Free Trial</span>
               </Link>
 
-              <Link
-                to="/pricing"
+              <a
+                href="#demo"
                 className="px-10 py-5 bg-white/80 backdrop-blur-sm text-gray-900 rounded-xl font-bold text-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-200"
               >
-                {t('hero.cta.secondary')}
-              </Link>
+                Watch 60s Demo ↗
+              </a>
             </div>
+
+            {/* Social Proof */}
+            <SocialProof />
 
 
             {/* Video Demo Placeholder */}
@@ -107,7 +110,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Transparency - Build in Public Section */}
+      {/* Why Clipper Pro Exists Section */}
       <section className="relative py-20 px-6 bg-gradient-to-br from-white via-purple-50/30 to-blue-50/30">
         <div className="max-w-4xl mx-auto">
           <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/50 shadow-xl p-8 md:p-10">
@@ -116,82 +119,54 @@ export default function HomePage() {
                 <Heart className="w-6 h-6 text-white" fill="white" />
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-gray-900">Building in Public</h3>
-                <p className="text-sm text-gray-600">Transparence totale sur le développement</p>
+                <h3 className="text-2xl font-bold text-gray-900">Why Clipper Pro Exists</h3>
+                <p className="text-sm text-gray-600">Solving real problems, not adding features</p>
               </div>
             </div>
 
             <div className="space-y-6">
-              <p className="text-gray-700 leading-relaxed">
-                Je suis <span className="font-semibold text-purple-700">un étudiant français en économie</span> qui construit ce projet en solo (avec l'aide d'outils IA).
-                Les coûts d'API, d'hébergement et d'outils de développement représentent <span className="font-bold text-purple-700">~500$/mois</span>.
+              <p className="text-gray-700 leading-relaxed text-lg">
+                Every other clipper assumes you're always online. But you work in trains, planes, cafés, and basements.
               </p>
 
-              <p className="text-gray-700 leading-relaxed">
-                Cette beta est une opportunité de <span className="font-semibold">tester gratuitement</span> ou de <span className="font-semibold">soutenir le projet dès le début</span> avec des prix verrouillés à vie.
+              <p className="text-gray-700 leading-relaxed text-lg">
+                Other clippers fail when you need them most. Clipper Pro queues locally → syncs when you're back.
               </p>
 
-              {/* Progress Bars */}
-              <div className="space-y-6 pt-4">
-                {/* Beta Users Progress */}
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="font-bold text-gray-900">Beta Testers</p>
-                      <p className="text-xs text-gray-600">Objectif: Atteindre 1000 utilisateurs beta</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                        0<span className="text-base text-gray-500">/1000</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-purple-600 to-blue-600 transition-all duration-500"
-                      style={{ width: '0%' }}
-                    />
-                  </div>
-                </div>
-
-                {/* MRR Progress */}
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="font-bold text-gray-900">Monthly Runway</p>
-                      <p className="text-xs text-gray-600">Objectif: Couvrir les coûts d'infrastructure</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
-                        $0<span className="text-base text-gray-500">/$500</span>
-                      </p>
-                    </div>
-                  </div>
-                  <div className="h-3 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-green-600 to-emerald-600 transition-all duration-500"
-                      style={{ width: '0%' }}
-                    />
-                  </div>
-                </div>
+              <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 border border-purple-200/50">
+                <p className="text-sm font-bold text-gray-900 mb-3">What makes us different:</p>
+                <ul className="space-y-2">
+                  <li className="flex items-start gap-2 text-gray-700">
+                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Works offline (queue + sync when back online)</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-700">
+                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Desktop backup (never lose your clips)</span>
+                  </li>
+                  <li className="flex items-start gap-2 text-gray-700">
+                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">Actually affordable ($4 not $15)</span>
+                  </li>
+                </ul>
               </div>
 
               {/* CTA to Pricing */}
-              <div className="pt-6 border-t border-gray-200">
+              <div className="pt-4">
                 <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                   <div className="text-center sm:text-left">
                     <p className="text-sm font-semibold text-gray-900 mb-1">
-                      Prêt à rejoindre l'aventure ?
+                      ⭐ Beta users lock in $3.99/mo forever (first 500 only)
                     </p>
                     <p className="text-xs text-gray-600">
-                      3 options: Beta gratuite, Early Supporter $1.99/mo, ou Pay What You Want
+                      Free: 10 clips/month • Pro: Unlimited clips + offline mode
                     </p>
                   </div>
                   <Link
-                    to="/pricing"
+                    to="/auth"
                     className="flex-shrink-0 px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-xl font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all"
                   >
-                    Voir les options beta
+                    Start Free Trial
                   </Link>
                 </div>
               </div>
@@ -282,39 +257,68 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Coming Soon */}
+          {/* Roadmap - Realistic Timeline */}
           <div className="mt-6 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl border border-blue-200/50 shadow-lg p-6">
             <div className="flex items-center gap-2 mb-4">
               <Info className="w-6 h-6 text-blue-600" />
-              <h3 className="text-xl font-bold text-gray-900">🚀 Prochaines 2 semaines</h3>
+              <h3 className="text-xl font-bold text-gray-900">🚀 Roadmap Q1 2025</h3>
             </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="flex items-start gap-2 text-gray-700">
-                <Info className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold">Extension Chrome v1.0</p>
-                  <p className="text-sm text-gray-600">Publication Chrome Web Store</p>
+            
+            <div className="space-y-6">
+              {/* In Progress */}
+              <div>
+                <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span className="text-lg">🚧</span> In Progress (2-4 weeks)
+                </h4>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="flex items-start gap-2 text-gray-700 bg-white/50 p-3 rounded-lg">
+                    <Chrome className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-sm">Extension Chrome v1.0</p>
+                      <p className="text-xs text-gray-600">Beta functional, fixing bugs</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 text-gray-700 bg-white/50 p-3 rounded-lg">
+                    <Monitor className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-sm">Desktop App macOS</p>
+                      <p className="text-xs text-gray-600">Private beta testing</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start gap-2 text-gray-700">
-                <Info className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold">Desktop App Beta</p>
-                  <p className="text-sm text-gray-600">Test privé macOS + Windows</p>
+
+              {/* Next Quarter */}
+              <div>
+                <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span className="text-lg">🎯</span> Next Quarter (Q2 2025)
+                </h4>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div className="flex items-start gap-2 text-gray-700 bg-white/50 p-3 rounded-lg">
+                    <Monitor className="w-4 h-4 text-indigo-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-sm">Desktop App Windows</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2 text-gray-700 bg-white/50 p-3 rounded-lg">
+                    <Mic className="w-4 h-4 text-indigo-600 mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-sm">Voice Recording + AI</p>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start gap-2 text-gray-700">
-                <Info className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold">Voice Recording</p>
-                  <p className="text-sm text-gray-600">Enregistrement + transcription AI</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-2 text-gray-700">
-                <Info className="w-4 h-4 text-blue-600 mt-1 flex-shrink-0" />
-                <div>
-                  <p className="font-semibold">OCR Text Extraction</p>
-                  <p className="text-sm text-gray-600">Extraction texte depuis images</p>
+
+              {/* Future */}
+              <div>
+                <h4 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <span className="text-lg">🔮</span> Future (Q3+ 2025)
+                </h4>
+                <div className="flex flex-wrap gap-2">
+                  <span className="text-xs bg-white/50 px-3 py-1.5 rounded-full text-gray-700">OCR Text Extraction</span>
+                  <span className="text-xs bg-white/50 px-3 py-1.5 rounded-full text-gray-700">Team Workspaces</span>
+                  <span className="text-xs bg-white/50 px-3 py-1.5 rounded-full text-gray-700">Mobile App iOS</span>
+                  <span className="text-xs bg-white/50 px-3 py-1.5 rounded-full text-gray-700">Templates System</span>
                 </div>
               </div>
             </div>
@@ -323,10 +327,7 @@ export default function HomePage() {
           {/* Last Updated */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-500">
-              Dernière mise à jour: <span className="font-semibold">18 Novembre 2025</span> •
-              <a href="https://github.com/votre-repo" className="text-purple-600 hover:text-purple-700 ml-1">
-                Voir changelog complet →
-              </a>
+              Dernière mise à jour: <span className="font-semibold">18 Novembre 2025</span>
             </p>
           </div>
         </div>
@@ -727,134 +728,32 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Roadmap - Prochaines fonctionnalités */}
-      <section className="relative py-20 px-6 bg-white/50 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left: Roadmap Screenshot */}
-            <div className="relative">
-              <div className="relative bg-white/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-gray-200 p-4">
-                {/* Window chrome */}
-                <div className="flex items-center gap-2 mb-3 pb-3 border-b border-gray-200">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
-                    <div className="w-3 h-3 rounded-full bg-green-400"></div>
-                  </div>
-                  <div className="flex-1 text-center text-sm text-gray-500 font-medium flex items-center justify-center gap-2">
-                    <Rocket className="w-4 h-4" />
-                    <span>Roadmap 2025</span>
-                  </div>
-                </div>
-
-                {/* Screenshot Placeholder */}
-                <div className="relative bg-gradient-to-br from-pink-50 to-orange-50 rounded-lg aspect-[4/3] flex items-center justify-center border-2 border-dashed border-pink-300">
-                  <div className="text-center space-y-3 p-8">
-                    <ImageIcon className="w-16 h-16 text-pink-600 mx-auto" />
-                    <p className="text-lg font-bold text-gray-900">
-                      📸 Screenshot Roadmap
-                    </p>
-                    <p className="text-sm text-gray-600 max-w-xs mx-auto">
-                      Visuel montrant les prochaines fonctionnalités en développement
-                    </p>
-                    <p className="text-xs text-gray-500 font-mono">
-                      Dimensions: 1000x750px • Format: PNG/JPG
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: Description */}
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-pink-100 text-pink-700 rounded-full text-sm font-semibold">
-                <Rocket className="w-4 h-4" />
-                <span>Roadmap 2025</span>
-              </div>
-
-              <h2 className="text-4xl sm:text-5xl font-bold text-gray-900">
-                Prochaines fonctionnalités
-              </h2>
-
-              <p className="text-xl text-gray-700 leading-relaxed">
-                En développement actif pour enrichir votre expérience Notion.
-              </p>
-
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Mic className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Voice Recording + Transcription AI</h4>
-                    <p className="text-gray-600">Enregistrez des notes vocales et transcrivez avec Whisper AI</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <ScanText className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">OCR - Extraction de texte</h4>
-                    <p className="text-gray-600">Extrayez le texte depuis images et screenshots</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <RefreshCw className="w-4 h-4 text-white" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Sync Extension ↔ Desktop</h4>
-                    <p className="text-gray-600">Synchronisation temps réel entre navigateur et desktop</p>
-                  </div>
-                </li>
-              </ul>
-
-              <div className="pt-6">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Également en préparation</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border border-amber-200">
-                    <p className="text-sm font-semibold text-gray-900">🌐 Web Highlights</p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
-                    <p className="text-sm font-semibold text-gray-900">🎯 Focus Mode</p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border border-purple-200">
-                    <p className="text-sm font-semibold text-gray-900">📸 Screenshots avancés</p>
-                  </div>
-                  <div className="p-3 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg border border-emerald-200">
-                    <p className="text-sm font-semibold text-gray-900">📤 Export multi-format</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA Final */}
       <section className="relative py-24 px-6 bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6">
-            Prêt à optimiser votre workflow Notion ?
+            Ready to clip without limits?
           </h2>
           <p className="text-xl text-purple-100 mb-10 max-w-2xl mx-auto">
-            Rejoignez les utilisateurs qui gagnent des heures chaque semaine avec Clipper Pro
+            Join the beta and help shape the future of Notion clipping
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/auth"
               className="px-10 py-5 bg-white text-purple-600 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-200"
             >
-              Commencer maintenant
+              Start Free Trial
             </Link>
             <Link
               to="/pricing"
               className="px-10 py-5 bg-white/10 backdrop-blur-sm text-white border-2 border-white rounded-xl font-bold text-lg hover:bg-white/20 transition-all duration-200"
             >
-              Voir les tarifs
+              See Pricing
             </Link>
           </div>
+          <p className="text-sm text-purple-200 mt-6">
+            No credit card • 14 days free • Cancel anytime
+          </p>
         </div>
       </section>
 

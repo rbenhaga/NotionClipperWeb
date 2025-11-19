@@ -13,6 +13,8 @@ interface SecretsCache {
   NOTION_CLIENT_SECRET: string;
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
+  TOKEN_ENCRYPTION_KEY: string;
+  STRIPE_PREMIUM_PRICE_ID: string;
   lastFetched: number;
 }
 
@@ -75,6 +77,8 @@ export async function getSecrets(): Promise<SecretsCache> {
       'NOTION_CLIENT_SECRET',
       'STRIPE_SECRET_KEY',
       'STRIPE_WEBHOOK_SECRET',
+      'TOKEN_ENCRYPTION_KEY',
+      'STRIPE_PREMIUM_PRICE_ID',
     ];
 
     const missingSecrets = expectedSecrets.filter(
@@ -111,6 +115,8 @@ export async function getSecrets(): Promise<SecretsCache> {
       NOTION_CLIENT_SECRET: process.env.NOTION_CLIENT_SECRET || '',
       STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY || '',
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
+      TOKEN_ENCRYPTION_KEY: process.env.TOKEN_ENCRYPTION_KEY || '',
+      STRIPE_PREMIUM_PRICE_ID: process.env.STRIPE_PREMIUM_PRICE_ID || '',
       lastFetched: Date.now(),
     };
 

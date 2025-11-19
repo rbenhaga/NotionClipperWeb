@@ -16,7 +16,7 @@ export default function ComparisonTable({ variant = 'condensed' }: ComparisonTab
       official: 'Free',
       saveToNotion: '$5.99/mo',
       copyToNotion: '$3.75-9/mo',
-      clipperPro: '$5.99/mo',
+      clipperPro: '$3.99 beta',
       highlight: false
     },
     {
@@ -25,9 +25,9 @@ export default function ComparisonTable({ variant = 'condensed' }: ComparisonTab
       official: false,
       saveToNotion: false,
       copyToNotion: false,
-      clipperPro: true,
+      clipperPro: '🚧 Beta',
       highlight: true,
-      badge: 'Unique'
+      badge: 'In Dev'
     },
     {
       name: 'Offline Mode',
@@ -35,7 +35,7 @@ export default function ComparisonTable({ variant = 'condensed' }: ComparisonTab
       official: false,
       saveToNotion: false,
       copyToNotion: false,
-      clipperPro: true,
+      clipperPro: '🚧 Beta',
       highlight: true,
       badge: 'Queue sync'
     },
@@ -45,18 +45,18 @@ export default function ComparisonTable({ variant = 'condensed' }: ComparisonTab
       official: false,
       saveToNotion: false,
       copyToNotion: false,
-      clipperPro: true,
+      clipperPro: '🚧 Coming',
       highlight: true,
-      badge: 'Dashboard'
+      badge: 'Q1 2025'
     },
     {
-      name: 'Performance',
-      icon: '⚡',
-      official: 'Slow',
-      saveToNotion: 'Medium',
-      copyToNotion: 'Medium',
-      clipperPro: '44% faster',
-      highlight: true
+      name: 'Chrome Extension',
+      icon: '🌐',
+      official: true,
+      saveToNotion: true,
+      copyToNotion: true,
+      clipperPro: '🚧 Beta',
+      highlight: false
     },
     {
       name: 'Web Highlights',
@@ -64,7 +64,7 @@ export default function ComparisonTable({ variant = 'condensed' }: ComparisonTab
       official: false,
       saveToNotion: true,
       copyToNotion: true,
-      clipperPro: true,
+      clipperPro: '🎯 Planned',
       highlight: false
     },
     {
@@ -73,40 +73,39 @@ export default function ComparisonTable({ variant = 'condensed' }: ComparisonTab
       official: false,
       saveToNotion: false,
       copyToNotion: 'Limited',
-      clipperPro: true,
-      highlight: true,
-      badge: 'Unlimited'
+      clipperPro: '🎯 Planned',
+      highlight: false
     }
   ];
 
   // Données complètes pour Pricing/Compare page
   const fullFeatures = [
     // Pricing
-    { category: '💰 Pricing', name: 'Monthly', official: 'Free', saveToNotion: '$5.99', copyToNotion: '$9', clipperPro: '$5.99', highlight: false },
-    { category: '💰 Pricing', name: 'Annual', official: 'Free', saveToNotion: 'N/A', copyToNotion: '$108', clipperPro: '$59', highlight: true },
-    { category: '💰 Pricing', name: 'Free Tier', official: 'Unlimited', saveToNotion: 'Unlimited', copyToNotion: '75 clips', clipperPro: '50/mo', highlight: false },
+    { category: '💰 Pricing', name: 'Monthly', official: 'Free', saveToNotion: '$5.99', copyToNotion: '$9', clipperPro: '$3.99 beta', highlight: true },
+    { category: '💰 Pricing', name: 'Regular Price', official: 'Free', saveToNotion: '$5.99', copyToNotion: '$9', clipperPro: '$5.99', highlight: false },
+    { category: '💰 Pricing', name: 'Free Tier', official: 'Unlimited', saveToNotion: 'Unlimited', copyToNotion: '75 clips', clipperPro: '10/mo', highlight: false },
 
     // Platform
-    { category: '🖥️ Platform', name: 'Browser Extension', official: true, saveToNotion: true, copyToNotion: true, clipperPro: true, highlight: false },
-    { category: '🖥️ Platform', name: 'Desktop App', official: false, saveToNotion: false, copyToNotion: false, clipperPro: true, highlight: true, badge: 'Win/Mac' },
-    { category: '🖥️ Platform', name: 'Mobile App', official: false, saveToNotion: false, copyToNotion: false, clipperPro: 'Roadmap', highlight: false },
+    { category: '🖥️ Platform', name: 'Browser Extension', official: true, saveToNotion: true, copyToNotion: true, clipperPro: '🚧 Beta', highlight: false },
+    { category: '🖥️ Platform', name: 'Desktop App', official: false, saveToNotion: false, copyToNotion: false, clipperPro: '🚧 Beta', highlight: true, badge: 'macOS' },
+    { category: '🖥️ Platform', name: 'Mobile App', official: false, saveToNotion: false, copyToNotion: false, clipperPro: '🔮 Q3 2025', highlight: false },
 
     // Core Features
-    { category: '📡 Core', name: 'Works Offline', official: false, saveToNotion: false, copyToNotion: false, clipperPro: true, highlight: true, badge: 'Queue' },
-    { category: '📡 Core', name: 'Full Pages', official: 'URL only', saveToNotion: true, copyToNotion: true, clipperPro: true, highlight: false },
-    { category: '📡 Core', name: 'Screenshots', official: 'Basic', saveToNotion: true, copyToNotion: true, clipperPro: 'Enhanced', highlight: false },
-    { category: '📡 Core', name: 'Highlights', official: false, saveToNotion: true, copyToNotion: true, clipperPro: true, highlight: false },
+    { category: '📡 Core', name: 'Works Offline', official: false, saveToNotion: false, copyToNotion: false, clipperPro: '🚧 Beta', highlight: true, badge: 'Queue' },
+    { category: '📡 Core', name: 'Full Pages', official: 'URL only', saveToNotion: true, copyToNotion: true, clipperPro: '🚧 Beta', highlight: false },
+    { category: '📡 Core', name: 'Screenshots', official: 'Basic', saveToNotion: true, copyToNotion: true, clipperPro: '🎯 Q2 2025', highlight: false },
+    { category: '📡 Core', name: 'Highlights', official: false, saveToNotion: true, copyToNotion: true, clipperPro: '🎯 Q2 2025', highlight: false },
 
     // Productivity
-    { category: '⚙️ Productivity', name: 'Custom Shortcuts', official: false, saveToNotion: false, copyToNotion: '5 max', clipperPro: true, highlight: true, badge: 'Unlimited' },
-    { category: '⚙️ Productivity', name: 'Multi-select', official: false, saveToNotion: true, copyToNotion: true, clipperPro: true, highlight: false },
-    { category: '⚙️ Productivity', name: 'Quick DB Switch', official: false, saveToNotion: true, copyToNotion: true, clipperPro: true, highlight: false },
-    { category: '⚙️ Productivity', name: 'Templates', official: false, saveToNotion: '4 max', copyToNotion: '1-5', clipperPro: 'Q1 2026', highlight: false },
+    { category: '⚙️ Productivity', name: 'Custom Shortcuts', official: false, saveToNotion: false, copyToNotion: '5 max', clipperPro: '🎯 Q2 2025', highlight: false },
+    { category: '⚙️ Productivity', name: 'Multi-select', official: false, saveToNotion: true, copyToNotion: true, clipperPro: '🎯 Q2 2025', highlight: false },
+    { category: '⚙️ Productivity', name: 'Quick DB Switch', official: false, saveToNotion: true, copyToNotion: true, clipperPro: '✅ Ready', highlight: false },
+    { category: '⚙️ Productivity', name: 'Templates', official: false, saveToNotion: '4 max', copyToNotion: '1-5', clipperPro: '🔮 Q3 2025', highlight: false },
 
     // Analytics
-    { category: '📊 Analytics', name: 'Usage Stats', official: false, saveToNotion: false, copyToNotion: false, clipperPro: true, highlight: true, badge: 'Dashboard' },
-    { category: '📊 Analytics', name: 'History', official: false, saveToNotion: false, copyToNotion: false, clipperPro: '1000+', highlight: true },
-    { category: '📊 Analytics', name: 'Export Data', official: false, saveToNotion: false, copyToNotion: false, clipperPro: 'JSON/CSV', highlight: true }
+    { category: '📊 Analytics', name: 'Usage Stats', official: false, saveToNotion: false, copyToNotion: false, clipperPro: '🚧 Coming', highlight: true, badge: 'Q1 2025' },
+    { category: '📊 Analytics', name: 'History', official: false, saveToNotion: false, copyToNotion: false, clipperPro: '✅ 1000+', highlight: true },
+    { category: '📊 Analytics', name: 'Export Data', official: false, saveToNotion: false, copyToNotion: false, clipperPro: '🎯 Q2 2025', highlight: false }
   ];
 
   const features = isCondensed ? condensedFeatures : fullFeatures;
@@ -198,9 +197,9 @@ export default function ComparisonTable({ variant = 'condensed' }: ComparisonTab
                     </span>
                   </div>
                   <span className="text-xs font-bold px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-md">
-                    $5.99/mo
+                    $3.99 beta
                   </span>
-                  <span className="text-xs text-gray-500 italic">Coming Soon</span>
+                  <span className="text-xs text-gray-500 italic">🧪 Beta</span>
                 </div>
               </th>
             </tr>
@@ -310,12 +309,18 @@ export default function ComparisonTable({ variant = 'condensed' }: ComparisonTab
       </div>
 
       {/* Footer note avec style moderne */}
-      <div className="mt-8 text-center">
+      <div className="mt-8 text-center space-y-4">
         <div className="inline-block bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200/50 px-6 py-4 shadow-md max-w-4xl">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 mb-3">
             <Star className="w-4 h-4 inline fill-yellow-400 text-yellow-400 -mt-0.5" /> Ratings from Chrome Web Store (Nov 2025).
             Official clipper has 1M+ users but 3.3★ due to "go online" errors.
           </p>
+          <div className="flex items-center justify-center gap-4 text-xs text-gray-600 pt-3 border-t border-gray-200">
+            <span>✅ Production Ready</span>
+            <span>🚧 Beta/In Dev</span>
+            <span>🎯 Planned Q2</span>
+            <span>🔮 Future Q3+</span>
+          </div>
         </div>
 
         {isCondensed && (
@@ -337,8 +342,7 @@ export default function ComparisonTable({ variant = 'condensed' }: ComparisonTab
             className="inline-flex items-center gap-3 px-12 py-5 bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 text-white rounded-2xl font-bold text-lg shadow-2xl hover:shadow-purple-500/50 hover:scale-105 transition-all duration-200"
           >
             <Sparkles className="w-5 h-5" />
-            <span>Start Free Trial</span>
-            <span className="text-sm font-normal opacity-90">50 clips/month</span>
+            <span>Start 14-Day Free Trial</span>
           </Link>
           <p className="mt-4 text-sm text-gray-500">No credit card required • Cancel anytime</p>
         </div>

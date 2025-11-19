@@ -133,11 +133,18 @@ export async function initializeSecrets(): Promise<void> {
     config.oauth.notion.clientSecret = secrets.NOTION_CLIENT_SECRET || config.oauth.notion.clientSecret;
     config.stripe.secretKey = secrets.STRIPE_SECRET_KEY || config.stripe.secretKey;
     config.stripe.webhookSecret = secrets.STRIPE_WEBHOOK_SECRET || config.stripe.webhookSecret;
+    config.stripe.prices.monthly = secrets.STRIPE_PREMIUM_PRICE_ID || config.stripe.prices.monthly;
+    
+    // Set TOKEN_ENCRYPTION_KEY in process.env so crypto service can access it
+    if (secrets.TOKEN_ENCRYPTION_KEY) {
+      process.env.TOKEN_ENCRYPTION_KEY = secrets.TOKEN_ENCRYPTION_KEY;
+    }
 
     console.log('✅ Secrets loaded successfully from Supabase Vault');
     console.log(`   Google Client ID: ${config.oauth.google.clientId.substring(0, 20)}...`);
     console.log(`   Notion Client ID: ${config.oauth.notion.clientId.substring(0, 20)}...`);
     console.log(`   Stripe Secret Key: ${config.stripe.secretKey.substring(0, 20)}...`);
+    console.log(`   Token Encryption Key: ${secrets.TOKEN_ENCRYPTION_KEY ? '✓ loaded' : '✗ missing'}`);
   } catch (error) {
     console.error('❌ Failed to load secrets from Vault:', error);
     console.log('⚠️  Falling back to environment variables...');
