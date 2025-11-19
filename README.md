@@ -5,11 +5,15 @@
 
 ---
 
-## ✅ Configuration Complète
+## ✅ Configuration
 
-### Stripe
-- Monthly: `price_1SSRiUC1QIPSyau3QOwLfWba` (2.99€/mois)
-- Annual: `price_1SVG5GC1QIPSyau3jq8Jrr4W` (28.68€/an)
+### Supabase Vault (Recommandé)
+Tous les secrets sont chargés depuis Supabase Vault:
+- OAuth (Google + Notion)
+- Stripe (Secret Key + Price IDs)
+- Token Encryption Key
+
+**Voir**: `SUPABASE_VAULT_SETUP.md` pour configuration (10 min)
 
 ### Features
 - ✅ Toggle Monthly/Annual avec badge -20%
@@ -17,7 +21,7 @@
 - ✅ OAuth Google + Notion
 - ✅ i18n FR/EN complet
 - ✅ RLS policies Supabase fixées
-- ✅ Vault désactivé en dev
+- ✅ Secrets depuis Supabase Vault
 
 ---
 
@@ -44,16 +48,18 @@ cd showcase-site && npm run dev
 
 ```
 NotionClipperWeb/
-├── backend/              # API Node.js + Express
+├── backend/
 │   ├── src/
-│   ├── .env             # Stripe configuré ✅
-│   └── logs/
-├── showcase-site/        # Frontend React + Vite
+│   ├── .env              # Config minimale (Supabase + JWT)
+│   └── .env.example      # Template
+├── showcase-site/
 │   ├── src/
 │   └── .env
 ├── supabase/
-│   └── migrations/      # RLS policies ✅
-└── CHANGELOG.md         # Historique
+│   ├── functions/        # Edge Function (get-oauth-secrets)
+│   └── migrations/       # RLS policies ✅
+├── SUPABASE_VAULT_SETUP.md  # Guide configuration Vault
+└── CHANGELOG.md
 ```
 
 ---

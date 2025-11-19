@@ -119,12 +119,6 @@ export const config: AppConfig = {
  * MUST be called before starting the server
  */
 export async function initializeSecrets(): Promise<void> {
-  // Skip Vault in development - use .env only
-  if (isDevelopment) {
-    console.log('⚠️  Dev mode: Using .env only, skipping Supabase Vault');
-    return;
-  }
-
   try {
     // Dynamically import to avoid circular dependency
     const { getSecrets } = await import('../services/secrets.service.js');
@@ -139,7 +133,8 @@ export async function initializeSecrets(): Promise<void> {
     config.oauth.notion.clientSecret = secrets.NOTION_CLIENT_SECRET || config.oauth.notion.clientSecret;
     config.stripe.secretKey = secrets.STRIPE_SECRET_KEY || config.stripe.secretKey;
     config.stripe.webhookSecret = secrets.STRIPE_WEBHOOK_SECRET || config.stripe.webhookSecret;
-    config.stripe.prices.monthly = secrets.STRIPE_PREMIUM_PRICE_ID || config.stripe.prices.monthly;
+    config.stripe.prices.monthly = secrets.STRIPE_PRICE_MONTHLY || config.stripe.prices.monthly;
+    config.stripe.prices.annual = secrets.STRIPE_PRICE_ANNUAL || config.stripe.prices.annual;
     
     // Set TOKEN_ENCRYPTION_KEY in process.env so crypto service can access it
     if (secrets.TOKEN_ENCRYPTION_KEY) {

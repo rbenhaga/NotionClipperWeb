@@ -15,6 +15,8 @@ interface SecretsCache {
   STRIPE_WEBHOOK_SECRET: string;
   TOKEN_ENCRYPTION_KEY: string;
   STRIPE_PREMIUM_PRICE_ID: string;
+  STRIPE_PRICE_MONTHLY: string;
+  STRIPE_PRICE_ANNUAL: string;
   lastFetched: number;
 }
 
@@ -79,6 +81,8 @@ export async function getSecrets(): Promise<SecretsCache> {
       'STRIPE_WEBHOOK_SECRET',
       'TOKEN_ENCRYPTION_KEY',
       'STRIPE_PREMIUM_PRICE_ID',
+      'STRIPE_PRICE_MONTHLY',
+      'STRIPE_PRICE_ANNUAL',
     ];
 
     const missingSecrets = expectedSecrets.filter(
@@ -117,6 +121,8 @@ export async function getSecrets(): Promise<SecretsCache> {
       STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET || '',
       TOKEN_ENCRYPTION_KEY: process.env.TOKEN_ENCRYPTION_KEY || '',
       STRIPE_PREMIUM_PRICE_ID: process.env.STRIPE_PREMIUM_PRICE_ID || '',
+      STRIPE_PRICE_MONTHLY: process.env.STRIPE_PRICE_MONTHLY || '',
+      STRIPE_PRICE_ANNUAL: process.env.STRIPE_PRICE_ANNUAL || '',
       lastFetched: Date.now(),
     };
 
