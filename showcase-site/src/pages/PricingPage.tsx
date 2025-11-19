@@ -40,14 +40,17 @@ export default function PricingPage() {
         }),
       });
 
-      const data = await response.json();
+      const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to create checkout session');
+        throw new Error(result.error?.message || 'Failed to create checkout session');
       }
 
-      if (data.url) {
-        window.location.href = data.url;
+      // Backend wraps response in { success: true, data: { url, sessionId } }
+      if (result.data?.url) {
+        window.location.href = result.data.url;
+      } else {
+        throw new Error('No checkout URL received');
       }
     } catch (error) {
       console.error('Subscription error:', error);
