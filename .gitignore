@@ -34,3 +34,6 @@ pids/
 
 # Supabase
 supabase/.temp/
+
+# Secrets locaux
+.secrets.local
