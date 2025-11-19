@@ -31,7 +31,6 @@ Click "New secret" pour chaque:
 7. STRIPE_PRICE_MONTHLY = price_1SSRiUC1QIPSyau3QOwLfWba
 8. STRIPE_PRICE_ANNUAL = price_1SVG5GC1QIPSyau3jq8Jrr4W
 9. TOKEN_ENCRYPTION_KEY = aiimX2gh3UE/McfAAdk73fsmjJlnlgrqkIAOM52pJ+o=
-10. STRIPE_PREMIUM_PRICE_ID = price_1SSRiUC1QIPSyau3QOwLfWba
 ```
 
 ---

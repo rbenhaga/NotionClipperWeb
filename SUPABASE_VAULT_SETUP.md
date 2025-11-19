@@ -54,6 +54,8 @@ Name: TOKEN_ENCRYPTION_KEY
 Value: aiimX2gh3UE/McfAAdk73fsmjJlnlgrqkIAOM52pJ+o=
 ```
 
+**Note**: `STRIPE_PREMIUM_PRICE_ID` a été supprimé (redondant avec MONTHLY)
+
 ---
 
 ## 🚀 Déployer l'Edge Function
