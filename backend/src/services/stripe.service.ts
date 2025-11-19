@@ -249,9 +249,23 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
  */
 export function constructWebhookEvent(payload: string | Buffer, signature: string): Stripe.Event {
   try {
-    return getStripeClient().webhooks.constructEvent(payload, signature, config.stripe.webhookSecret);
+    logger.debug('Constructing webhook event', {
+      payloadType: typeof payload,
+      payloadIsBuffer: Buffer.isBuffer(payload),
+      signatureLength: signature.length,
+      webhookSecretPrefix: config.stripe.webhookSecret.substring(0, 10) + '...',
+    });
+
+    const event = getStripeClient().webhooks.constructEvent(payload, signature, config.stripe.webhookSecret);
+    logger.info(`✅ Webhook signature verified successfully for event: ${event.type}`);
+    return event;
   } catch (error) {
-    logger.error('Failed to construct webhook event:', error);
+    logger.error('❌ Failed to construct webhook event:', {
+      error: error instanceof Error ? error.message : error,
+      payloadType: typeof payload,
+      payloadIsBuffer: Buffer.isBuffer(payload),
+      payloadLength: Buffer.isBuffer(payload) ? payload.length : (typeof payload === 'string' ? payload.length : 0),
+    });
     throw new AppError('Invalid webhook signature', 400);
   }
 }

@@ -12,6 +12,7 @@ import { corsMiddleware } from './middleware/cors.middleware.js';
 import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
 import { generalRateLimiter } from './middleware/rate-limit.middleware.js';
 import routes from './routes/index.js';
+import webhookRoutes from './routes/webhook.routes.js';
 
 /**
  * Start the server
@@ -36,7 +37,11 @@ app.use(corsMiddleware);
 // Request logging
 app.use(morgan('combined', { stream: morganStream }));
 
-// Body parsing
+// ⚠️ CRITICAL: Webhook routes MUST be mounted BEFORE body parsers
+// Stripe webhooks need raw body for signature verification
+app.use('/api/webhooks', webhookRoutes);
+
+// Body parsing (applied to all routes EXCEPT webhooks)
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 

@@ -7,7 +7,6 @@ import { Router } from 'express';
 import authRoutes from './auth.routes.js';
 import stripeRoutes from './stripe.routes.js';
 import userRoutes from './user.routes.js';
-import webhookRoutes from './webhook.routes.js';
 import notionRoutes from './notion.routes.js';
 import usageRoutes from './usage.routes.js';
 
@@ -26,7 +25,8 @@ router.get('/health', (_req, res) => {
 router.use('/auth', authRoutes);
 router.use('/stripe', stripeRoutes);
 router.use('/user', userRoutes);
-router.use('/webhooks', webhookRoutes);
+// NOTE: Webhook routes are mounted separately in server.ts BEFORE body parsers
+// This is critical for Stripe signature verification which needs raw body
 router.use('/notion', notionRoutes);
 router.use('/usage', usageRoutes);
 
