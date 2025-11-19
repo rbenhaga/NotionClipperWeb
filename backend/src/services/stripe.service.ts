@@ -9,9 +9,21 @@ import { db } from '../config/database.js';
 import { logger } from '../utils/logger.js';
 import { AppError } from '../types/index.js';
 
-const stripe = new Stripe(config.stripe.secretKey, {
-  apiVersion: '2023-10-16',
-});
+// Initialize Stripe lazily to ensure secrets are loaded first
+let stripe: Stripe | null = null;
+
+function getStripeClient(): Stripe {
+  if (!stripe) {
+    if (!config.stripe.secretKey) {
+      throw new AppError('Stripe secret key not configured', 500);
+    }
+    stripe = new Stripe(config.stripe.secretKey, {
+      apiVersion: '2023-10-16',
+    });
+    logger.info('Stripe client initialized with key: ' + config.stripe.secretKey.substring(0, 20) + '...');
+  }
+  return stripe;
+}
 
 /**
  * Create Stripe Checkout session for Premium upgrade
@@ -60,7 +72,7 @@ export async function createCheckoutSession(
     let customerId = (await db.getSubscription(userId))?.stripe_customer_id;
 
     if (!customerId) {
-      const customer = await stripe.customers.create({
+      const customer = await getStripeClient().customers.create({
         email: user.email,
         metadata: {
           user_id: userId,
@@ -70,7 +82,7 @@ export async function createCheckoutSession(
     }
 
     // Create checkout session
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripeClient().checkout.sessions.create({
       customer: customerId,
       mode,
       payment_method_types: ['card'],
@@ -111,7 +123,7 @@ export async function createPortalSession(userId: string, returnUrl: string) {
       throw new AppError('No active subscription found', 404);
     }
 
-    const session = await stripe.billingPortal.sessions.create({
+    const session = await getStripeClient().billingPortal.sessions.create({
       customer: subscription.stripe_customer_id,
       return_url: returnUrl,
     });
@@ -237,7 +249,7 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
  */
 export function constructWebhookEvent(payload: string | Buffer, signature: string): Stripe.Event {
   try {
-    return stripe.webhooks.constructEvent(payload, signature, config.stripe.webhookSecret);
+    return getStripeClient().webhooks.constructEvent(payload, signature, config.stripe.webhookSecret);
   } catch (error) {
     logger.error('Failed to construct webhook event:', error);
     throw new AppError('Invalid webhook signature', 400);
