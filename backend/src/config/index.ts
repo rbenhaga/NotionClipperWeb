@@ -119,6 +119,12 @@ export const config: AppConfig = {
  * MUST be called before starting the server
  */
 export async function initializeSecrets(): Promise<void> {
+  // Skip Vault in development - use .env only
+  if (isDevelopment) {
+    console.log('⚠️  Dev mode: Using .env only, skipping Supabase Vault');
+    return;
+  }
+
   try {
     // Dynamically import to avoid circular dependency
     const { getSecrets } = await import('../services/secrets.service.js');

@@ -7,6 +7,7 @@ import ComparisonTable from '../components/ComparisonTable';
 
 export default function PricingPage() {
   const [loading, setLoading] = useState(false);
+  const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'annual'>('monthly');
 
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -18,13 +19,15 @@ export default function PricingPage() {
 
     setLoading(true);
     try {
+      const stripePlan = billingPeriod === 'monthly' ? 'premium_monthly' : 'premium_annual';
+      
       const response = await fetch(`${apiUrl}/stripe/create-checkout-session`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          plan: 'premium_monthly', // Use existing premium plan
+          plan: stripePlan,
         }),
       });
 
@@ -144,6 +147,33 @@ export default function PricingPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-3">Simple, Honest Pricing</h2>
             <p className="text-lg text-gray-600">Try free, upgrade when you need more</p>
+            
+            {/* Billing Period Toggle */}
+            <div className="flex items-center justify-center gap-3 mt-8">
+              <button
+                onClick={() => setBillingPeriod('monthly')}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                  billingPeriod === 'monthly'
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-400'
+                }`}
+              >
+                Mensuel
+              </button>
+              <button
+                onClick={() => setBillingPeriod('annual')}
+                className={`px-6 py-3 rounded-xl font-semibold transition-all relative ${
+                  billingPeriod === 'annual'
+                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-gray-400'
+                }`}
+              >
+                Annuel
+                <span className="ml-2 px-2 py-0.5 bg-green-500 text-white text-xs rounded-full">
+                  -20%
+                </span>
+              </button>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -220,11 +250,24 @@ export default function PricingPage() {
 
               <div className="mb-8">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">$3.99</span>
-                  <span className="text-gray-700">/month</span>
+                  {billingPeriod === 'monthly' ? (
+                    <>
+                      <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">2.99€</span>
+                      <span className="text-gray-700">/mois</span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-5xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">28.68€</span>
+                      <span className="text-gray-700">/an</span>
+                    </>
+                  )}
                 </div>
                 <p className="text-xs text-purple-700 font-medium mt-2">
-                  🔒 Beta price (first 500 users) • Regular $5.99
+                  {billingPeriod === 'monthly' ? (
+                    <>🔒 Prix beta (500 premiers utilisateurs) • Prix normal 5.99€</>
+                  ) : (
+                    <>🔒 2.39€/mois • Économisez 20% • Prix normal 71.88€/an</>
+                  )}
                 </p>
               </div>
 

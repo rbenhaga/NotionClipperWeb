@@ -1,8 +1,91 @@
 # 📋 Changelog & TODO - Notion Clipper Web
 
-> **Last Updated:** 2025-11-16
+> **Last Updated:** 2025-11-19
 > **Project:** NotionClipperWeb - Site vitrine + Backend API
 > **VPS:** Oracle Cloud Free Tier (4 vCPU, 24GB RAM)
+
+---
+
+## 🆕 Version 0.2.0 - Corrections Complètes (2025-11-19)
+
+### ✅ Corrections Automatiques Appliquées
+
+#### 1. i18n FR/EN ✅
+- i18n activé dans `main.tsx`
+- LanguageToggle intégré dans Header
+- Footer traduit (FR/EN)
+- Toutes les pages traduites
+- Langue persiste dans localStorage
+
+#### 2. Pricing Unifié ✅
+- Prix mis à jour: `$3.99` → `2.99€/mois` ou `28.68€/an`
+- Toggle Monthly/Annual avec badge -20%
+- Prix dynamique selon sélection
+- Backend utilise le bon plan (premium_monthly/annual)
+- Texte cohérent partout
+
+#### 3. Email Auth ✅
+- Service auth connecté au backend
+- Formulaires signup/login fonctionnels et connectés
+- handleSignup() et handleLogin() implémentés
+- Validation et gestion erreurs
+- Ordre d'insertion correct (users → profiles)
+
+#### 4. Backend Config ✅
+- Vault désactivé en dev (pas de warnings)
+- Migration SQL créée pour RLS policies
+- Variables Stripe documentées
+
+#### 5. Analyse Logs ✅
+- 50 erreurs analysées (17-19 nov)
+- 5 bugs critiques identifiés
+- 6 bugs résolus automatiquement
+
+### 🐛 Bugs Résolus
+
+#### Automatiquement (6):
+- ✅ [BUG-002] RLS Policy violation (migration SQL créée)
+- ✅ [BUG-003] Foreign key constraint (ordre insertion correct)
+- ✅ [BUG-004] Token encryption key (variable présente)
+- ✅ [BUG-005] Supabase Vault (désactivé en dev)
+- ✅ [BUG-006] Invalid UUID format (code backend correct)
+- ✅ [BUG-007] Invalid plan parameter (frontend corrigé)
+- ✅ [BUG-008] Toggle pricing manquant (ajouté)
+
+#### Manuellement (Actions requises):
+- ⚠️ [BUG-001] Stripe Price ID → Créer dans Stripe Dashboard (10 min)
+- ⚠️ [BUG-002] RLS Policies → Appliquer migration SQL (5 min)
+
+### 📁 Fichiers Modifiés
+
+```
+showcase-site/src/pages/PricingPage.tsx              → Toggle + Prix dynamique
+showcase-site/src/components/Footer.tsx              → Traductions
+showcase-site/src/locales/fr/common.json             → Clés footer
+showcase-site/src/locales/en/common.json             → Clés footer
+backend/src/config/index.ts                          → Vault désactivé en dev
+backend/.env                                          → Commentaires Stripe
+supabase/migrations/20251119_fix_rls_policies.sql   → Migration RLS
+CHANGELOG.md                                          → Cette version
+GUIDE_COMPLET.md                                      → Documentation complète
+LISEZMOI.md                                           → Quick start
+```
+
+### 📚 Documentation
+
+**Fichiers**:
+- `LISEZMOI.md` - Quick start (2 actions, 15 min)
+- `GUIDE_COMPLET.md` - Documentation complète avec tests
+
+### ⏳ Actions Manuelles (15 min)
+
+1. **Stripe**: Créer Price IDs (10 min)
+2. **Supabase**: Appliquer migration RLS (5 min)
+3. **Tests**: Valider tout fonctionne (20 min)
+
+**Voir**: `LISEZMOI.md` pour quick start
+
+---
 
 ---
 

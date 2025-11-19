@@ -13,13 +13,13 @@ export default function Footer() {
           <div className="col-span-1">
             <h3 className="text-sm font-semibold text-gray-900 mb-3">Clipper Pro</h3>
             <p className="text-xs text-gray-600 leading-relaxed">
-              L'outil ultime pour capturer vos idées dans Notion.
+              {t('footer.tagline', 'L\'outil ultime pour capturer vos idées dans Notion.')}
             </p>
           </div>
 
           {/* Product */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Produit</h3>
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('footer.product', 'Produit')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/pricing" className="text-xs text-gray-600 hover:text-gray-900">
@@ -36,21 +36,21 @@ export default function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Légal</h3>
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('footer.legal', 'Légal')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link to="/privacy" className="text-xs text-gray-600 hover:text-gray-900">
-                  Confidentialité
+                  {t('footer.privacy', 'Confidentialité')}
                 </Link>
               </li>
               <li>
                 <Link to="/terms" className="text-xs text-gray-600 hover:text-gray-900">
-                  Conditions d'utilisation
+                  {t('footer.terms', 'Conditions d\'utilisation')}
                 </Link>
               </li>
               <li>
                 <Link to="/legal" className="text-xs text-gray-600 hover:text-gray-900">
-                  Mentions légales
+                  {t('footer.legalNotice', 'Mentions légales')}
                 </Link>
               </li>
             </ul>
@@ -58,11 +58,11 @@ export default function Footer() {
 
           {/* Company */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 mb-3">Entreprise</h3>
+            <h3 className="text-sm font-semibold text-gray-900 mb-3">{t('footer.company', 'Entreprise')}</h3>
             <p className="text-xs text-gray-600">
               Rayane Ben Haga
               <br />
-              <span className="text-gray-500">Entrepreneur</span>
+              <span className="text-gray-500">{t('footer.role', 'Entrepreneur')}</span>
             </p>
           </div>
         </div>
@@ -70,7 +70,7 @@ export default function Footer() {
         {/* Bottom */}
         <div className="pt-8 border-t border-gray-200">
           <p className="text-xs text-gray-500 text-center">
-            © {currentYear} Clipper Pro. Tous droits réservés.
+            © {currentYear} Clipper Pro. {t('footer.rights', 'Tous droits réservés.')}
           </p>
         </div>
       </div>

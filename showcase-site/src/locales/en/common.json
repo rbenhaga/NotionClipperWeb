@@ -29,6 +29,15 @@
     "cancelAnytime": "Cancel anytime"
   },
   "footer": {
+    "tagline": "The ultimate tool to capture your ideas in Notion.",
+    "product": "Product",
+    "legal": "Legal",
+    "company": "Company",
+    "role": "Entrepreneur",
+    "privacy": "Privacy",
+    "terms": "Terms of Service",
+    "legalNotice": "Legal Notice",
+    "rights": "All rights reserved.",
     "copyright": "All rights reserved.",
     "madeWith": "Made with love for Notion users everywhere",
     "links": {
