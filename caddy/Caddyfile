@@ -1,5 +1,5 @@
 # ==============================================
-# Caddy Configuration for Notion Clipper
+# Caddy Configuration for Clipper Pro
 # Modern, simple, HTTPS automatic
 # ==============================================
 
@@ -83,7 +83,7 @@ YOUR_VPS_IP {
 
     # Logs
     log {
-        output file /var/log/caddy/notionclipper-access.log
+        output file /var/log/caddy/clipperpro-access.log
         format json
     }
 }

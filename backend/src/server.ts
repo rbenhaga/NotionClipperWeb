@@ -24,56 +24,56 @@ async function startServer() {
 
   const app = express();
 
-// ============================================
-// MIDDLEWARE
-// ============================================
+  // ============================================
+  // MIDDLEWARE
+  // ============================================
 
-// Security headers
-app.use(helmet());
+  // Security headers
+  app.use(helmet());
 
-// CORS
-app.use(corsMiddleware);
+  // CORS
+  app.use(corsMiddleware);
 
-// Request logging
-app.use(morgan('combined', { stream: morganStream }));
+  // Request logging
+  app.use(morgan('combined', { stream: morganStream }));
 
-// ⚠️ CRITICAL: Webhook routes MUST be mounted BEFORE body parsers
-// Stripe webhooks need raw body for signature verification
-app.use('/api/webhooks', webhookRoutes);
+  // ⚠️ CRITICAL: Webhook routes MUST be mounted BEFORE body parsers
+  // Stripe webhooks need raw body for signature verification
+  app.use('/api/webhooks', webhookRoutes);
 
-// Body parsing (applied to all routes EXCEPT webhooks)
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  // Body parsing (applied to all routes EXCEPT webhooks)
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Rate limiting
-app.use(generalRateLimiter);
+  // Rate limiting
+  app.use(generalRateLimiter);
 
-// ============================================
-// ROUTES
-// ============================================
+  // ============================================
+  // ROUTES
+  // ============================================
 
-// Health check (before rate limiting)
-app.get('/health', (_req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: config.env,
+  // Health check (before rate limiting)
+  app.get('/health', (_req, res) => {
+    res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: config.env,
+    });
   });
-});
 
-// API routes
-app.use('/api', routes);
+  // API routes
+  app.use('/api', routes);
 
-// ============================================
-// ERROR HANDLING
-// ============================================
+  // ============================================
+  // ERROR HANDLING
+  // ============================================
 
-// 404 handler (must be after all routes)
-app.use(notFoundHandler);
+  // 404 handler (must be after all routes)
+  app.use(notFoundHandler);
 
-// Global error handler (must be last)
-app.use(errorHandler);
+  // Global error handler (must be last)
+  app.use(errorHandler);
 
   // ============================================
   // SERVER START
@@ -85,6 +85,10 @@ app.use(errorHandler);
     logger.info(`   URL: http://${config.host}:${config.port}`);
     logger.info(`   Health check: http://${config.host}:${config.port}/health`);
     logger.info(`   API endpoints: http://${config.host}:${config.port}/api`);
+
+    // Log critical configuration status
+    const stripeStatus = config.stripe.prices.monthly && config.stripe.prices.annual ? '✅ Ready' : '❌ Missing Price IDs';
+    logger.info(`   Stripe Config: ${stripeStatus}`);
   });
 
   // Graceful shutdown

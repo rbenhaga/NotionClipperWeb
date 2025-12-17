@@ -1,18 +1,26 @@
 {
   "hero": {
+    "badge": "{{remaining}} places beta · 2,99€/mois à vie",
     "title": {
-      "line1": "Capturez tout",
-      "line2": "dans Notion instantanément"
+      "line1": "Clip vers Notion.",
+      "line2": "Même hors ligne."
     },
-    "subtitle": {
-      "line1": "L'outil ultime pour capturer et organiser vos idées dans Notion.",
-      "line2": "Ultra-rapide, sécurisé et magnifiquement conçu."
-    },
+    "subtitle": "Le clipper officiel échoue hors ligne. Le nôtre met en file d'attente localement et synchronise automatiquement.",
     "cta": {
-      "primary": "Commencer gratuitement",
-      "secondary": "Voir les tarifs"
+      "download": "Télécharger l'App",
+      "extension": "Extension Chrome",
+      "freeTrial": "Ou commencer l'essai gratuit"
     },
-    "trust": "Sécurisé & Privé • Aucune carte bancaire requise"
+    "trust": {
+      "platforms": "macOS, Windows, Linux",
+      "offline": "Fonctionne hors ligne",
+      "free": "Version gratuite disponible"
+    }
+  },
+  "download": {
+    "title": "Télécharger l'App Desktop",
+    "subtitle": "Choisissez votre plateforme",
+    "close": "Fermer"
   },
   "features": {
     "title": "Tout ce dont vous avez besoin",
@@ -46,9 +54,48 @@
     }
   },
   "cta": {
-    "title": "Prêt à commencer?",
-    "subtitle": "Rejoignez des milliers d'utilisateurs qui économisent des heures chaque semaine avec Clipper Pro",
-    "button": "Commencer gratuitement",
-    "trial": "Aucune carte bancaire requise • Essai gratuit de 14 jours"
+    "title": "Prêt à clipper hors ligne ?",
+    "subtitle": "Bloquez 2,99€/mois à vie. Le prix augmente après la beta.",
+    "spotsRemaining": "{{remaining}} places restantes",
+    "download": "Télécharger l'App",
+    "pricing": "Voir les Tarifs",
+    "trust": "Paiement sécurisé · Annulez à tout moment"
+  },
+  "sections": {
+    "features": {
+      "title": "Tout ce qu'il faut pour clipper",
+      "subtitle": "App desktop + extension Chrome. Fonctionne hors ligne. Synchronise partout."
+    },
+    "extension": {
+      "badge": "Extension Chrome",
+      "title": "Clippez depuis votre navigateur",
+      "subtitle": "Clippez n'importe quelle page web, article ou sélection directement vers votre espace Notion. Fonctionne parfaitement avec votre configuration existante.",
+      "features": ["Capture page entière", "Sélection de texte", "Changement rapide de base", "Raccourcis personnalisés"],
+      "cta": "Obtenir l'Extension"
+    },
+    "desktop": {
+      "badge": "App Desktop",
+      "title": "Clippez de n'importe où",
+      "subtitle": "Application native pour macOS, Windows et Linux. Raccourcis globaux, barre système et support hors ligne. Clippez sans ouvrir votre navigateur.",
+      "features": ["Fonctionne hors ligne", "Raccourcis globaux", "Modes Focus & Compact", "Pièces jointes", "Templates"],
+      "cta": "Télécharger l'App"
+    },
+    "howItWorks": {
+      "title": "Simple comme copier-coller",
+      "subtitle": "Trois étapes. Zéro friction.",
+      "steps": [
+        { "title": "Copiez n'importe quoi", "desc": "Texte, images, fichiers" },
+        { "title": "Détection auto", "desc": "Clipper détecte le nouveau contenu" },
+        { "title": "Envoyez vers Notion", "desc": "Sauvegardé en moins de 2 secondes" }
+      ]
+    }
+  },
+  "features": {
+    "offline": { "title": "Fonctionne Hors Ligne", "description": "File d'attente locale, sync au retour en ligne. Ne perdez jamais un clip." },
+    "instant": { "title": "Capture Instantanée", "description": "Un raccourci. Presse-papiers vers Notion en moins de 2 secondes." },
+    "analytics": { "title": "Statistiques d'Usage", "description": "Suivez l'activité, identifiez les tendances, optimisez votre workflow." },
+    "files": { "title": "Pièces Jointes", "description": "Envoyez des fichiers directement vers Notion. Images, PDFs, documents." },
+    "multiselect": { "title": "Multi-sélection & Templates", "description": "Sélectionnez plusieurs bases de données. Utilisez des templates pour clipper rapidement." },
+    "modes": { "title": "Modes Focus & Compact", "description": "Bulle flottante ou interface minimaliste. À vous de choisir." }
   }
 }

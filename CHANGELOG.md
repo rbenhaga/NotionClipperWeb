@@ -1,8 +1,262 @@
-# 📋 Changelog & TODO - Notion Clipper Web
+# 📋 Changelog & TODO - Clipper Pro Web
 
-> **Last Updated:** 2025-11-19
+> **Last Updated:** 2025-12-02
 > **Project:** NotionClipperWeb - Site vitrine + Backend API
 > **VPS:** Oracle Cloud Free Tier (4 vCPU, 24GB RAM)
+
+---
+
+## 🆕 Version 0.2.6 - Audit UI/UX Site Web Complet (2025-12-02)
+
+### ✅ Refonte Design Pages Légales
+
+#### PrivacyPage.tsx
+- Design moderne avec cards et icônes
+- Gradients et animations Framer Motion
+- Support dark mode complet
+- Sections avec icônes (Shield, Lock, Eye, Database, Cookie, Mail)
+
+#### TermsPage.tsx
+- Design cohérent avec le reste du site
+- Cards interactives avec hover effects
+- Icônes pour chaque section (FileText, User, CreditCard, Ban, Scale, AlertTriangle)
+
+#### LegalPage.tsx
+- Même design system que Privacy et Terms
+- Informations structurées en cards
+- Gradients indigo/purple
+
+#### ChangelogPage.tsx
+- Refonte complète avec design premium
+- Timeline avec gradient vertical
+- Badges version avec gradient
+- Support multilingue (FR/EN)
+- Stats cards (commits, mois, lignes de code)
+
+### ✅ Améliorations CSS (index.css)
+
+#### Nouvelles animations
+- `animate-gradient` : Gradient animé pour boutons
+- `animate-shimmer` : Effet shimmer
+- `animate-pulse-glow` : Pulse avec glow
+- `animate-float` : Animation flottante
+
+#### Nouveaux effets
+- `.card-premium` : Card avec bordure gradient
+- `.btn-premium` : Bouton avec gradient animé
+- `.glass-premium` : Glass morphism amélioré
+- `.orb-purple/blue/pink` : Orbes de fond
+- `.divider-gradient` : Séparateur avec gradient
+- `.scrollbar-premium` : Scrollbar stylisée
+- `.badge-gradient` : Badge avec gradient
+- `.section-glow` : Section avec glow
+
+### 📁 Fichiers Modifiés
+- `showcase-site/src/pages/PrivacyPage.tsx` (refonte complète)
+- `showcase-site/src/pages/TermsPage.tsx` (refonte complète)
+- `showcase-site/src/pages/LegalPage.tsx` (refonte complète)
+- `showcase-site/src/pages/ChangelogPage.tsx` (refonte complète)
+- `showcase-site/src/styles/index.css` (animations et effets premium)
+
+---
+
+## 🆕 Version 0.2.5 - Audit UI/UX Complet (2025-12-02)
+
+### ✅ Traductions Complètes
+
+#### common.json (EN/FR)
+- **hero** : badge, title1, title2, subtitle, subtitleError, cta, ctaSecondary
+- **features** : offline, instant, analytics (title + description)
+- **howItWorks** : badge, title, subtitle, step1-3
+- **showcase** : badge, title, subtitle, placeholder
+- **comparison** : title, subtitle
+- **cta** : title, subtitle, button, buttonSecondary, trust
+- **trust** : freeTrial, secure, cancelAnytime
+- **buttons** : loading
+- **footer** : tagline, product, legal, company, privacy, terms, legalNotice, role, rights, madeWith
+- **activity** : title, subtitle, export, totalClips, totalFiles, timeSaved, streak, trend, activityChart, insights, history
+
+### ✅ Backend API
+
+#### Endpoint Beta Spots
+- **GET /api/stripe/beta-spots** : Récupère le nombre réel d'abonnés depuis Stripe
+- Compte les abonnements `active` + `trialing`
+- Calcule les places restantes sur 500
+
+### ✅ Améliorations UI/UX
+
+#### ComparisonTable
+- Supprimé les ratings Chrome Web Store
+- Supprimé la légende "Ready/Soon/Planned"
+- Design plus épuré et professionnel
+
+#### PricingPage
+- Compteur de places beta dynamique (API Stripe)
+- Indicateur vert animé pour les places restantes
+- Subtitle amélioré avec mention des fonctionnalités complètes
+
+### 📁 Fichiers Modifiés
+- `backend/src/controllers/stripe.controller.ts` (getBetaSpots)
+- `backend/src/routes/stripe.routes.ts`
+- `showcase-site/src/components/ComparisonTable.tsx`
+- `showcase-site/src/pages/PricingPage.tsx`
+- `showcase-site/src/locales/en/common.json`
+- `showcase-site/src/locales/fr/common.json`
+- `showcase-site/src/locales/en/pricing.json`
+- `showcase-site/src/locales/fr/pricing.json`
+
+---
+
+## 🆕 Version 0.2.4 - UI/UX Improvements (2025-12-02)
+
+### ✅ Améliorations Design
+
+#### Site Web
+- **Settings** : Affiche le nom utilisateur au lieu de "User"
+- **Pricing** : Ajout compteur de places beta restantes (347/500)
+- **Traductions** : Nouvelles clés auth (finalizingAuth, loadingWorkspace, etc.)
+
+#### Application Desktop
+- **Premium CSS** : Nouveau fichier `premium.css` avec gradients, glows, animations
+- **QuotaIndicator** : Redesign avec gradient progress bar et prix beta
+- **UpgradeModal** : Design premium avec orbes animés, prix beta 2.99€, places restantes
+- **BETA_PRICING** : Nouvelle config avec prix, places restantes, messages
+
+### 📁 Fichiers Créés
+- `packages/ui/src/styles/premium.css`
+
+### 📁 Fichiers Modifiés
+- `packages/core-shared/src/config/subscription.config.ts` (BETA_PRICING)
+- `packages/ui/src/components/QuotaIndicator.tsx`
+- `packages/ui/src/components/subscription/UpgradeModal.tsx`
+- `packages/ui/src/styles/index.css`
+- `showcase-site/src/pages/SettingsPage.tsx`
+- `showcase-site/src/pages/PricingPage.tsx`
+- `showcase-site/src/locales/*/auth.json`
+- `showcase-site/src/locales/*/pricing.json`
+
+---
+
+## 🆕 Version 0.2.3 - Simplification Auth (2025-12-02)
+
+### ✅ Suppression de l'authentification Email
+
+#### Changements
+- **Supprimé** : Inscription/connexion par email+password
+- **Supprimé** : Pages forgot-password et reset-password
+- **Conservé** : OAuth Google + OAuth Notion uniquement
+
+#### Raison
+- L'app nécessite Notion de toute façon
+- Simplifie le code et la maintenance
+- Moins de surface d'attaque (pas de gestion de mots de passe)
+
+#### Flux d'authentification simplifié
+1. **Notion OAuth** : Inscription + connexion Notion en une étape
+2. **Google OAuth** : Inscription puis connexion Notion dans les settings
+
+### 📁 Fichiers Modifiés
+- `showcase-site/src/pages/AuthPage.tsx` (simplifié, OAuth only)
+- `showcase-site/src/App.tsx` (routes email supprimées)
+- `backend/src/routes/auth.routes.ts` (endpoints email supprimés)
+- `backend/src/controllers/auth.controller.ts` (fonctions email supprimées)
+
+### ⚠️ Pour supprimer les données email de Supabase
+```sql
+-- Optionnel: Supprimer les utilisateurs qui se sont inscrits par email
+-- DELETE FROM user_profiles WHERE auth_provider = 'email';
+
+-- Mettre à jour la contrainte pour n'autoriser que google/notion
+ALTER TABLE public.user_profiles DROP CONSTRAINT IF EXISTS check_auth_provider;
+ALTER TABLE public.user_profiles ADD CONSTRAINT check_auth_provider
+  CHECK (auth_provider IN ('google', 'notion'));
+```
+
+---
+
+## 🆕 Version 0.2.2 - Notion Email Collection (2025-12-02)
+
+### ✅ Notion OAuth - Collecte d'email si non fourni
+
+#### Problème
+- Notion OAuth ne fournit pas toujours l'email de l'utilisateur
+
+#### Solution
+- Si Notion fournit l'email → création directe du compte
+- Si pas d'email → redirection vers `/auth/email` pour le collecter
+- **Nouvelle page `/auth/email`** : Demande l'email après OAuth Notion
+- **Nouvelle page `/auth/verify-notion`** : Finalise l'inscription après vérification
+- **Table `pending_notion_registrations`** : Stocke temporairement les données OAuth
+- **Endpoints backend** :
+  - `POST /api/auth/notion/complete` : Initie la vérification email
+  - `POST /api/auth/notion/finalize` : Finalise après vérification
+
+#### 3. Flux Notion OAuth Corrigé
+1. User clique "Continue with Notion"
+2. Notion OAuth callback → pas d'email
+3. Redirect vers `/auth/email?workspace=xxx`
+4. User entre son email
+5. Email de vérification envoyé
+6. User clique le lien → `/auth/verify-notion?workspace=xxx`
+7. Compte créé avec email vérifié
+8. Redirect vers dashboard ou app
+
+#### 4. Flash AuthPage Corrigé
+- `isCheckingAuth` initialisé à `true` pour `source=app`
+- Loading screen affiché pendant la vérification
+- Pas de flash de la page d'auth
+
+### 📁 Fichiers Créés
+- `showcase-site/src/pages/NotionEmailPage.tsx`
+- `showcase-site/src/pages/VerifyNotionPage.tsx`
+- `supabase/migrations/20251202000001_pending_notion_registrations.sql`
+
+### 📁 Fichiers Modifiés
+- `showcase-site/src/App.tsx` (nouvelles routes)
+- `showcase-site/src/pages/AuthPage.tsx` (fix flash)
+- `backend/src/controllers/auth.controller.ts` (nouveaux endpoints)
+- `backend/src/routes/auth.routes.ts` (nouvelles routes)
+- `backend/src/config/database.ts` (fonctions pending registrations)
+
+### ⚠️ ACTION REQUISE
+Exécuter la migration dans Supabase Dashboard :
+```sql
+-- Voir fichier: supabase/migrations/20251202000001_pending_notion_registrations.sql
+```
+
+---
+
+## 🆕 Version 0.2.1 - Corrections OAuth Flow (2025-12-01)
+
+### ✅ Corrections OAuth
+
+#### 1. Contrainte DB `check_auth_provider`
+- Migration `20251201000007_fix_auth_provider_constraint.sql` créée
+- Ajoute 'email' aux valeurs autorisées (google, notion, email)
+- **⚠️ ACTION REQUISE**: Exécuter dans Supabase Dashboard:
+```sql
+ALTER TABLE public.user_profiles DROP CONSTRAINT IF EXISTS check_auth_provider;
+ALTER TABLE public.user_profiles ADD CONSTRAINT check_auth_provider
+  CHECK (auth_provider IN ('google', 'notion', 'email'));
+```
+
+#### 2. Vérification Token Expiré
+- `AuthPage.tsx` vérifie maintenant l'expiration du token (`exp` claim)
+- Si token expiré → supprimé et page d'auth affichée
+
+#### 3. Erreurs OAuth via Deep Link
+- Backend redirige les erreurs via deep link pour `source=app`
+- Format: `notion-clipper://auth/callback?error=xxx`
+- Erreurs affichées dans l'app desktop (ex: workspace déjà utilisé)
+
+#### 4. Logs Debug Google OAuth
+- Ajouté logs dans `getGoogleUserInfo()` pour tracer name/picture
+
+### 📁 Fichiers Modifiés
+- `showcase-site/src/pages/AuthPage.tsx`
+- `backend/src/controllers/auth.controller.ts`
+- `backend/src/services/auth.service.ts`
+- `supabase/migrations/20251201000007_fix_auth_provider_constraint.sql`
 
 ---
 
@@ -91,7 +345,7 @@ LISEZMOI.md                                           → Quick start
 
 ## 🎯 Vision du Projet
 
-Créer un site vitrine et un backend de niveau **Apple/Notion** pour Notion Clipper :
+Créer un site vitrine et un backend de niveau **Apple/Notion** pour Clipper Pro :
 - Design **élégant, minimaliste, professionnel**
 - UX/UI **fluide et intuitive**
 - Code **production-ready, sécurisé, performant**

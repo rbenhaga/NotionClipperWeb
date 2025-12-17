@@ -40,6 +40,23 @@ export const trackUsage = asyncHandler(
 
     logger.info(`[track-usage] Tracking ${feature} for user ${userId}, increment: ${increment}`);
 
+    // 🔧 FIX: Ensure user exists in user_profiles before tracking
+    // This prevents FK constraint violations on usage_events
+    try {
+      const existingUser = await db.getUserById(userId);
+      if (!existingUser) {
+        logger.info(`[track-usage] User ${userId} not found in user_profiles, creating placeholder`);
+        await db.upsertUser({
+          id: userId,
+          email: `user-${userId.substring(0, 8)}@placeholder.local`,
+          auth_provider: 'notion', // Default to notion since most users come from there
+        });
+      }
+    } catch (userError) {
+      logger.warn(`[track-usage] Could not ensure user exists: ${userError}`);
+      // Continue anyway - the subscription check will handle missing users
+    }
+
     // Get or create subscription
     const subscription = await db.getSubscription(userId);
 
@@ -78,9 +95,15 @@ export const trackUsage = asyncHandler(
 
         logger.info('[track-usage] Usage event logged successfully');
       } catch (eventError) {
-        logger.error('[track-usage] Failed to log usage event:', eventError);
-        // Don't fail the request if event logging fails
+        // 🔧 FIX: Log error but don't fail the main tracking operation
+        // The usage counter was already incremented, event logging is secondary
+        logger.error('[track-usage] Failed to log usage event (non-blocking):', eventError);
       }
+    }
+
+    // 🔧 FIX: Return error if usage record wasn't created
+    if (!usageRecord) {
+      throw new AppError('Failed to track usage - no usage record created', 500);
     }
 
     sendSuccess(res, {

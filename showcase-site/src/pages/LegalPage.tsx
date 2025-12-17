@@ -1,283 +1,192 @@
 import { useTranslation } from 'react-i18next';
+import { motion } from 'framer-motion';
+import { Building, Server, Copyright, Cookie, Link2, Gavel } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { containerVariants, itemVariants } from '../lib/animations';
 
 export default function LegalPage() {
   const { i18n } = useTranslation();
   const isFrench = i18n.language === 'fr';
 
+  const sections = isFrench ? [
+    {
+      icon: Building,
+      title: '1. Éditeur du site',
+      items: [
+        { label: 'Raison sociale', value: 'Rayane Ben Haga (Entrepreneur individuel)' },
+        { label: 'Responsable de publication', value: 'Rayane Ben Haga' },
+        { label: 'E-mail', value: 'contact@clipperpro.app' },
+        { label: 'Site web', value: 'https://clipperpro.app' }
+      ]
+    },
+    {
+      icon: Server,
+      title: '2. Hébergement',
+      items: [
+        { label: 'Hébergeur', value: 'Oracle Cloud Infrastructure' },
+        { label: 'Adresse', value: 'Oracle Corporation, 500 Oracle Parkway, Redwood City, CA 94065, USA' },
+        { label: 'Site web', value: 'https://www.oracle.com/cloud/' }
+      ]
+    },
+    {
+      icon: Copyright,
+      title: '3. Propriété intellectuelle',
+      content: 'L\'ensemble du contenu de ce site (textes, images, vidéos, code source, design) est la propriété exclusive de Rayane Ben Haga. "Clipper Pro" est une marque déposée.'
+    },
+    {
+      icon: Cookie,
+      title: '4. Cookies',
+      content: 'Ce site utilise des cookies essentiels : cookies de session (authentification), cookies de préférence (langue, thème), et cookies analytiques (anonymisés).'
+    },
+    {
+      icon: Link2,
+      title: '5. Liens hypertextes',
+      content: 'Ce site peut contenir des liens vers des sites externes. L\'éditeur n\'a aucun contrôle sur le contenu de ces sites et décline toute responsabilité.'
+    },
+    {
+      icon: Gavel,
+      title: '6. Droit applicable',
+      content: 'Ces mentions légales sont régies par le droit français. Tout litige sera soumis à la compétence exclusive des tribunaux français.'
+    }
+  ] : [
+    {
+      icon: Building,
+      title: '1. Site Publisher',
+      items: [
+        { label: 'Company', value: 'Rayane Ben Haga (Sole Proprietor)' },
+        { label: 'Publication Director', value: 'Rayane Ben Haga' },
+        { label: 'Email', value: 'contact@clipperpro.app' },
+        { label: 'Website', value: 'https://clipperpro.app' }
+      ]
+    },
+    {
+      icon: Server,
+      title: '2. Hosting',
+      items: [
+        { label: 'Host', value: 'Oracle Cloud Infrastructure' },
+        { label: 'Address', value: 'Oracle Corporation, 500 Oracle Parkway, Redwood City, CA 94065, USA' },
+        { label: 'Website', value: 'https://www.oracle.com/cloud/' }
+      ]
+    },
+    {
+      icon: Copyright,
+      title: '3. Intellectual Property',
+      content: 'All content on this site (text, images, videos, source code, design) is the exclusive property of Rayane Ben Haga. "Clipper Pro" is a registered trademark.'
+    },
+    {
+      icon: Cookie,
+      title: '4. Cookies',
+      content: 'This site uses essential cookies: session cookies (authentication), preference cookies (language, theme), and analytics cookies (anonymized).'
+    },
+    {
+      icon: Link2,
+      title: '5. Hyperlinks',
+      content: 'This site may contain links to external sites. The publisher has no control over the content of these sites and disclaims all responsibility.'
+    },
+    {
+      icon: Gavel,
+      title: '6. Governing Law',
+      content: 'These legal notices are governed by French law. Any disputes will be subject to the exclusive jurisdiction of French courts.'
+    }
+  ];
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
       <Header />
 
-      <div className="pt-24 pb-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-16 px-6 overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl" />
+
+        <motion.div
+          className="max-w-4xl mx-auto text-center relative z-10"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={itemVariants} className="flex justify-center mb-6">
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <Gavel className="w-8 h-8 text-white" />
+            </div>
+          </motion.div>
+
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl sm:text-6xl font-bold mb-4 text-gray-900 dark:text-white"
+          >
             {isFrench ? 'Mentions Légales' : 'Legal Notice'}
-          </h1>
-          <p className="text-sm text-gray-500 mb-10">
+          </motion.h1>
+
+          <motion.p variants={itemVariants} className="text-lg text-gray-600 dark:text-gray-400">
             {isFrench ? 'Dernière mise à jour : ' : 'Last updated: '}
             {new Date().toLocaleDateString(isFrench ? 'fr-FR' : 'en-US')}
-          </p>
+          </motion.p>
+        </motion.div>
+      </section>
 
-          <div className="prose prose-gray max-w-none">
-            {isFrench ? (
-              <>
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Éditeur du site</h2>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Raison sociale :</strong> Rayane Ben Haga (Entrepreneur individuel)
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Responsable de publication :</strong> Rayane Ben Haga
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>E-mail :</strong> contact@notionclipper.com
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Site web :</strong> https://notionclipper.com
-                  </p>
-                </section>
+      {/* Content */}
+      <section className="pb-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            className="space-y-6"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            {sections.map((section, index) => (
+              <motion.div
+                key={index}
+                variants={itemVariants}
+                className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6 hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <section.icon className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  </div>
+                  <div className="flex-1">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                      {section.title}
+                    </h2>
+                    {section.items ? (
+                      <div className="space-y-2">
+                        {section.items.map((item, i) => (
+                          <p key={i} className="text-sm text-gray-600 dark:text-gray-400">
+                            <span className="font-medium text-gray-900 dark:text-white">{item.label} :</span>{' '}
+                            {item.value}
+                          </p>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                        {section.content}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
 
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Hébergement</h2>
-                  <p className="text-gray-700 mb-4">
-                    Le site Clipper Pro est hébergé par :
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Hébergeur :</strong> Oracle Cloud Infrastructure
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Adresse :</strong> Oracle Corporation, 500 Oracle Parkway, Redwood City, CA 94065, USA
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Site web :</strong> https://www.oracle.com/cloud/
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Propriété intellectuelle</h2>
-                  <p className="text-gray-700 mb-4">
-                    L'ensemble du contenu de ce site (textes, images, vidéos, code source, design) est la propriété
-                    exclusive de Rayane Ben Haga, sauf mention contraire.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    Toute reproduction, distribution, modification ou exploitation non autorisée du contenu est strictement interdite
-                    et peut faire l'objet de poursuites judiciaires.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    <strong>Marques :</strong> "Clipper Pro" et "NotionClipper" sont des marques de Rayane Ben Haga.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Données personnelles (RGPD)</h2>
-                  <p className="text-gray-700 mb-4">
-                    Conformément au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés,
-                    vous disposez d'un droit d'accès, de rectification, de suppression et d'opposition aux données vous concernant.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    Pour exercer ces droits, veuillez nous contacter à : <strong>privacy@notionclipper.com</strong>
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    Pour plus d'informations, consultez notre <a href="/privacy" className="text-gray-900 underline">Politique de Confidentialité</a>.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Cookies</h2>
-                  <p className="text-gray-700 mb-4">
-                    Ce site utilise des cookies essentiels pour assurer son bon fonctionnement :
-                  </p>
-                  <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                    <li>Cookies de session (authentification)</li>
-                    <li>Cookies de préférence (langue, thème)</li>
-                    <li>Cookies analytiques (anonymisés)</li>
-                  </ul>
-                  <p className="text-gray-700 mb-4 mt-4">
-                    Vous pouvez désactiver les cookies dans les paramètres de votre navigateur, mais certaines fonctionnalités
-                    du site pourraient ne plus fonctionner correctement.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">6. Responsabilité</h2>
-                  <p className="text-gray-700 mb-4">
-                    L'éditeur s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées sur ce site,
-                    mais ne peut garantir l'exactitude, la précision ou l'exhaustivité des informations mises à disposition.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    L'éditeur ne pourra être tenu responsable :
-                  </p>
-                  <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                    <li>Des erreurs ou omissions dans le contenu</li>
-                    <li>De l'indisponibilité temporaire ou définitive du service</li>
-                    <li>Des dommages directs ou indirects résultant de l'utilisation du site</li>
-                    <li>Du contenu des sites externes liés</li>
-                  </ul>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Liens hypertextes</h2>
-                  <p className="text-gray-700 mb-4">
-                    Ce site peut contenir des liens vers des sites externes. L'éditeur n'a aucun contrôle sur le contenu
-                    de ces sites et décline toute responsabilité quant à leur contenu.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    La création de liens vers ce site est autorisée sous réserve de ne pas porter atteinte à l'image de Clipper Pro.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Droit applicable</h2>
-                  <p className="text-gray-700 mb-4">
-                    Les présentes mentions légales sont régies par le droit français. Tout litige relatif à l'utilisation
-                    du site sera soumis à la compétence exclusive des tribunaux français.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. Contact</h2>
-                  <p className="text-gray-700 mb-4">
-                    Pour toute question concernant ces mentions légales :
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>E-mail :</strong> legal@notionclipper.com
-                    <br />
-                    <strong>Site web :</strong> https://notionclipper.com
-                  </p>
-                </section>
-              </>
-            ) : (
-              <>
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">1. Site Publisher</h2>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Company:</strong> Rayane Ben Haga (Sole Proprietor)
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Publication Director:</strong> Rayane Ben Haga
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Email:</strong> contact@notionclipper.com
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Website:</strong> https://notionclipper.com
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">2. Hosting</h2>
-                  <p className="text-gray-700 mb-4">
-                    The Clipper Pro site is hosted by:
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Host:</strong> Oracle Cloud Infrastructure
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Address:</strong> Oracle Corporation, 500 Oracle Parkway, Redwood City, CA 94065, USA
-                  </p>
-                  <p className="text-gray-700 mb-2">
-                    <strong>Website:</strong> https://www.oracle.com/cloud/
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">3. Intellectual Property</h2>
-                  <p className="text-gray-700 mb-4">
-                    All content on this site (text, images, videos, source code, design) is the exclusive property
-                    of Rayane Ben Haga, unless otherwise stated.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    Any unauthorized reproduction, distribution, modification or exploitation of the content is strictly prohibited
-                    and may result in legal action.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    <strong>Trademarks:</strong> "Clipper Pro" and "NotionClipper" are trademarks of Rayane Ben Haga.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">4. Personal Data (GDPR)</h2>
-                  <p className="text-gray-700 mb-4">
-                    In accordance with the General Data Protection Regulation (GDPR), you have the right to access,
-                    rectify, delete and object to data concerning you.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    To exercise these rights, please contact us at: <strong>privacy@notionclipper.com</strong>
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    For more information, see our <a href="/privacy" className="text-gray-900 underline">Privacy Policy</a>.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">5. Cookies</h2>
-                  <p className="text-gray-700 mb-4">
-                    This site uses essential cookies to ensure proper functioning:
-                  </p>
-                  <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                    <li>Session cookies (authentication)</li>
-                    <li>Preference cookies (language, theme)</li>
-                    <li>Analytics cookies (anonymized)</li>
-                  </ul>
-                  <p className="text-gray-700 mb-4 mt-4">
-                    You can disable cookies in your browser settings, but some site features may no longer work properly.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">6. Liability</h2>
-                  <p className="text-gray-700 mb-4">
-                    The publisher strives to ensure the accuracy and updating of information on this site,
-                    but cannot guarantee the accuracy, precision or completeness of the information provided.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    The publisher cannot be held responsible for:
-                  </p>
-                  <ul className="list-disc pl-6 text-gray-700 space-y-2">
-                    <li>Errors or omissions in content</li>
-                    <li>Temporary or permanent unavailability of the service</li>
-                    <li>Direct or indirect damages resulting from site use</li>
-                    <li>Content of linked external sites</li>
-                  </ul>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">7. Hyperlinks</h2>
-                  <p className="text-gray-700 mb-4">
-                    This site may contain links to external sites. The publisher has no control over the content
-                    of these sites and disclaims all responsibility for their content.
-                  </p>
-                  <p className="text-gray-700 mb-4">
-                    Creating links to this site is authorized provided it does not harm the image of Clipper Pro.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">8. Governing Law</h2>
-                  <p className="text-gray-700 mb-4">
-                    These legal notices are governed by French law. Any dispute relating to the use of the site
-                    will be subject to the exclusive jurisdiction of French courts.
-                  </p>
-                </section>
-
-                <section className="mb-8">
-                  <h2 className="text-2xl font-semibold text-gray-900 mb-4">9. Contact</h2>
-                  <p className="text-gray-700 mb-4">
-                    For any questions regarding these legal notices:
-                  </p>
-                  <p className="text-gray-700">
-                    <strong>Email:</strong> legal@notionclipper.com
-                    <br />
-                    <strong>Website:</strong> https://notionclipper.com
-                  </p>
-                </section>
-              </>
-            )}
-          </div>
+            {/* Contact Section */}
+            <motion.div
+              variants={itemVariants}
+              className="bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800 p-6"
+            >
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                {isFrench ? 'Contact' : 'Contact'}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400">
+                {isFrench ? 'Pour toute question : ' : 'For any questions: '}
+                <a href="mailto:legal@clipperpro.app" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
+                  legal@clipperpro.app
+                </a>
+              </p>
+            </motion.div>
+          </motion.div>
         </div>
-      </div>
+      </section>
 
       <Footer />
     </div>

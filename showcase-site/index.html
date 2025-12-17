@@ -5,30 +5,68 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary Meta Tags -->
-    <title>Clipper Pro - Capturez tout dans Notion instantanément</title>
-    <meta name="title" content="Clipper Pro - Capturez tout dans Notion instantanément" />
-    <meta name="description" content="L'outil ultime pour capturer et organiser vos idées dans Notion. Ultra-rapide, sécurisé et magnifiquement conçu." />
+    <!-- Primary Meta Tags - Optimized for conversion -->
+    <title>Clipper Pro - Clip anything to Notion. Instantly.</title>
+    <meta name="title" content="Clipper Pro - Clip anything to Notion. Instantly." />
+    <meta name="description" content="Browser extension + desktop app. 180ms average. €2.99/month. The Notion clipper that actually works." />
+    <meta name="keywords" content="notion clipper, web clipper notion, save to notion, notion extension, clip to notion, notion web clipper alternative" />
+    <link rel="canonical" href="https://clipperpro.app/" />
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://notionclipper.com/" />
-    <meta property="og:title" content="Clipper Pro - Capturez tout dans Notion instantanément" />
-    <meta property="og:description" content="L'outil ultime pour capturer et organiser vos idées dans Notion. Ultra-rapide, sécurisé et magnifiquement conçu." />
-    <meta property="og:image" content="https://notionclipper.com/og-image.png" />
+    <meta property="og:url" content="https://clipperpro.app/" />
+    <meta property="og:title" content="Clipper Pro - Clip anything to Notion instantly" />
+    <meta property="og:description" content="Browser extension + desktop app. 180ms average. €2.99/month. 63% cheaper than alternatives." />
+    <meta property="og:image" content="https://clipperpro.app/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="Clipper Pro" />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://notionclipper.com/" />
-    <meta property="twitter:title" content="Clipper Pro - Capturez tout dans Notion instantanément" />
-    <meta property="twitter:description" content="L'outil ultime pour capturer et organiser vos idées dans Notion. Ultra-rapide, sécurisé et magnifiquement conçu." />
-    <meta property="twitter:image" content="https://notionclipper.com/og-image.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:url" content="https://clipperpro.app/" />
+    <meta name="twitter:title" content="Clipper Pro - Clip anything to Notion" />
+    <meta name="twitter:description" content="Browser extension + desktop app. 180ms average. €2.99/month." />
+    <meta name="twitter:image" content="https://clipperpro.app/twitter-card.jpg" />
+    <meta name="twitter:creator" content="@clipperpro" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Google Analytics 4 - Replace G-XXXXXXXXXX with your ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-XXXXXXXXXX');
+    </script>
+
+    <!-- Microsoft Clarity - Uncomment and replace YOUR_PROJECT_ID when ready
+    <script type="text/javascript">
+      (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+      })(window, document, "clarity", "script", "YOUR_PROJECT_ID");
+    </script>
+    -->
   </head>
   <body>
+    <!-- Theme initialization script (prevents flash) - Default to light mode -->
+    <script>
+      (function() {
+        // Only use dark mode if explicitly set by user
+        const darkMode = localStorage.getItem('darkMode');
+        if (darkMode === 'true') {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

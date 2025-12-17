@@ -1,51 +1,356 @@
 {
-  "brand": {
-    "name": "Clipper Pro",
-    "tagline": "Capturez tout, instantanément dans Notion"
-  },
   "nav": {
     "home": "Accueil",
-    "features": "Fonctionnalités",
     "pricing": "Tarifs",
+    "compare": "Comparer",
+    "changelog": "Changelog",
+    "dashboard": "Tableau de bord",
+    "account": "Compte",
     "login": "Connexion",
-    "getStarted": "Commencer"
+    "start": "Commencer",
+    "upgrade": "Upgrade",
+    "getStarted": "Pro"
   },
-  "buttons": {
-    "getStarted": "Commencer gratuitement",
-    "viewPricing": "Voir les tarifs",
-    "backToHome": "Retour à l'accueil",
-    "signIn": "Se connecter",
-    "signUp": "S'inscrire",
+  "common": {
     "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
     "cancel": "Annuler",
     "save": "Enregistrer",
-    "continue": "Continuer"
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Soumettre",
+    "confirm": "Confirmer",
+    "logout": "Se déconnecter"
+  },
+  "auth": {
+    "login": "Se connecter",
+    "signup": "S'inscrire",
+    "email": "Email",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "rememberMe": "Se souvenir de moi",
+    "loginWithGoogle": "Continuer avec Google",
+    "loginWithNotion": "Continuer avec Notion",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "dontHaveAccount": "Vous n'avez pas de compte ?",
+    "createAccount": "Créer un compte"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bon retour",
+    "overview": "Aperçu",
+    "nav": {
+      "menu": "Menu",
+      "overview": "Aperçu",
+      "activity": "Activité",
+      "billing": "Facturation",
+      "settings": "Paramètres",
+      "links": "Liens rapides",
+      "website": "Visiter le site",
+      "switchTo": "Passer en",
+      "language": "Langue"
+    },
+    "stats": {
+      "totalClips": "Clips totaux",
+      "thisMonth": "Ce mois-ci",
+      "storage": "Stockage utilisé",
+      "subscription": "Abonnement",
+      "clipsUsed": "clips utilisés ce mois",
+      "clipsLimit": "limite",
+      "unlimited": "Vous avez un accès illimité à toutes les fonctionnalités.",
+      "renews": "Renouvellement",
+      "ends": "Fin",
+      "trialEnds": "Fin de l'essai"
+    },
+    "premium": {
+      "title": "Vos fonctionnalités Premium",
+      "subtitle": "Débloquez tout le potentiel de Clipper Pro",
+      "clipboardCapture": "Capture du presse-papiers",
+      "clipboardCaptureDesc": "Capturez instantanément texte, images et liens vers Notion",
+      "chromeExtension": "Extension Chrome",
+      "chromeExtensionDesc": "Sauvegardez du contenu web directement depuis votre navigateur",
+      "offlineMode": "Mode hors ligne",
+      "offlineModeDesc": "Mettez en file d'attente localement et synchronisez une fois en ligne",
+      "desktopApp": "Application de bureau",
+      "desktopAppDesc": "Application native pour macOS et Windows",
+      "active": "Actif",
+      "comingSoon": "Bientôt",
+      "thankYou": "Merci d'être membre Premium !",
+      "thankYouDesc": "Vous soutenez le développement de Clipper Pro. De nouvelles fonctionnalités arrivent bientôt !",
+      "unlimitedClips": "Clips illimités",
+      "unlimitedFiles": "Fichiers illimités",
+      "prioritySupport": "Support prioritaire",
+      "earlyAccess": "Accès anticipé"
+    },
+    "free": {
+      "availableFeatures": "Fonctionnalités disponibles",
+      "upgradeTitle": "Passer à Premium",
+      "upgradeDesc": "Obtenez des clips illimités, un support prioritaire et un accès anticipé aux nouvelles fonctionnalités. Bloquez 2,99$/mois à vie en tant qu'early adopter.",
+      "upgradeNow": "Mettre à niveau",
+      "processing": "Traitement...",
+      "limitedOffer": "Offre limitée"
+    },
+    "status": {
+      "premium": "Premium",
+      "free": "Plan Gratuit",
+      "canceling": "Annulation",
+      "active": "Actif",
+      "trial": "Essai"
+    }
+  },
+  "billing": {
+    "title": "Facturation",
+    "subtitle": "Gérez votre abonnement et vos informations de facturation.",
+    "currentPlan": "Plan actuel",
+    "premiumPlan": "Plan Premium",
+    "premiumCanceling": "Premium (Annulation)",
+    "freePlan": "Plan Gratuit",
+    "planFeatures": "Fonctionnalités du plan",
+    "paymentMethod": "Moyen de paiement",
+    "manage": "Gérer",
+    "manageSubscription": "Gérer l'abonnement",
+    "managedViaStripe": "Géré via Stripe",
+    "clickManage": "Cliquez sur Gérer pour voir les détails",
+    "expires": "Expire",
+    "noPaymentMethod": "Aucun moyen de paiement ajouté.",
+    "upgradeToAdd": "Passez à Premium pour ajouter un moyen de paiement.",
+    "upgradeToPro": "Passer à Pro",
+    "upgradeDescription": "Obtenez des clips illimités, un support prioritaire et des fonctionnalités avancées.",
+    "upgradeNow": "Mettre à niveau",
+    "processing": "Traitement...",
+    "betaPrice": "Prix Bêta",
+    "lockedForever": "Prix bloqué à vie • Rég. 5,99$",
+    "trial14days": "14 jours d'essai gratuit",
+    "securePayment": "Paiement sécurisé",
+    "cancelAnytime": "Annulez à tout moment",
+    "reactivate": "Réactiver l'abonnement",
+    "renewsOn": "Renouvellement le {{date}}",
+    "cancelingOn": "Votre abonnement se termine le {{date}}",
+    "trialEnds": "Votre essai se termine le {{date}}",
+    "freeDescription": "Vous êtes actuellement sur le plan gratuit.",
+    "premiumActive": "Premium Actif",
+    "trialActive": "Essai Actif",
+    "subscriptionEnding": "Abonnement en fin",
+    "cancelingDescription": "Votre accès se terminera à la fin de la période de facturation.",
+    "trialDescription": "Profitez de votre essai gratuit avec toutes les fonctionnalités Premium.",
+    "premiumDescription": "Merci d'être abonné Premium !",
+    "endsOn": "Se termine le",
+    "trialEndsOn": "Fin de l'essai",
+    "nextBilling": "Prochaine facturation",
+    "status": {
+      "label": "Statut",
+      "active": "Actif",
+      "canceling": "Annulation",
+      "trial": "Essai",
+      "free": "Gratuit"
+    },
+    "cancelWarning": {
+      "title": "Votre abonnement est programmé pour être annulé",
+      "description": "Vous perdrez l'accès aux fonctionnalités Premium après la période de facturation actuelle. Vous pouvez réactiver à tout moment."
+    },
+    "trial": {
+      "title": "Vous êtes en période d'essai gratuit",
+      "description": "Profitez de toutes les fonctionnalités Premium pendant votre période d'essai. Votre carte sera débitée à la fin de l'essai."
+    },
+    "features": {
+      "unlimitedClips": "Clips illimités",
+      "unlimitedFiles": "Fichiers illimités",
+      "prioritySupport": "Support prioritaire",
+      "offlineMode": "Mode hors ligne (bientôt)",
+      "freeClips": "100 clips par mois",
+      "freeFiles": "10 fichiers par mois",
+      "communitySupport": "Support communautaire"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez vos préférences de compte",
+    "profile": {
+      "title": "Profil",
+      "description": "Vos informations de compte"
+    },
+    "workspaces": {
+      "title": "Espaces Notion",
+      "description": "Gérez vos espaces Notion connectés",
+      "addNew": "Ajouter un espace",
+      "default": "Par défaut",
+      "lastUsed": "Dernière utilisation : {{date}}",
+      "neverUsed": "Jamais utilisé",
+      "setAsDefault": "Définir par défaut",
+      "disconnect": "Déconnecter",
+      "noWorkspaces": "Aucun espace connecté",
+      "connectFirst": "Connectez votre premier espace",
+      "disconnected": "Espaces déconnectés",
+      "reconnect": "Reconnecter",
+      "note": "Note :",
+      "noteText": "Chaque espace Notion ne peut être lié qu'à un seul compte Clipper Pro. Cela aide à prévenir les abus et garantit une utilisation équitable.",
+      "fetchError": "Échec du chargement des espaces",
+      "setDefaultError": "Échec de la définition de l'espace par défaut",
+      "disconnectError": "Échec de la déconnexion de l'espace",
+      "confirmDisconnect": "Êtes-vous sûr de vouloir déconnecter cet espace ? Vous pourrez le reconnecter plus tard.",
+      "addedSuccess": "Espace ajouté avec succès !"
+    },
+    "language": {
+      "title": "Langue",
+      "description": "Choisissez votre langue préférée"
+    },
+    "appearance": {
+      "title": "Apparence",
+      "description": "Personnalisez l'apparence",
+      "darkMode": "Mode sombre",
+      "darkEnabled": "Thème sombre activé",
+      "lightEnabled": "Thème clair activé"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Gérez vos préférences de notification",
+      "email": "Notifications par email",
+      "emailDescription": "Recevoir les mises à jour par email",
+      "inApp": "Notifications dans l'app",
+      "inAppDescription": "Afficher les notifications dans l'application"
+    },
+    "danger": {
+      "title": "Compte",
+      "description": "Gérez votre compte",
+      "logout": "Se déconnecter",
+      "delete": "Supprimer le compte"
+    },
+    "theme": {
+      "light": "Clair",
+      "dark": "Sombre",
+      "system": "Système"
+    }
+  },
+  "forgotPassword": {
+    "title": "Mot de passe oublié ?",
+    "subtitle": "Entrez votre email et nous vous enverrons un lien de réinitialisation.",
+    "email": "Email",
+    "sendLink": "Envoyer le lien",
+    "sending": "Envoi...",
+    "successTitle": "Vérifiez votre email",
+    "successMessage": "Si un compte existe avec cet email, nous vous avons envoyé un lien de réinitialisation.",
+    "backToLogin": "Retour à la connexion",
+    "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+    "signIn": "Se connecter"
+  },
+  "resetPassword": {
+    "title": "Réinitialiser votre mot de passe",
+    "subtitle": "Entrez votre nouveau mot de passe ci-dessous.",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "passwordHint": "Au moins 8 caractères",
+    "resetButton": "Réinitialiser",
+    "resetting": "Réinitialisation...",
+    "successTitle": "Mot de passe réinitialisé !",
+    "successMessage": "Votre mot de passe a été réinitialisé avec succès. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+    "signIn": "Se connecter",
+    "invalidLink": "Lien invalide ou expiré",
+    "invalidLinkMessage": "Ce lien de réinitialisation est invalide ou a expiré. Veuillez en demander un nouveau.",
+    "requestNewLink": "Demander un nouveau lien",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères"
+  },
+  "login": {
+    "forgotPassword": "Mot de passe oublié ?"
+  },
+  "hero": {
+    "badge": "Early Bird : Les 500 premiers utilisateurs à 2,99€/mois à vie",
+    "title1": "La Meilleure Façon",
+    "title2": "de Clipper vers Notion.",
+    "subtitle": "Mode hors ligne ✓ Meilleur parsing ✓ App desktop native.",
+    "subtitleError": "Fini les erreurs \"connectez-vous\". Qualité premium qui fonctionne.",
+    "cta": "Essai Gratuit",
+    "ctaSecondary": "Voir les Tarifs"
+  },
+  "features": {
+    "offline": {
+      "title": "Fonctionne Hors Ligne",
+      "description": "File d'attente locale qui se synchronise automatiquement. Ne perdez plus jamais un clip."
+    },
+    "instant": {
+      "title": "Capture Instantanée",
+      "description": "Un raccourci clavier. Presse-papiers vers Notion en moins de 2 secondes."
+    },
+    "analytics": {
+      "title": "Statistiques d'Usage",
+      "description": "Suivez votre activité de clipping. Identifiez les tendances. Optimisez votre workflow."
+    }
+  },
+  "howItWorks": {
+    "badge": "Workflow Simple",
+    "title": "Simple comme Copier-Coller",
+    "subtitle": "Trois étapes. Zéro friction. Productivité maximale.",
+    "step1": {
+      "title": "Copiez n'importe quoi",
+      "description": "Texte, images, liens. Utilisez",
+      "description2": "comme d'habitude."
+    },
+    "step2": {
+      "title": "Détection automatique",
+      "description": "Clipper Pro détecte instantanément le nouveau contenu du presse-papiers."
+    },
+    "step3": {
+      "title": "Envoyez vers Notion",
+      "description": "Appuyez sur",
+      "description2": "Terminé. Sauvegardé dans Notion en moins de 2 secondes."
+    }
+  },
+  "showcase": {
+    "badge": "Interface Élégante",
+    "title": "Voyez-le en Action",
+    "subtitle": "Un aperçu de l'expérience Clipper Pro. Propre, rapide et puissant.",
+    "placeholder": "Capture d'écran ou GIF bientôt disponible"
+  },
+  "comparison": {
+    "title": "Pourquoi Choisir Clipper Pro ?",
+    "subtitle": "Conçu pour ceux qui travaillent hors ligne. Pas une simple extension navigateur."
+  },
+  "cta": {
+    "title": "Prêt à clipper hors ligne ?",
+    "subtitle": "Rejoignez 200+ early adopters. Bloquez 2,99€/mois à vie.",
+    "button": "Essai Gratuit",
+    "buttonSecondary": "Voir les Tarifs",
+    "trust": "Annulez à tout moment • Paiement sécurisé"
   },
   "trust": {
-    "secure": "Connexion sécurisée",
-    "noCardRequired": "Aucune carte bancaire requise",
-    "freeT rial": "Essai gratuit de 14 jours",
-    "neverShare": "Nous ne partageons jamais vos données",
+    "freeTrial": "14 jours d'essai gratuit",
+    "secure": "Paiement sécurisé",
     "cancelAnytime": "Annulez à tout moment"
+  },
+  "buttons": {
+    "loading": "Traitement..."
   },
   "footer": {
     "tagline": "L'outil ultime pour capturer vos idées dans Notion.",
     "product": "Produit",
     "legal": "Légal",
     "company": "Entreprise",
-    "role": "Entrepreneur",
     "privacy": "Confidentialité",
     "terms": "Conditions d'utilisation",
     "legalNotice": "Mentions légales",
+    "role": "Entrepreneur",
     "rights": "Tous droits réservés.",
-    "copyright": "Tous droits réservés.",
-    "madeWith": "Fait avec amour pour les utilisateurs de Notion",
-    "links": {
-      "home": "Accueil",
-      "pricing": "Tarifs",
-      "github": "GitHub",
-      "privacy": "Confidentialité",
-      "terms": "Conditions"
-    }
+    "madeWith": "Fait avec amour pour les utilisateurs Notion partout dans le monde"
+  },
+  "common": {
+    "soon": "Bientôt"
+  },
+  "activity": {
+    "title": "Activité",
+    "subtitle": "Suivez votre productivité et analysez votre workflow",
+    "export": "Exporter",
+    "totalClips": "Total Clips",
+    "totalFiles": "Total Fichiers",
+    "timeSaved": "Temps Économisé",
+    "streak": "Série Actuelle",
+    "trend": "Tendance Hebdo",
+    "activityChart": "Activité dans le Temps",
+    "insights": "Insights",
+    "history": "Historique d'Activité"
   }
 }

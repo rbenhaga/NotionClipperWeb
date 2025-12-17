@@ -1,6 +1,6 @@
-# NotionClipper Showcase Website
+# Clipper Pro Showcase Website
 
-Professional showcase website for NotionClipper with complete OAuth integration, subscription management, and user dashboard.
+Professional showcase website for Clipper Pro with complete OAuth integration, subscription management, and user dashboard.
 
 ## Features
 
@@ -167,7 +167,7 @@ For detailed OAuth setup instructions, see [OAUTH_SETUP.md](./OAUTH_SETUP.md).
 2. **Notion OAuth**: Configured via Notion Integration Settings + Supabase Edge Function
 3. **Callbacks**:
    - Google: `https://<project-ref>.supabase.co/auth/v1/callback`
-   - Notion: `https://notionclipper.com/auth/callback/notion`
+   - Notion: `https://clipperpro.app/auth/callback/notion`
 
 ## Deployment
 
@@ -194,9 +194,9 @@ npm run build
 ```nginx
 server {
     listen 80;
-    server_name notionclipper.com;
+    server_name clipperpro.app;
 
-    root /var/www/notionclipper/dist;
+    root /var/www/clipperpro/dist;
     index index.html;
 
     location / {
@@ -211,12 +211,12 @@ server {
 
 4. Set up SSL with Let's Encrypt:
 ```bash
-sudo certbot --nginx -d notionclipper.com
+sudo certbot --nginx -d clipperpro.app
 ```
 
 5. Update OAuth callbacks to production URLs:
-   - Google: `https://notionclipper.com/auth/callback`
-   - Notion: `https://notionclipper.com/auth/callback/notion`
+   - Google: `https://clipperpro.app/auth/callback`
+   - Notion: `https://clipperpro.app/auth/callback/notion`
 
 ### Deploy to Vercel/Netlify
 
@@ -255,7 +255,7 @@ supabase functions deploy <function-name>
 
 ## Database Schema
 
-Required tables (should already exist in NotionClipper app database):
+Required tables (should already exist in Clipper Pro app database):
 
 - `users` - User profiles
 - `subscriptions` - User subscriptions and tiers
@@ -336,7 +336,7 @@ npm run build
 
 ## License
 
-Proprietary - NotionClipper Team
+Proprietary - Clipper Pro Team
 
 ## Support
 
@@ -344,10 +344,10 @@ For issues or questions:
 - Review [OAUTH_SETUP.md](./OAUTH_SETUP.md)
 - Check Edge Function logs
 - Review Supabase Auth logs
-- Contact: support@notionclipper.com
+- Contact: support@clipperpro.app
 
 ---
 
 **Last Updated:** 2025-11-17
 **Version:** 1.0.0
-**Author:** NotionClipper Team
+**Author:** Clipper Pro Team

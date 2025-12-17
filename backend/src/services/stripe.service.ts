@@ -12,7 +12,7 @@ import { AppError } from '../types/index.js';
 // Initialize Stripe lazily to ensure secrets are loaded first
 let stripe: Stripe | null = null;
 
-function getStripeClient(): Stripe {
+export function getStripeClient(): Stripe {
   if (!stripe) {
     if (!config.stripe.secretKey) {
       throw new AppError('Stripe secret key not configured', 500);
@@ -81,6 +81,17 @@ export async function createCheckoutSession(
       customerId = customer.id;
     }
 
+    // Check if user already had a subscription (no trial for returning users)
+    const existingSubscription = await db.getSubscription(userId);
+    const hadPreviousSubscription = existingSubscription?.stripe_subscription_id;
+
+    // Add 14-day trial for subscriptions (not one-time payments) and new users only
+    const trialDays = (mode === 'subscription' && !hadPreviousSubscription) ? 14 : undefined;
+    
+    if (trialDays) {
+      logger.info(`Adding ${trialDays}-day trial for new user: ${userId}`);
+    }
+
     // Create checkout session
     const session = await getStripeClient().checkout.sessions.create({
       customer: customerId,
@@ -98,6 +109,14 @@ export async function createCheckoutSession(
         user_id: userId,
         plan,
       },
+      ...(trialDays && mode === 'subscription' ? {
+        subscription_data: {
+          trial_period_days: trialDays,
+          metadata: {
+            user_id: userId,
+          },
+        },
+      } : {}),
     });
 
     logger.info(`Checkout session created for user: ${userId}, plan: ${plan}`);
@@ -113,6 +132,31 @@ export async function createCheckoutSession(
 }
 
 /**
+ * Extract customer ID from potentially corrupted data
+ * (handles case where full customer object was stored instead of just ID)
+ */
+function extractCustomerId(customerData: string): string {
+  if (!customerData) return '';
+  
+  // If it starts with 'cus_', it's already a valid ID
+  if (customerData.startsWith('cus_')) {
+    return customerData;
+  }
+  
+  // Try to parse as JSON and extract the ID
+  try {
+    const parsed = JSON.parse(customerData);
+    if (parsed && parsed.id && typeof parsed.id === 'string') {
+      return parsed.id;
+    }
+  } catch {
+    // Not JSON, return as-is
+  }
+  
+  return customerData;
+}
+
+/**
  * Create Stripe Customer Portal session
  */
 export async function createPortalSession(userId: string, returnUrl: string) {
@@ -123,8 +167,18 @@ export async function createPortalSession(userId: string, returnUrl: string) {
       throw new AppError('No active subscription found', 404);
     }
 
+    // Extract clean customer ID (in case corrupted data was stored)
+    const customerId = extractCustomerId(subscription.stripe_customer_id);
+    
+    if (!customerId || !customerId.startsWith('cus_')) {
+      logger.error(`Invalid customer ID format: ${subscription.stripe_customer_id?.substring(0, 50)}...`);
+      throw new AppError('Invalid customer ID in database', 500);
+    }
+
+    logger.info(`Creating portal session for customer: ${customerId}`);
+
     const session = await getStripeClient().billingPortal.sessions.create({
-      customer: subscription.stripe_customer_id,
+      customer: customerId,
       return_url: returnUrl,
     });
 
@@ -186,51 +240,189 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const customerId = session.customer as string;
   const subscriptionId = session.subscription as string;
 
-  await db.updateSubscription(userId, {
-    tier: 'premium',
+  logger.info(`Processing checkout completion for user: ${userId}`);
+  logger.info(`Customer ID: ${customerId}, Subscription ID: ${subscriptionId}`);
+
+  // Use upsertSubscription to handle both create and update cases
+  await db.upsertSubscription({
+    user_id: userId,
+    tier: 'PREMIUM', // UPPERCASE to match DB enum
     status: 'active',
     stripe_customer_id: customerId,
     stripe_subscription_id: subscriptionId,
+    current_period_start: new Date(),
+    current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
   });
 
-  logger.info(`Subscription activated for user: ${userId}`);
+  logger.info(`✅ Subscription activated for user: ${userId}`);
 }
 
 /**
  * Handle subscription update
+ * Also handles workspace downgrade when tier changes from PREMIUM to FREE
  */
 async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
-  const userId = subscription.metadata?.user_id;
+  // Try to get user_id from subscription metadata first
+  let userId = subscription.metadata?.user_id;
+  
+  // If not in metadata, try to find by customer ID
   if (!userId) {
-    logger.warn('Subscription missing user_id metadata');
+    const customerId = subscription.customer as string;
+    logger.info(`Looking up user by customer ID: ${customerId}`);
+    
+    // Query database to find user by stripe_customer_id
+    const supabase = (await import('../config/database.js')).getSupabaseClient();
+    const { data } = await supabase
+      .from('subscriptions')
+      .select('user_id, tier')
+      .eq('stripe_customer_id', customerId)
+      .maybeSingle();
+    
+    if (data) {
+      userId = data.user_id;
+    }
+  }
+  
+  if (!userId) {
+    logger.warn('Subscription missing user_id and could not find by customer ID');
     return;
   }
 
-  await db.updateSubscription(userId, {
-    status: subscription.status === 'active' ? 'active' : 'past_due',
+  // Get previous tier to detect downgrade
+  const previousSubscription = await db.getSubscription(userId);
+  const previousTier = previousSubscription?.tier;
+
+  const tier = subscription.status === 'active' || subscription.status === 'trialing' ? 'PREMIUM' : 'FREE';
+  const cancelAtPeriodEnd = subscription.cancel_at_period_end;
+  
+  await db.upsertSubscription({
+    user_id: userId,
+    tier: tier as 'FREE' | 'PREMIUM' | 'GRACE_PERIOD',
+    status: subscription.status,
+    stripe_subscription_id: subscription.id,
+    stripe_customer_id: subscription.customer as string,
+    current_period_start: new Date(subscription.current_period_start * 1000),
     current_period_end: new Date(subscription.current_period_end * 1000),
-    cancel_at_period_end: subscription.cancel_at_period_end,
+    cancel_at_period_end: cancelAtPeriodEnd,
   });
 
-  logger.info(`Subscription updated for user: ${userId}`);
+  // Handle workspace downgrade if tier changed from PREMIUM to FREE
+  if (previousTier === 'PREMIUM' && tier === 'FREE') {
+    logger.info(`Tier downgrade detected for user ${userId}: PREMIUM -> FREE`);
+    await handleWorkspaceDowngrade(userId);
+  }
+
+  logger.info(`✅ Subscription updated for user: ${userId}, tier: ${tier}, cancel_at_period_end: ${cancelAtPeriodEnd}`);
 }
 
 /**
  * Handle subscription cancellation
+ * Also handles workspace downgrade: keeps only the default workspace active
  */
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
-  const userId = subscription.metadata?.user_id;
+  // Try to get user_id from subscription metadata first
+  let userId = subscription.metadata?.user_id;
+  
+  // If not in metadata, try to find by customer ID
   if (!userId) {
-    logger.warn('Subscription missing user_id metadata');
+    const customerId = subscription.customer as string;
+    const supabase = (await import('../config/database.js')).getSupabaseClient();
+    const { data } = await supabase
+      .from('subscriptions')
+      .select('user_id')
+      .eq('stripe_customer_id', customerId)
+      .maybeSingle();
+    
+    if (data) {
+      userId = data.user_id;
+    }
+  }
+  
+  if (!userId) {
+    logger.warn('Subscription missing user_id and could not find by customer ID');
     return;
   }
 
-  await db.updateSubscription(userId, {
-    tier: 'free',
+  // Update subscription to FREE tier
+  await db.upsertSubscription({
+    user_id: userId,
+    tier: 'FREE',
     status: 'canceled',
   });
 
-  logger.info(`Subscription canceled for user: ${userId}`);
+  // Handle workspace downgrade: deactivate all non-default workspaces
+  await handleWorkspaceDowngrade(userId);
+
+  logger.info(`✅ Subscription canceled for user: ${userId}`);
+}
+
+/**
+ * Handle workspace downgrade when user goes from Premium to Free
+ * Keeps only the default workspace active, deactivates all others
+ */
+async function handleWorkspaceDowngrade(userId: string) {
+  try {
+    const supabase = (await import('../config/database.js')).getSupabaseClient();
+    
+    // Get all active workspaces for this user
+    const { data: workspaces, error: fetchError } = await supabase
+      .from('notion_connections')
+      .select('id, is_default, workspace_name')
+      .eq('user_id', userId)
+      .eq('is_active', true);
+
+    if (fetchError) {
+      logger.error('Error fetching workspaces for downgrade:', fetchError);
+      return;
+    }
+
+    if (!workspaces || workspaces.length <= 1) {
+      logger.info(`User ${userId} has ${workspaces?.length || 0} workspace(s), no downgrade needed`);
+      return;
+    }
+
+    // Find the default workspace
+    const defaultWorkspace = workspaces.find(w => w.is_default);
+    
+    // If no default is set, make the first one default
+    if (!defaultWorkspace && workspaces.length > 0) {
+      const firstWorkspace = workspaces[0];
+      await supabase
+        .from('notion_connections')
+        .update({ is_default: true })
+        .eq('id', firstWorkspace.id);
+      
+      logger.info(`Set workspace ${firstWorkspace.workspace_name} as default for user ${userId}`);
+    }
+
+    // Deactivate all non-default workspaces
+    const workspacesToDeactivate = workspaces.filter(w => !w.is_default);
+    
+    if (workspacesToDeactivate.length > 0) {
+      const idsToDeactivate = workspacesToDeactivate.map(w => w.id);
+      
+      const { error: updateError } = await supabase
+        .from('notion_connections')
+        .update({ 
+          is_active: false,
+          connection_status: 'disconnected',
+          updated_at: new Date().toISOString()
+        })
+        .in('id', idsToDeactivate);
+
+      if (updateError) {
+        logger.error('Error deactivating workspaces:', updateError);
+        return;
+      }
+
+      logger.info(`✅ Deactivated ${workspacesToDeactivate.length} non-default workspace(s) for user ${userId}`);
+      workspacesToDeactivate.forEach(w => {
+        logger.info(`  - Deactivated: ${w.workspace_name}`);
+      });
+    }
+  } catch (error) {
+    logger.error('Error handling workspace downgrade:', error);
+  }
 }
 
 /**
@@ -242,6 +434,68 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 
   // TODO: Send email notification to user
   // TODO: Update subscription status to past_due
+}
+
+/**
+ * Get payment method info for a customer
+ */
+export async function getPaymentMethodInfo(userId: string) {
+  try {
+    const subscription = await db.getSubscription(userId);
+
+    if (!subscription?.stripe_customer_id) {
+      return null;
+    }
+
+    const customerId = extractCustomerId(subscription.stripe_customer_id);
+    
+    if (!customerId || !customerId.startsWith('cus_')) {
+      return null;
+    }
+
+    // Get customer's default payment method
+    const customer = await getStripeClient().customers.retrieve(customerId, {
+      expand: ['default_source', 'invoice_settings.default_payment_method'],
+    }) as Stripe.Customer;
+
+    if (customer.deleted) {
+      return null;
+    }
+
+    // Try to get payment method from invoice settings first
+    const defaultPaymentMethod = customer.invoice_settings?.default_payment_method as Stripe.PaymentMethod | null;
+    
+    if (defaultPaymentMethod && defaultPaymentMethod.card) {
+      return {
+        brand: defaultPaymentMethod.card.brand,
+        last4: defaultPaymentMethod.card.last4,
+        expMonth: defaultPaymentMethod.card.exp_month,
+        expYear: defaultPaymentMethod.card.exp_year,
+      };
+    }
+
+    // Fallback: list payment methods
+    const paymentMethods = await getStripeClient().paymentMethods.list({
+      customer: customerId,
+      type: 'card',
+      limit: 1,
+    });
+
+    if (paymentMethods.data.length > 0 && paymentMethods.data[0].card) {
+      const card = paymentMethods.data[0].card;
+      return {
+        brand: card.brand,
+        last4: card.last4,
+        expMonth: card.exp_month,
+        expYear: card.exp_year,
+      };
+    }
+
+    return null;
+  } catch (error) {
+    logger.error('Failed to get payment method info:', error);
+    return null;
+  }
 }
 
 /**

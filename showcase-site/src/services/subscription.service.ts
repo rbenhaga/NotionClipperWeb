@@ -22,6 +22,7 @@ export interface Subscription {
   grace_period_ends_at?: string;
   cancel_at?: string;
   canceled_at?: string;
+  cancel_at_period_end?: boolean;
   metadata?: Record<string, any>;
   created_at: string;
   updated_at: string;
@@ -52,18 +53,18 @@ export interface Quotas {
 // Quotas par tier (must match server-side constants)
 const TIER_QUOTAS: Record<SubscriptionTier, Quotas> = {
   FREE: {
-    clips: 100, // 100 clips per month
+    clips: 100, // Free tier: 100 clips per month
     files: 10,
     words_per_clip: 1000,
     focus_mode_minutes: 60,
     compact_mode_minutes: 60,
   },
   PREMIUM: {
-    clips: Number.MAX_SAFE_INTEGER, // Unlimited
-    files: Number.MAX_SAFE_INTEGER,
-    words_per_clip: Number.MAX_SAFE_INTEGER,
-    focus_mode_minutes: Number.MAX_SAFE_INTEGER,
-    compact_mode_minutes: Number.MAX_SAFE_INTEGER,
+    clips: -1, // Unlimited
+    files: -1,
+    words_per_clip: -1,
+    focus_mode_minutes: -1,
+    compact_mode_minutes: -1,
   },
   GRACE_PERIOD: {
     clips: 100, // Same as free tier
@@ -97,8 +98,17 @@ class SubscriptionService {
         throw new Error('Failed to fetch subscription');
       }
 
-      const data = await response.json();
-      return data.subscription || data;
+      const result = await response.json();
+      // Handle both { data: {...} } and direct response formats
+      const data = result.data || result;
+      
+      // Normalize tier to uppercase
+      if (data && data.tier) {
+        data.tier = data.tier.toUpperCase() as SubscriptionTier;
+      }
+      
+      console.log('Subscription data received:', data);
+      return data;
     } catch (error) {
       console.error('Error fetching subscription:', error);
       return null;
@@ -159,6 +169,7 @@ class SubscriptionService {
         },
         body: JSON.stringify({
           plan: 'premium_monthly', // Default to monthly plan
+          returnUrl: returnUrl || window.location.origin,
         }),
       });
 
@@ -206,6 +217,39 @@ class SubscriptionService {
     } catch (error) {
       console.error('Error creating portal session:', error);
       throw error;
+    }
+  }
+
+  /**
+   * Get payment method info
+   */
+  async getPaymentMethod(): Promise<{
+    brand: string;
+    last4: string;
+    expMonth: number;
+    expYear: number;
+  } | null> {
+    const token = authService.getToken();
+    if (!token) return null;
+
+    try {
+      const response = await fetch(`${API_URL}/stripe/payment-method`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const result = await response.json();
+      return result.data?.paymentMethod || null;
+    } catch (error) {
+      console.error('Error fetching payment method:', error);
+      return null;
     }
   }
 

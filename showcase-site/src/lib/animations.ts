@@ -396,7 +396,7 @@ export const createSpring = (
  */
 export const createDuration = (
   duration: number = 0.25,
-  ease: number[] = easings.apple
+  ease: any = easings.apple
 ): Transition => ({
   duration,
   ease,

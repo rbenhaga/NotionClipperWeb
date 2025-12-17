@@ -1,5 +1,5 @@
 /**
- * PM2 Ecosystem Configuration for Notion Clipper Backend
+ * PM2 Ecosystem Configuration for Clipper Pro Backend
  *
  * Usage:
  *   pm2 start ecosystem.config.js

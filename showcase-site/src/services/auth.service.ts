@@ -58,21 +58,32 @@ class AuthService {
    * Get stored auth token from localStorage
    */
   getToken(): string | null {
-    return localStorage.getItem('auth_token');
+    return localStorage.getItem('token');
   }
 
   /**
-   * Store auth token in localStorage
+   * Store auth token and user info in localStorage
    */
   setToken(token: string): void {
-    localStorage.setItem('auth_token', token);
+    localStorage.setItem('token', token);
+    
+    // Also decode and store user info for app redirect
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      if (payload.userId) localStorage.setItem('user_id', payload.userId);
+      if (payload.email) localStorage.setItem('user_email', payload.email);
+    } catch (e) {
+      console.error('Error decoding token:', e);
+    }
   }
 
   /**
-   * Clear auth token from localStorage
+   * Clear auth token and user info from localStorage
    */
   clearToken(): void {
-    localStorage.removeItem('auth_token');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user_id');
+    localStorage.removeItem('user_email');
   }
 
   /**
@@ -85,17 +96,29 @@ class AuthService {
   /**
    * Initiate Google OAuth flow
    * Redirects to backend VPS which handles the OAuth flow
+   * @param source - 'app' if coming from desktop app, 'web' otherwise
    */
-  initiateGoogleOAuth(): void {
-    window.location.href = `${API_URL}/auth/google`;
+  initiateGoogleOAuth(source?: 'app' | 'web'): void {
+    const params = new URLSearchParams();
+    if (source === 'app') {
+      params.set('source', 'app');
+    }
+    const queryString = params.toString();
+    window.location.href = `${API_URL}/auth/google${queryString ? `?${queryString}` : ''}`;
   }
 
   /**
    * Initiate Notion OAuth flow
    * Redirects to backend VPS which handles the OAuth flow
+   * @param source - 'app' if coming from desktop app, 'web' otherwise
    */
-  initiateNotionOAuth(): void {
-    window.location.href = `${API_URL}/auth/notion`;
+  initiateNotionOAuth(source?: 'app' | 'web'): void {
+    const params = new URLSearchParams();
+    if (source === 'app') {
+      params.set('source', 'app');
+    }
+    const queryString = params.toString();
+    window.location.href = `${API_URL}/auth/notion${queryString ? `?${queryString}` : ''}`;
   }
 
   /**
@@ -199,6 +222,74 @@ class AuthService {
    */
   handleOAuthCallback(token: string): void {
     this.setToken(token);
+  }
+
+  /**
+   * Request password reset email
+   */
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const response = await fetch(`${API_URL}/auth/forgot-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to send password reset email');
+    }
+
+    const data = await response.json();
+    return data.data;
+  }
+
+  /**
+   * Reset password with token
+   */
+  async resetPassword(accessToken: string, newPassword: string): Promise<{ message: string }> {
+    const response = await fetch(`${API_URL}/auth/reset-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ accessToken, newPassword }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to reset password');
+    }
+
+    const data = await response.json();
+    return data.data;
+  }
+
+  /**
+   * Get user profile with avatar
+   */
+  async getUserProfile(): Promise<UserProfile | null> {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const response = await fetch(`${API_URL}/user/profile`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      return data.data;
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      return null;
+    }
   }
 }
 

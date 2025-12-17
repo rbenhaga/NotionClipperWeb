@@ -1,7 +1,7 @@
 {
   "name": "@notion-clipper/backend",
   "version": "1.0.0",
-  "description": "Backend API server for Notion Clipper - OAuth callbacks, Stripe webhooks, and showcase site API",
+  "description": "Backend API server for Clipper Pro - OAuth callbacks, Stripe webhooks, and showcase site API",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {
@@ -21,7 +21,7 @@
     "express",
     "typescript"
   ],
-  "author": "Notion Clipper Team",
+  "author": "Clipper Pro Team",
   "license": "MIT",
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",

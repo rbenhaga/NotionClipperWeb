@@ -7,7 +7,7 @@ export interface LogoProps {
 }
 
 // Logo principal - Sparkles avec dégradé purple → indigo
-export const NotionClipperLogo: React.FC<LogoProps> = ({ size = 32, className }) => (
+export const ClipperProLogo: React.FC<LogoProps> = ({ size = 32, className }) => (
   <div className={`relative inline-flex items-center justify-center ${className}`} style={{ width: size, height: size }}>
     {/* Définition du dégradé SVG */}
     <svg width="0" height="0" className="absolute">
@@ -32,7 +32,7 @@ export const NotionClipperLogo: React.FC<LogoProps> = ({ size = 32, className })
 );
 
 // Logo avec texte
-export const NotionClipperLogoWithText: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'md' }) => {
+export const ClipperProLogoWithText: React.FC<{ size?: 'sm' | 'md' | 'lg' }> = ({ size = 'md' }) => {
   const sizes = {
     sm: { icon: 24, text: 'text-lg' },
     md: { icon: 32, text: 'text-xl' },
@@ -43,7 +43,7 @@ export const NotionClipperLogoWithText: React.FC<{ size?: 'sm' | 'md' | 'lg' }> 
 
   return (
     <div className="flex items-center gap-2">
-      <NotionClipperLogo size={config.icon} />
+      <ClipperProLogo size={config.icon} />
       <span className={`font-semibold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent ${config.text}`}>
         Clipper Pro
       </span>

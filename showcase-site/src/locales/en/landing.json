@@ -1,0 +1,269 @@
+{
+  "nav": {
+    "demo": "Demo",
+    "features": "Features",
+    "comparison": "Compare",
+    "howItWorks": "How it works",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "download": "Download",
+    "login": "Login",
+    "betaAccess": "Beta Access",
+    "joinBeta": "Join the Beta",
+    "menu": "Menu",
+    "lightMode": "Enable light mode",
+    "darkMode": "Enable dark mode",
+    "openMenu": "Open menu",
+    "changeLanguage": "Change language",
+    "language": "Language",
+    "settings": "Settings"
+  },
+  "hero": {
+    "badge": "-50% for life",
+    "badgeSuffix": "for the first 100",
+    "title": {
+      "line1": "Capture everything.",
+      "line2": "Instantly."
+    },
+    "subtitle": "The browser extension and desktop app for power users. Web, emails and files, directly to Notion.",
+    "stats": {
+      "latency": "latency",
+      "offlineReady": "Ready",
+      "perMonth": "/ month"
+    },
+    "cta": {
+      "primary": "14-day free trial",
+      "secondary": "See demo"
+    }
+  },
+  "demo": {
+    "title": "See the",
+    "titleHighlight": "magic",
+    "titleEnd": "in action.",
+    "subtitle": "60 seconds to understand how you'll save 2 hours a day.",
+    "videoFallback": "Your browser does not support video playback.",
+    "comingSoon": "Demo coming soon",
+    "comingSoonDesc": "We're finalizing the demo video. In the meantime, sign up for early access.",
+    "joinBeta": "Join the beta"
+  },
+  "howItWorks": {
+    "title": "The art of",
+    "titleHighlight": "simplicity.",
+    "subtitle": "Three steps. Zero friction. Designed to fade away and let you work.",
+    "steps": {
+      "install": {
+        "label": "01 — Installation",
+        "title": "Native & Extension",
+        "description": "An ultra-light app (<50MB) that installs instantly on macOS, Windows or Linux."
+      },
+      "connect": {
+        "label": "02 — Connection",
+        "title": "OAuth Security",
+        "description": "No token to copy. Official encrypted authentication. Your data stays 100% private and local."
+      },
+      "capture": {
+        "label": "03 — Capture",
+        "title": "Instant",
+        "description": "The universal shortcut that works everywhere. Web, email, files. Simply magical."
+      }
+    },
+    "features": {
+      "title": "What makes us",
+      "titleHighlight": "unique.",
+      "speed": {
+        "title": "Instant",
+        "description": "10x faster. Zero interruption."
+      },
+      "offline": {
+        "title": "Offline Mode",
+        "description": "Capture without connection. Auto sync."
+      },
+      "parser": {
+        "title": "Advanced Parser",
+        "description": "Markdown, HTML, tables, code..."
+      },
+      "platforms": {
+        "title": "App & Extension",
+        "description": "Native desktop + web extension."
+      }
+    }
+  },
+  "comparison": {
+    "title": "Make the right",
+    "titleHighlight": "choice.",
+    "subtitle": "More features, lower price. Compare and decide.",
+    "founderNote": "*Founder price -50% for life for the first 100 (instead of €3.99/mo)",
+    "header": "Feature",
+    "vsTitle": "Clipper Pro vs Competitors",
+    "features": {
+      "price": "Monthly price",
+      "latency": "Capture latency",
+      "desktopApp": "Desktop App (OS)",
+      "offlineMode": "Offline Mode",
+      "parsing": "Markdown Parsing",
+      "localStorage": "Local Storage"
+    },
+    "values": {
+      "free": "Free",
+      "basic": "Basic",
+      "good": "Good",
+      "advanced": "Advanced"
+    }
+  },
+  "useCases": {
+    "title": "Built for",
+    "titleHighlight": "you.",
+    "subtitle": "Whatever your profile, save hours every week.",
+    "cases": {
+      "pm": {
+        "title": "Product Managers",
+        "description": "Competitive intelligence, product specs, user feedback",
+        "metric": "150+",
+        "label": "articles saved / month"
+      },
+      "developer": {
+        "title": "Developers",
+        "description": "Documentation, snippets, Stack Overflow solutions",
+        "metric": "200+",
+        "label": "snippets captured / month"
+      },
+      "writer": {
+        "title": "Writers",
+        "description": "Sources, citations, inspiration for your articles",
+        "metric": "300+",
+        "label": "sources collected / month"
+      },
+      "student": {
+        "title": "Students",
+        "description": "Courses, academic articles, bibliographies",
+        "metric": "100+",
+        "label": "references / month"
+      },
+      "consultant": {
+        "title": "Consultants",
+        "description": "Client reports, benchmarks, market studies",
+        "metric": "80+",
+        "label": "documents / month"
+      },
+      "researcher": {
+        "title": "Researchers",
+        "description": "Publications, data, scientific bibliographies",
+        "metric": "250+",
+        "label": "papers / month"
+      }
+    }
+  },
+  "pricing": {
+    "title": "Invest in",
+    "titleHighlight": "yourself.",
+    "subtitle": "Cheaper than a coffee, to save hours of productivity every month.",
+    "free": {
+      "name": "Free",
+      "price": "0",
+      "period": "",
+      "description": "To discover Clipper Pro.",
+      "features": [
+        "100 clips / month",
+        "10 files / month",
+        "No Offline mode",
+        "No Focus mode",
+        "1 Notion workspace"
+      ],
+      "cta": "Start for free"
+    },
+    "pro": {
+      "name": "Pro",
+      "badge": "-50% Founder",
+      "price": "1.99",
+      "originalPrice": "3.99",
+      "period": "/month for life",
+      "description": "14-day free trial • -50% for the first 100.",
+      "features": [
+        "Unlimited clips",
+        "Unlimited files",
+        "Full Offline mode",
+        "Unlimited Focus mode",
+        "Unlimited workspaces",
+        "Price locked for life"
+      ],
+      "cta": "14-day free trial"
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked",
+    "titleHighlight": "Questions",
+    "questions": {
+      "security": {
+        "question": "Are my Notion credentials secure?",
+        "answer": "Tokens encrypted locally (AES-256). Direct communication with Notion API. No data passes through our servers."
+      },
+      "offline": {
+        "question": "How does offline mode work?",
+        "answer": "Captures stored locally, automatically synced on reconnection. Smart queue with auto retry."
+      },
+      "difference": {
+        "question": "What's the difference with Copy to Notion?",
+        "answer": "€1.99 vs €7.99, native desktop app, offline mode, 10x faster latency."
+      },
+      "founder": {
+        "question": "How does the founder offer work?",
+        "answer": "-50% for life for the first 100 (€1.99/mo instead of €3.99). Permanent as long as you stay subscribed."
+      },
+      "platforms": {
+        "question": "Which browsers/OS are supported?",
+        "answer": "Chrome, Firefox, Edge, Brave, Arc. Desktop: Windows, macOS, Linux."
+      },
+      "cancel": {
+        "question": "Can I cancel anytime?",
+        "answer": "Yes, in one click. No hidden fees or commitment."
+      },
+      "hosting": {
+        "question": "Where is my data hosted?",
+        "answer": "France (Paris) on Oracle Cloud. 100% GDPR compliant. Your data never leaves Europe."
+      }
+    }
+  },
+  "waitlist": {
+    "badge": "Private Beta Access",
+    "title": "Be among the first 100.",
+    "subtitle": "-50% for life for founders.",
+    "subtitleTrial": "14-day free trial included.",
+    "notionCta": "Continue with Notion",
+    "securityNote": "Secure connection via official Notion OAuth",
+    "features": {
+      "trial": "14 days free",
+      "discount": "-50% for life"
+    },
+    "registered": {
+      "title": "You're registered!",
+      "subtitle": "Thanks {{name}}! You'll be notified as soon as Clipper Pro is available.",
+      "note": "You'll receive an email at launch."
+    }
+  },
+  "footer": {
+    "description": "Capture the web, your emails and files directly to Notion. Fast, offline, private.",
+    "product": {
+      "title": "Product",
+      "features": "Features",
+      "pricing": "Pricing",
+      "updates": "Updates",
+      "download": "Download"
+    },
+    "resources": {
+      "title": "Resources",
+      "docs": "Documentation",
+      "notionGuide": "Notion Guide",
+      "community": "Community",
+      "support": "Support"
+    },
+    "legal": {
+      "title": "Legal",
+      "privacy": "Privacy",
+      "terms": "Terms",
+      "security": "Security",
+      "legalNotice": "Legal Notice"
+    },
+    "copyright": "© 2025 Clipper Pro Inc.",
+    "systemStatus": "All systems operational"
+  }
+}

@@ -9,6 +9,10 @@ import stripeRoutes from './stripe.routes.js';
 import userRoutes from './user.routes.js';
 import notionRoutes from './notion.routes.js';
 import usageRoutes from './usage.routes.js';
+import activityRoutes from './activity.routes.js';
+import workspaceRoutes from './workspace.routes.js';
+import analyticsRoutes from './analytics.routes.js';
+import waitlistRoutes from './waitlist.routes.js';
 
 const router = Router();
 
@@ -29,5 +33,9 @@ router.use('/user', userRoutes);
 // This is critical for Stripe signature verification which needs raw body
 router.use('/notion', notionRoutes);
 router.use('/usage', usageRoutes);
+router.use('/activity', activityRoutes);
+router.use('/workspace', workspaceRoutes);
+router.use('/analytics', analyticsRoutes);
+router.use('/waitlist', waitlistRoutes);
 
 export default router;

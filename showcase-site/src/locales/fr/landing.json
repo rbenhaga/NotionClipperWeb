@@ -1,0 +1,269 @@
+{
+  "nav": {
+    "demo": "Démo",
+    "features": "Fonctionnalités",
+    "comparison": "Comparatif",
+    "howItWorks": "Comment ça marche",
+    "pricing": "Tarifs",
+    "faq": "FAQ",
+    "download": "Télécharger",
+    "login": "Connexion",
+    "betaAccess": "Accès Beta",
+    "joinBeta": "Rejoindre la Beta",
+    "menu": "Menu",
+    "lightMode": "Activer le mode clair",
+    "darkMode": "Activer le mode sombre",
+    "openMenu": "Ouvrir le menu",
+    "changeLanguage": "Changer de langue",
+    "language": "Langue",
+    "settings": "Paramètres"
+  },
+  "hero": {
+    "badge": "-50% à vie",
+    "badgeSuffix": "pour les 100 premiers",
+    "title": {
+      "line1": "Capturez tout.",
+      "line2": "Instantanément."
+    },
+    "subtitle": "L'extension navigateur et l'application desktop pour les power users. Web, emails et fichiers, directement dans Notion.",
+    "stats": {
+      "latency": "latence",
+      "offlineReady": "Ready",
+      "perMonth": "/ mois"
+    },
+    "cta": {
+      "primary": "Essai gratuit 14 jours",
+      "secondary": "Voir la démo"
+    }
+  },
+  "demo": {
+    "title": "Voyez la",
+    "titleHighlight": "magie",
+    "titleEnd": "en action.",
+    "subtitle": "60 secondes pour comprendre comment vous allez gagner 2 heures par jour.",
+    "videoFallback": "Votre navigateur ne supporte pas la lecture vidéo.",
+    "comingSoon": "Démo disponible bientôt",
+    "comingSoonDesc": "Nous finalisons la vidéo de démo. En attendant, inscrivez-vous pour un accès anticipé.",
+    "joinBeta": "Rejoindre la beta"
+  },
+  "howItWorks": {
+    "title": "L'art de la",
+    "titleHighlight": "simplicité.",
+    "subtitle": "Trois étapes. Zéro friction. Conçu pour s'effacer et vous laisser travailler.",
+    "steps": {
+      "install": {
+        "label": "01 — Installation",
+        "title": "Native & Extension",
+        "description": "Une application ultra-légère (<50Mo) qui s'installe instantanément sur macOS, Windows ou Linux."
+      },
+      "connect": {
+        "label": "02 — Connexion",
+        "title": "Sécurité OAuth",
+        "description": "Zéro token à copier. Authentification officielle chiffrée. Vos données restent 100% privées et locales."
+      },
+      "capture": {
+        "label": "03 — Capture",
+        "title": "Instantané",
+        "description": "Le raccourci universel qui fonctionne partout. Web, email, fichiers. C'est simplement magique."
+      }
+    },
+    "features": {
+      "title": "Ce qui nous rend",
+      "titleHighlight": "uniques.",
+      "speed": {
+        "title": "Instantané",
+        "description": "10x plus rapide. Zéro interruption."
+      },
+      "offline": {
+        "title": "Mode Offline",
+        "description": "Capturez sans connexion. Sync auto."
+      },
+      "parser": {
+        "title": "Parser Avancé",
+        "description": "Markdown, HTML, tables, code..."
+      },
+      "platforms": {
+        "title": "App & Extension",
+        "description": "Desktop native + extension web."
+      }
+    }
+  },
+  "comparison": {
+    "title": "Faites le bon",
+    "titleHighlight": "choix.",
+    "subtitle": "Plus de fonctionnalités, moins cher. Comparez et décidez.",
+    "founderNote": "*Prix fondateur -50% à vie pour les 100 premiers (au lieu de 3,99€/mois)",
+    "header": "Fonctionnalité",
+    "vsTitle": "Clipper Pro vs Concurrents",
+    "features": {
+      "price": "Prix mensuel",
+      "latency": "Latence capture",
+      "desktopApp": "App Desktop (OS)",
+      "offlineMode": "Mode Offline",
+      "parsing": "Parsing Markdown",
+      "localStorage": "Stockage Local"
+    },
+    "values": {
+      "free": "Gratuit",
+      "basic": "Basique",
+      "good": "Bon",
+      "advanced": "Avancé"
+    }
+  },
+  "useCases": {
+    "title": "Conçu pour",
+    "titleHighlight": "vous.",
+    "subtitle": "Quel que soit votre profil, gagnez des heures chaque semaine.",
+    "cases": {
+      "pm": {
+        "title": "Product Managers",
+        "description": "Veille concurrentielle, specs produit, feedbacks utilisateurs",
+        "metric": "150+",
+        "label": "articles sauvés / mois"
+      },
+      "developer": {
+        "title": "Développeurs",
+        "description": "Documentation, snippets, solutions Stack Overflow",
+        "metric": "200+",
+        "label": "snippets capturés / mois"
+      },
+      "writer": {
+        "title": "Rédacteurs",
+        "description": "Sources, citations, inspirations pour vos articles",
+        "metric": "300+",
+        "label": "sources collectées / mois"
+      },
+      "student": {
+        "title": "Étudiants",
+        "description": "Cours, articles académiques, bibliographies",
+        "metric": "100+",
+        "label": "références / mois"
+      },
+      "consultant": {
+        "title": "Consultants",
+        "description": "Rapports clients, benchmarks, études de marché",
+        "metric": "80+",
+        "label": "documents / mois"
+      },
+      "researcher": {
+        "title": "Chercheurs",
+        "description": "Publications, données, bibliographies scientifiques",
+        "metric": "250+",
+        "label": "papers / mois"
+      }
+    }
+  },
+  "pricing": {
+    "title": "Investissez en",
+    "titleHighlight": "vous-même.",
+    "subtitle": "Moins cher qu'un café, pour sauver des heures de productivité chaque mois.",
+    "free": {
+      "name": "Gratuit",
+      "price": "0",
+      "period": "",
+      "description": "Pour découvrir Clipper Pro.",
+      "features": [
+        "100 clips / mois",
+        "10 fichiers / mois",
+        "Pas de mode Offline",
+        "Pas de mode Focus",
+        "1 workspace Notion"
+      ],
+      "cta": "Commencer gratuitement"
+    },
+    "pro": {
+      "name": "Pro",
+      "badge": "-50% Fondateur",
+      "price": "1,99",
+      "originalPrice": "3,99",
+      "period": "/mois à vie",
+      "description": "14 jours d'essai gratuit • -50% pour les 100 premiers.",
+      "features": [
+        "Clips illimités",
+        "Fichiers illimités",
+        "Mode Offline complet",
+        "Mode Focus illimité",
+        "Workspaces illimités",
+        "Prix bloqué à vie"
+      ],
+      "cta": "Essai gratuit 14 jours"
+    }
+  },
+  "faq": {
+    "title": "Questions",
+    "titleHighlight": "Fréquentes",
+    "questions": {
+      "security": {
+        "question": "Mes identifiants Notion sont-ils sécurisés ?",
+        "answer": "Tokens chiffrés localement (AES-256). Communication directe avec l'API Notion. Aucune donnée ne transite par nos serveurs."
+      },
+      "offline": {
+        "question": "Comment fonctionne le mode hors-ligne ?",
+        "answer": "Captures stockées localement, synchronisées automatiquement à la reconnexion. File d'attente intelligente avec retry auto."
+      },
+      "difference": {
+        "question": "Quelle différence avec Copy to Notion ?",
+        "answer": "1,99€ vs 7,99€, app desktop native, mode offline, latence 10x plus rapide."
+      },
+      "founder": {
+        "question": "Comment fonctionne l'offre fondateur ?",
+        "answer": "-50% à vie pour les 100 premiers (1,99€/mois au lieu de 3,99€). Permanent tant que vous restez abonné."
+      },
+      "platforms": {
+        "question": "Quels navigateurs/OS supportés ?",
+        "answer": "Chrome, Firefox, Edge, Brave, Arc. Desktop : Windows, macOS, Linux."
+      },
+      "cancel": {
+        "question": "Puis-je annuler à tout moment ?",
+        "answer": "Oui, en un clic. Pas de frais cachés ni d'engagement."
+      },
+      "hosting": {
+        "question": "Où sont hébergées mes données ?",
+        "answer": "France (Paris) sur Oracle Cloud. 100% RGPD. Vos données ne quittent jamais l'Europe."
+      }
+    }
+  },
+  "waitlist": {
+    "badge": "Accès Beta Privé",
+    "title": "Soyez parmi les 100 premiers.",
+    "subtitle": "-50% à vie pour les fondateurs.",
+    "subtitleTrial": "14 jours d'essai gratuit inclus.",
+    "notionCta": "Continuer avec Notion",
+    "securityNote": "Connexion sécurisée via OAuth officiel Notion",
+    "features": {
+      "trial": "14 jours gratuits",
+      "discount": "-50% à vie"
+    },
+    "registered": {
+      "title": "Vous êtes inscrit !",
+      "subtitle": "Merci {{name}} ! Vous serez notifié dès que Clipper Pro sera disponible.",
+      "note": "Vous recevrez un email dès le lancement."
+    }
+  },
+  "footer": {
+    "description": "Capturez le web, vos emails et fichiers directement dans Notion. Rapide, offline, privé.",
+    "product": {
+      "title": "Produit",
+      "features": "Fonctionnalités",
+      "pricing": "Tarifs",
+      "updates": "Mises à jour",
+      "download": "Télécharger"
+    },
+    "resources": {
+      "title": "Ressources",
+      "docs": "Documentation",
+      "notionGuide": "Guide Notion",
+      "community": "Communauté",
+      "support": "Support"
+    },
+    "legal": {
+      "title": "Légal",
+      "privacy": "Confidentialité",
+      "terms": "CGU",
+      "security": "Sécurité",
+      "legalNotice": "Mentions légales"
+    },
+    "copyright": "© 2025 Clipper Pro Inc.",
+    "systemStatus": "Systèmes opérationnels"
+  }
+}

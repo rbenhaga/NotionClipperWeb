@@ -1,51 +1,356 @@
 {
-  "brand": {
-    "name": "Clipper Pro",
-    "tagline": "Capture anything to Notion instantly"
-  },
   "nav": {
     "home": "Home",
-    "features": "Features",
     "pricing": "Pricing",
-    "login": "Login",
-    "getStarted": "Get Started"
+    "compare": "Compare",
+    "changelog": "Changelog",
+    "dashboard": "Dashboard",
+    "account": "Account",
+    "login": "Log in",
+    "start": "Start",
+    "upgrade": "Upgrade",
+    "getStarted": "Go Pro"
   },
-  "buttons": {
-    "getStarted": "Get Started Free",
-    "viewPricing": "View Pricing",
-    "backToHome": "Back to Home",
-    "signIn": "Sign In",
-    "signUp": "Sign Up",
+  "common": {
     "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
     "cancel": "Cancel",
     "save": "Save",
-    "continue": "Continue"
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "logout": "Log out"
+  },
+  "auth": {
+    "login": "Log in",
+    "signup": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "rememberMe": "Remember me",
+    "loginWithGoogle": "Continue with Google",
+    "loginWithNotion": "Continue with Notion",
+    "alreadyHaveAccount": "Already have an account?",
+    "dontHaveAccount": "Don't have an account?",
+    "createAccount": "Create account"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "overview": "Overview",
+    "nav": {
+      "menu": "Menu",
+      "overview": "Overview",
+      "activity": "Activity",
+      "billing": "Billing",
+      "settings": "Settings",
+      "links": "Quick Links",
+      "website": "Visit Website",
+      "switchTo": "Switch to",
+      "language": "Language"
+    },
+    "stats": {
+      "totalClips": "Total Clips",
+      "thisMonth": "This Month",
+      "storage": "Storage Used",
+      "subscription": "Subscription",
+      "clipsUsed": "clips used this month",
+      "clipsLimit": "limit",
+      "unlimited": "You have unlimited access to all features.",
+      "renews": "Renews",
+      "ends": "Ends",
+      "trialEnds": "Trial ends"
+    },
+    "premium": {
+      "title": "Your Premium Features",
+      "subtitle": "Unlock the full potential of Clipper Pro",
+      "clipboardCapture": "Clipboard Capture",
+      "clipboardCaptureDesc": "Instantly capture text, images, and links to Notion",
+      "chromeExtension": "Chrome Extension",
+      "chromeExtensionDesc": "Save web content directly from your browser",
+      "offlineMode": "Offline Mode",
+      "offlineModeDesc": "Queue clips locally and sync when back online",
+      "desktopApp": "Desktop App",
+      "desktopAppDesc": "Native app for macOS and Windows",
+      "active": "Active",
+      "comingSoon": "Coming Soon",
+      "thankYou": "Thank you for being a Premium member!",
+      "thankYouDesc": "You're supporting the development of Clipper Pro. New features are coming soon!",
+      "unlimitedClips": "Unlimited Clips",
+      "unlimitedFiles": "Unlimited Files",
+      "prioritySupport": "Priority Support",
+      "earlyAccess": "Early Access"
+    },
+    "free": {
+      "availableFeatures": "Available Features",
+      "upgradeTitle": "Upgrade to Premium",
+      "upgradeDesc": "Get unlimited clips, priority support, and early access to new features. Lock in $2.99/mo forever as an early adopter.",
+      "upgradeNow": "Upgrade Now",
+      "processing": "Processing...",
+      "limitedOffer": "Limited Time Offer"
+    },
+    "status": {
+      "premium": "Premium",
+      "free": "Free Plan",
+      "canceling": "Canceling",
+      "active": "Active",
+      "trial": "Trial"
+    }
+  },
+  "billing": {
+    "title": "Billing",
+    "subtitle": "Manage your subscription and billing details.",
+    "currentPlan": "Current Plan",
+    "premiumPlan": "Premium Plan",
+    "premiumCanceling": "Premium (Canceling)",
+    "freePlan": "Free Plan",
+    "planFeatures": "Plan Features",
+    "paymentMethod": "Payment Method",
+    "manage": "Manage",
+    "manageSubscription": "Manage Subscription",
+    "managedViaStripe": "Managed via Stripe",
+    "clickManage": "Click Manage to view details",
+    "expires": "Expires",
+    "noPaymentMethod": "No payment methods added yet.",
+    "upgradeToAdd": "Upgrade to Premium to add a payment method.",
+    "upgradeToPro": "Upgrade to Pro",
+    "upgradeDescription": "Get unlimited clips, priority support, and advanced features.",
+    "upgradeNow": "Upgrade Now",
+    "processing": "Processing...",
+    "betaPrice": "Beta Price",
+    "lockedForever": "Locked in forever • Reg. $5.99",
+    "trial14days": "14-day free trial",
+    "securePayment": "Secure payment",
+    "cancelAnytime": "Cancel anytime",
+    "reactivate": "Reactivate Subscription",
+    "renewsOn": "Renews on {{date}}",
+    "cancelingOn": "Your subscription will end on {{date}}",
+    "trialEnds": "Your trial ends on {{date}}",
+    "freeDescription": "You are currently on the free plan.",
+    "premiumActive": "Premium Active",
+    "trialActive": "Trial Active",
+    "subscriptionEnding": "Subscription Ending",
+    "cancelingDescription": "Your access will end at the end of the billing period.",
+    "trialDescription": "Enjoying your free trial with all Premium features.",
+    "premiumDescription": "Thank you for being a Premium subscriber!",
+    "endsOn": "Ends on",
+    "trialEndsOn": "Trial ends",
+    "nextBilling": "Next billing",
+    "status": {
+      "label": "Status",
+      "active": "Active",
+      "canceling": "Canceling",
+      "trial": "Trial",
+      "free": "Free"
+    },
+    "cancelWarning": {
+      "title": "Your subscription is set to cancel",
+      "description": "You will lose access to Premium features after the current billing period. You can reactivate anytime before then."
+    },
+    "trial": {
+      "title": "You are on a free trial",
+      "description": "Enjoy all Premium features during your trial period. Your card will be charged when the trial ends."
+    },
+    "features": {
+      "unlimitedClips": "Unlimited clips",
+      "unlimitedFiles": "Unlimited file uploads",
+      "prioritySupport": "Priority support",
+      "offlineMode": "Offline mode (coming soon)",
+      "freeClips": "100 clips per month",
+      "freeFiles": "10 file uploads per month",
+      "communitySupport": "Community support"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account preferences",
+    "profile": {
+      "title": "Profile",
+      "description": "Your account information"
+    },
+    "workspaces": {
+      "title": "Notion Workspaces",
+      "description": "Manage your connected Notion workspaces",
+      "addNew": "Add Workspace",
+      "default": "Default",
+      "lastUsed": "Last used: {{date}}",
+      "neverUsed": "Never used",
+      "setAsDefault": "Set as default",
+      "disconnect": "Disconnect",
+      "noWorkspaces": "No workspaces connected",
+      "connectFirst": "Connect your first workspace",
+      "disconnected": "Disconnected Workspaces",
+      "reconnect": "Reconnect",
+      "note": "Note:",
+      "noteText": "Each Notion workspace can only be linked to one Clipper Pro account. This helps prevent abuse and ensures fair usage.",
+      "fetchError": "Failed to load workspaces",
+      "setDefaultError": "Failed to set default workspace",
+      "disconnectError": "Failed to disconnect workspace",
+      "confirmDisconnect": "Are you sure you want to disconnect this workspace? You can reconnect it later.",
+      "addedSuccess": "Workspace added successfully!"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Choose your preferred language"
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize the look and feel",
+      "darkMode": "Dark Mode",
+      "darkEnabled": "Dark theme enabled",
+      "lightEnabled": "Light theme enabled"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Manage your notification preferences",
+      "email": "Email notifications",
+      "emailDescription": "Receive updates via email",
+      "inApp": "In-app notifications",
+      "inAppDescription": "Show notifications in the app"
+    },
+    "danger": {
+      "title": "Account",
+      "description": "Manage your account",
+      "logout": "Log out",
+      "delete": "Delete Account"
+    },
+    "theme": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "forgotPassword": {
+    "title": "Forgot your password?",
+    "subtitle": "Enter your email and we'll send you a reset link.",
+    "email": "Email",
+    "sendLink": "Send Reset Link",
+    "sending": "Sending...",
+    "successTitle": "Check your email",
+    "successMessage": "If an account exists with this email, we've sent you a password reset link.",
+    "backToLogin": "Back to Login",
+    "rememberPassword": "Remember your password?",
+    "signIn": "Sign in"
+  },
+  "resetPassword": {
+    "title": "Reset your password",
+    "subtitle": "Enter your new password below.",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordHint": "At least 8 characters",
+    "resetButton": "Reset Password",
+    "resetting": "Resetting...",
+    "successTitle": "Password Reset!",
+    "successMessage": "Your password has been successfully reset. You can now sign in with your new password.",
+    "signIn": "Sign In",
+    "invalidLink": "Invalid or Expired Link",
+    "invalidLinkMessage": "This password reset link is invalid or has expired. Please request a new one.",
+    "requestNewLink": "Request New Link",
+    "passwordMismatch": "Passwords do not match",
+    "passwordTooShort": "Password must be at least 8 characters"
+  },
+  "login": {
+    "forgotPassword": "Forgot password?"
+  },
+  "hero": {
+    "badge": "Early Bird: First 500 Users Get $2.99/mo Forever",
+    "title1": "The Smarter Way",
+    "title2": "to Clip to Notion.",
+    "subtitle": "Offline mode ✓ Better parsing ✓ Native desktop app.",
+    "subtitleError": "No more \"go online\" errors. Premium quality that works.",
+    "cta": "Start Free Trial",
+    "ctaSecondary": "See Pricing"
+  },
+  "features": {
+    "offline": {
+      "title": "Works Offline",
+      "description": "Local queue syncs automatically when you're back online. Never lose a clip again."
+    },
+    "instant": {
+      "title": "Instant Capture",
+      "description": "One keyboard shortcut. Clipboard to Notion in under 2 seconds. Simple as copy-paste."
+    },
+    "analytics": {
+      "title": "Usage Analytics",
+      "description": "Track your clipping activity. See patterns. Optimize your workflow."
+    }
+  },
+  "howItWorks": {
+    "badge": "Simple Workflow",
+    "title": "Simple as Copy-Paste",
+    "subtitle": "Three steps. Zero friction. Maximum productivity.",
+    "step1": {
+      "title": "Copy anything",
+      "description": "Text, images, links. Use",
+      "description2": "like normal."
+    },
+    "step2": {
+      "title": "Auto-detection",
+      "description": "Clipper Pro instantly detects new clipboard content."
+    },
+    "step3": {
+      "title": "Send to Notion",
+      "description": "Press",
+      "description2": "Done. Saved to Notion in under 2 seconds."
+    }
+  },
+  "showcase": {
+    "badge": "Beautiful Interface",
+    "title": "See It In Action",
+    "subtitle": "A glimpse of the Clipper Pro experience. Clean, fast, and powerful.",
+    "placeholder": "Screenshot or GIF coming soon"
+  },
+  "comparison": {
+    "title": "Why Choose Clipper Pro?",
+    "subtitle": "Built for people who work offline. Not another browser extension."
+  },
+  "cta": {
+    "title": "Ready to clip offline?",
+    "subtitle": "Join 200+ early users. Lock in $2.99/mo forever.",
+    "button": "Start Free Trial",
+    "buttonSecondary": "See Pricing",
+    "trust": "Cancel anytime • Secure payment"
   },
   "trust": {
-    "secure": "Secure connection",
-    "noCardRequired": "No credit card required",
     "freeTrial": "14-day free trial",
-    "neverShare": "We never share your data",
+    "secure": "Secure payment",
     "cancelAnytime": "Cancel anytime"
+  },
+  "buttons": {
+    "loading": "Processing..."
   },
   "footer": {
     "tagline": "The ultimate tool to capture your ideas in Notion.",
     "product": "Product",
     "legal": "Legal",
     "company": "Company",
-    "role": "Entrepreneur",
     "privacy": "Privacy",
     "terms": "Terms of Service",
     "legalNotice": "Legal Notice",
+    "role": "Entrepreneur",
     "rights": "All rights reserved.",
-    "copyright": "All rights reserved.",
-    "madeWith": "Made with love for Notion users everywhere",
-    "links": {
-      "home": "Home",
-      "pricing": "Pricing",
-      "github": "GitHub",
-      "privacy": "Privacy",
-      "terms": "Terms"
-    }
+    "madeWith": "Made with love for Notion users everywhere"
+  },
+  "common": {
+    "soon": "Soon"
+  },
+  "activity": {
+    "title": "Activity",
+    "subtitle": "Track your productivity and analyze your workflow",
+    "export": "Export",
+    "totalClips": "Total Clips",
+    "totalFiles": "Total Files",
+    "timeSaved": "Time Saved",
+    "streak": "Current Streak",
+    "trend": "Weekly Trend",
+    "activityChart": "Activity Over Time",
+    "insights": "Insights",
+    "history": "Activity History"
   }
 }

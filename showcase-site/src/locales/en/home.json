@@ -1,18 +1,26 @@
 {
   "hero": {
+    "badge": "{{remaining}} beta spots · €2.99/mo forever",
     "title": {
-      "line1": "Capture anything",
-      "line2": "to Notion instantly"
+      "line1": "Clip to Notion.",
+      "line2": "Even offline."
     },
-    "subtitle": {
-      "line1": "The ultimate tool to capture and organize your ideas in Notion.",
-      "line2": "Lightning fast, secure, and beautifully designed."
-    },
+    "subtitle": "The official clipper fails offline. Ours queues locally and syncs automatically.",
     "cta": {
-      "primary": "Get Started Free",
-      "secondary": "View Pricing"
+      "download": "Download App",
+      "extension": "Chrome Extension",
+      "freeTrial": "Or start with free trial"
     },
-    "trust": "Secure & Private • No credit card required"
+    "trust": {
+      "platforms": "macOS, Windows, Linux",
+      "offline": "Works offline",
+      "free": "Free tier available"
+    }
+  },
+  "download": {
+    "title": "Download Desktop App",
+    "subtitle": "Choose your platform",
+    "close": "Close"
   },
   "features": {
     "title": "Everything you need",
@@ -46,9 +54,48 @@
     }
   },
   "cta": {
-    "title": "Ready to get started?",
-    "subtitle": "Join thousands of users who save hours every week with Clipper Pro",
-    "button": "Start Free Today",
-    "trial": "No credit card required • 14-day free trial"
+    "title": "Ready to clip offline?",
+    "subtitle": "Lock in €2.99/mo forever. Price increases after beta.",
+    "spotsRemaining": "{{remaining}} spots remaining",
+    "download": "Download App",
+    "pricing": "See Pricing",
+    "trust": "Secure payment · Cancel anytime"
+  },
+  "sections": {
+    "features": {
+      "title": "Everything you need to clip",
+      "subtitle": "Desktop app + Chrome extension. Works offline. Syncs everywhere."
+    },
+    "extension": {
+      "badge": "Chrome Extension",
+      "title": "Clip from your browser",
+      "subtitle": "Clip any webpage, article, or selection directly to your Notion workspace. Works seamlessly with your existing setup.",
+      "features": ["Full page capture", "Selection clipping", "Quick database switch", "Custom shortcuts"],
+      "cta": "Get Extension"
+    },
+    "desktop": {
+      "badge": "Desktop App",
+      "title": "Clip from anywhere",
+      "subtitle": "Native app for macOS, Windows, and Linux. Global shortcuts, system tray, and offline support. Clip without opening your browser.",
+      "features": ["Works offline", "Global shortcuts", "Focus & Compact modes", "File attachments", "Templates"],
+      "cta": "Download App"
+    },
+    "howItWorks": {
+      "title": "Simple as copy-paste",
+      "subtitle": "Three steps. Zero friction.",
+      "steps": [
+        { "title": "Copy anything", "desc": "Text, images, files" },
+        { "title": "Auto-detect", "desc": "Clipper detects new content" },
+        { "title": "Send to Notion", "desc": "Saved in under 2 seconds" }
+      ]
+    }
+  },
+  "features": {
+    "offline": { "title": "Works Offline", "description": "Queue clips locally, sync when back online. Never lose a clip." },
+    "instant": { "title": "Instant Capture", "description": "One shortcut. Clipboard to Notion in under 2 seconds." },
+    "analytics": { "title": "Usage Analytics", "description": "Track activity, see patterns, optimize your workflow." },
+    "files": { "title": "File Attachments", "description": "Send files directly to Notion. Images, PDFs, documents." },
+    "multiselect": { "title": "Multi-select & Templates", "description": "Select multiple databases. Use templates for quick clips." },
+    "modes": { "title": "Focus & Compact Modes", "description": "Floating bubble or minimalist interface. Your choice." }
   }
 }

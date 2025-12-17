@@ -193,41 +193,83 @@ export const db = {
    */
   async upsertSubscription(subscriptionData: {
     user_id: string;
-    tier?: 'FREE' | 'PREMIUM' | 'GRACE_PERIOD';
+    tier?: 'FREE' | 'PREMIUM' | 'GRACE_PERIOD' | 'free' | 'premium' | 'grace_period';
     status?: string;
     stripe_customer_id?: string;
     stripe_subscription_id?: string;
     stripe_price_id?: string;
     current_period_start?: Date;
     current_period_end?: Date;
+    cancel_at_period_end?: boolean;
     metadata?: any;
   }) {
     const supabase = getSupabaseClient();
 
-    // Normalize tier to uppercase
-    const normalizedData = {
-      ...subscriptionData,
-      tier: subscriptionData.tier ? subscriptionData.tier.toUpperCase() as 'FREE' | 'PREMIUM' | 'GRACE_PERIOD' : 'FREE',
+    // Normalize tier to UPPERCASE (as per DB constraint after migration)
+    const tierUpper = subscriptionData.tier 
+      ? subscriptionData.tier.toUpperCase() as 'FREE' | 'PREMIUM' | 'GRACE_PERIOD'
+      : 'FREE';
+
+    logger.info(`Upserting subscription for user: ${subscriptionData.user_id}, tier: ${tierUpper}`);
+
+    // First check if subscription exists
+    const { data: existing } = await supabase
+      .from('subscriptions')
+      .select('id')
+      .eq('user_id', subscriptionData.user_id)
+      .maybeSingle();
+
+    const dataToUpsert: Record<string, unknown> = {
+      user_id: subscriptionData.user_id,
+      tier: tierUpper,
+      status: subscriptionData.status || 'active',
+      stripe_customer_id: subscriptionData.stripe_customer_id,
+      stripe_subscription_id: subscriptionData.stripe_subscription_id,
+      stripe_price_id: subscriptionData.stripe_price_id,
+      current_period_start: subscriptionData.current_period_start?.toISOString() || new Date().toISOString(),
+      current_period_end: subscriptionData.current_period_end?.toISOString() || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      metadata: subscriptionData.metadata || {},
       updated_at: new Date().toISOString(),
     };
 
-    const { data, error } = await supabase
-      .from('subscriptions')
-      .upsert(
-        normalizedData,
-        {
-          onConflict: 'user_id',
-        }
-      )
-      .select()
-      .single();
-
-    if (error) {
-      logger.error('Database error upserting subscription:', error);
-      throw error;
+    // Only include cancel_at_period_end if explicitly set
+    if (subscriptionData.cancel_at_period_end !== undefined) {
+      dataToUpsert.cancel_at_period_end = subscriptionData.cancel_at_period_end;
     }
 
-    return data;
+    let result;
+    
+    if (existing) {
+      // Update existing
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .update(dataToUpsert)
+        .eq('user_id', subscriptionData.user_id)
+        .select()
+        .single();
+      
+      if (error) {
+        logger.error('Database error updating subscription:', error);
+        throw error;
+      }
+      result = data;
+    } else {
+      // Insert new
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .insert(dataToUpsert)
+        .select()
+        .single();
+      
+      if (error) {
+        logger.error('Database error inserting subscription:', error);
+        throw error;
+      }
+      result = data;
+    }
+
+    logger.info(`✅ Subscription upserted successfully for user: ${subscriptionData.user_id}`);
+    return result;
   },
 
   // ============================================
@@ -275,7 +317,7 @@ export const db = {
   },
 
   /**
-   * Get Notion connection for user
+   * Get Notion connection for user (returns most recently updated if multiple)
    */
   async getNotionConnection(userId: string) {
     const supabase = getSupabaseClient();
@@ -285,6 +327,8 @@ export const db = {
       .select('*')
       .eq('user_id', userId)
       .eq('is_active', true)
+      .order('updated_at', { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     if (error) {
@@ -293,6 +337,27 @@ export const db = {
     }
 
     return data;
+  },
+
+  /**
+   * Get all Notion connections for user
+   */
+  async getAllNotionConnections(userId: string) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('notion_connections')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('is_active', true)
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      logger.error('Database error fetching Notion connections:', error);
+      throw error;
+    }
+
+    return data || [];
   },
 
   /**
@@ -514,6 +579,185 @@ export const db = {
     }
 
     return data || [];
+  },
+
+  // ============================================
+  // WORKSPACE HISTORY (Anti-abuse)
+  // ============================================
+
+  /**
+   * Get workspace history entry
+   */
+  async getWorkspaceHistory(workspaceId: string) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('workspace_usage_history')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      logger.error('Database error fetching workspace history:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
+   * Register workspace in history (anti-abuse tracking)
+   */
+  async registerWorkspaceHistory(
+    workspaceId: string,
+    workspaceName: string,
+    userId: string,
+    userEmail: string
+  ) {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase
+      .from('workspace_usage_history')
+      .upsert({
+        workspace_id: workspaceId,
+        workspace_name: workspaceName,
+        first_user_id: userId,
+        first_user_email: userEmail,
+        disconnected_at: null,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'workspace_id'
+      });
+
+    if (error) {
+      logger.error('Database error registering workspace history:', error);
+      throw error;
+    }
+  },
+
+  // ============================================
+  // PENDING NOTION REGISTRATIONS
+  // ============================================
+
+  /**
+   * Save pending Notion registration (waiting for email verification)
+   */
+  async savePendingNotionRegistration(data: {
+    workspaceId: string;
+    workspaceName?: string;
+    workspaceIcon?: string;
+    accessToken: string; // Already encrypted
+    ownerName?: string;
+    ownerAvatar?: string;
+    source?: 'app' | 'web';
+  }) {
+    const supabase = getSupabaseClient();
+
+    // Delete any existing pending registration for this workspace
+    await supabase
+      .from('pending_notion_registrations')
+      .delete()
+      .eq('workspace_id', data.workspaceId);
+
+    const { data: result, error } = await supabase
+      .from('pending_notion_registrations')
+      .insert({
+        workspace_id: data.workspaceId,
+        workspace_name: data.workspaceName,
+        workspace_icon: data.workspaceIcon,
+        access_token: data.accessToken,
+        owner_name: data.ownerName,
+        owner_avatar: data.ownerAvatar,
+        source: data.source || 'web',
+        expires_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour
+      })
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Database error saving pending Notion registration:', error);
+      throw error;
+    }
+
+    return result;
+  },
+
+  /**
+   * Get pending Notion registration by workspace ID
+   */
+  async getPendingNotionRegistration(workspaceId: string) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('pending_notion_registrations')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+      .gt('expires_at', new Date().toISOString())
+      .maybeSingle();
+
+    if (error) {
+      logger.error('Database error fetching pending Notion registration:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
+   * Update pending registration with email
+   */
+  async updatePendingNotionEmail(workspaceId: string, email: string) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('pending_notion_registrations')
+      .update({
+        email,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('workspace_id', workspaceId)
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Database error updating pending Notion email:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  /**
+   * Delete pending Notion registration
+   */
+  async deletePendingNotionRegistration(workspaceId: string) {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase
+      .from('pending_notion_registrations')
+      .delete()
+      .eq('workspace_id', workspaceId);
+
+    if (error) {
+      logger.error('Database error deleting pending Notion registration:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Cleanup expired pending registrations
+   */
+  async cleanupExpiredPendingRegistrations() {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase
+      .from('pending_notion_registrations')
+      .delete()
+      .lt('expires_at', new Date().toISOString());
+
+    if (error) {
+      logger.error('Database error cleaning up expired pending registrations:', error);
+    }
   },
 
   // ============================================

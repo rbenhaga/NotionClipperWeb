@@ -1,69 +1,65 @@
 {
-  "title": "Simple, transparent pricing",
-  "subtitle": "Choose the plan that's right for you",
+  "badge": "Beta Pricing - First 500 Users",
+  "spotsRemaining": "347 spots remaining out of 500",
+  "spotsLabel": "spots remaining",
+  "title": "Simple, Honest Pricing",
+  "subtitle": "Try free. Upgrade for unlimited clips, offline mode, and more.",
+  "earlyBird": "Early users get $2.99/mo forever.",
+  "betaNotice": {
+    "title": "This is beta software.",
+    "description": "Clipboard capture works great. Desktop app and offline sync coming soon.",
+    "link": "See what works →"
+  },
   "billing": {
     "monthly": "Monthly",
     "annual": "Annual",
     "save": "Save"
   },
+  "period": {
+    "month": "month",
+    "mo": "mo",
+    "year": "year"
+  },
   "free": {
     "name": "Free",
-    "tagline": "Perfect to get started",
-    "price": "0",
-    "currency": "$",
-    "period": "/month",
+    "tagline": "Try It Out",
+    "description": "Perfect for light usage",
     "features": {
-      "clips": "50 clips per month",
-      "uploads": "10 file uploads per month",
-      "focus": "60 minutes focus mode",
-      "markdown": "Basic Markdown support"
+      "clips": "10 clips/month",
+      "extension": "Chrome extension",
+      "capture": "Basic clipboard capture",
+      "support": "Community support"
     },
-    "button": "Get Started Free"
+    "button": "Start Free"
   },
   "premium": {
-    "name": "Premium",
-    "tagline": "For power users",
-    "badge": "MOST POPULAR",
-    "price": "5.99",
-    "priceAnnual": "4.92",
-    "currency": "$",
-    "period": "/month",
-    "billedAnnually": "Billed ${price}/year • Save ${savings}",
-    "features": {
-      "unlimitedClips": "Unlimited clips",
-      "unlimitedUploads": "Unlimited file uploads",
-      "unlimitedFocus": "Unlimited focus mode",
-      "advancedMarkdown": "Advanced Markdown parsing",
-      "prioritySupport": "Priority support",
-      "earlyAccess": "Early access to new features"
+    "name": "Pro",
+    "badge": "Beta Price",
+    "tagline": "Clipper Pro",
+    "description": "For power users",
+    "priceNote": {
+      "monthly": "Locked in forever • Reg. $5.99",
+      "annual": "$2.39/mo • Save 20%"
     },
-    "button": "Start 14-Day Free Trial",
-    "trial": "No credit card required for trial"
-  },
-  "onetime": {
-    "name": "One-Time Purchase",
-    "tagline": "Pay once, use forever",
-    "badge": "BEST VALUE",
-    "price": "TBD",
-    "currency": "€",
-    "period": "one-time",
     "features": {
-      "everything": "All Premium features",
-      "lifetime": "Lifetime access",
-      "updates": "Free updates",
-      "priority": "Priority support",
-      "noSubscription": "No subscription"
+      "unlimited": "Unlimited clips",
+      "offline": "Offline mode",
+      "desktop": "Desktop app",
+      "analytics": "Usage analytics",
+      "support": "Priority support"
     },
-    "button": "Buy Now",
-    "comingSoon": "Coming Soon"
-  },
-  "trust": {
-    "trial": "14-day free trial",
-    "cancel": "Cancel anytime",
-    "noQuestions": "No questions asked"
+    "button": "Start Free Trial"
   },
   "faq": {
-    "title": "Frequently Asked Questions",
+    "title": "Common Questions",
+    "locked": {
+      "question": "Is beta pricing really locked in forever?",
+      "answer": "Yes. Like YouTube Premium early adopters who still pay $7.99 while new users pay $13.99 (10 years later), your $2.99/mo rate never changes. Ever."
+    },
+    "why": {
+      "question": "Why pay when the official clipper is free?",
+      "answer": "If the official clipper works for you, stick with it. We built this for people who experience \"go online\" errors and need offline support. Different problem, different solution."
+    },
     "cancel": {
       "question": "Can I cancel anytime?",
       "answer": "Yes! You can cancel your subscription at any time. No questions asked, no hidden fees."
@@ -71,10 +67,6 @@
     "payment": {
       "question": "What payment methods do you accept?",
       "answer": "We accept all major credit cards via Stripe. Your payment information is secure and encrypted."
-    },
-    "upgrade": {
-      "question": "Can I upgrade or downgrade later?",
-      "answer": "Absolutely! You can upgrade to Premium or downgrade to Free at any time from your account settings."
     }
   }
 }

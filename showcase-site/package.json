@@ -1,7 +1,7 @@
 {
   "name": "@notion-clipper/showcase-site",
   "version": "1.0.0",
-  "description": "Showcase website for Notion Clipper - Apple/Notion inspired design",
+  "description": "Showcase website for Clipper Pro - Apple/Notion inspired design",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
+    "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.0",
     "framer-motion": "^10.18.0",
     "i18next": "^25.6.2",
@@ -23,6 +24,7 @@
     "react-router-dom": "^6.21.1"
   },
   "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@typescript-eslint/eslint-plugin": "^6.16.0",

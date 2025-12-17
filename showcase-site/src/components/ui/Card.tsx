@@ -25,8 +25,8 @@ export default function Card({
   const cardClass = interactive
     ? 'card-interactive'
     : hover
-    ? 'card-hover'
-    : 'card';
+      ? 'card-hover'
+      : 'card';
 
   const classes = `${cardClass} ${paddingClasses[padding]} ${className}`.replace(
     'p-6',
@@ -35,11 +35,12 @@ export default function Card({
 
   if (interactive) {
     return (
+      // @ts-ignore
       <motion.div
         className={classes}
-        whileHover={{ scale: 1.02 }}
-        whileTap={{ scale: 0.99 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+        whileHover={{ scale: 1.02, y: -2 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         {...props}
       >
         {children}

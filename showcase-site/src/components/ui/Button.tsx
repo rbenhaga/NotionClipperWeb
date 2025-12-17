@@ -41,17 +41,18 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       lg: 'btn-lg',
     };
 
-    const baseClasses = `${variantClasses[variant]} ${sizeClasses[size]} ${
-      fullWidth ? 'w-full' : ''
-    } ${className}`;
+    const baseClasses = `${variantClasses[variant]} ${sizeClasses[size]} ${fullWidth ? 'w-full' : ''
+      } ${className} focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-purple-500 dark:focus-visible:ring-purple-400`;
 
     return (
+      // @ts-ignore
       <motion.button
         ref={ref}
         className={baseClasses}
         disabled={disabled || isLoading}
+        whileHover={{ scale: disabled || isLoading ? 1 : 1.02 }}
         whileTap={{ scale: disabled || isLoading ? 1 : 0.98 }}
-        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
         {...props}
       >
         {isLoading ? (

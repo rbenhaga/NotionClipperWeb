@@ -4,10 +4,10 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        // Notion-inspired neutral palette
         'notion-gray': {
           50: '#f7f7f5',
           100: '#ededed',
@@ -77,53 +77,9 @@ export default {
           500: '#ec4899',
           600: '#db2777',
           700: '#be185d',
-          800: '#9f1239',
+          800: '#9d174d',
           900: '#831843',
         },
-        yellow: {
-          50: '#fefce8',
-          100: '#fef9c3',
-          200: '#fef08a',
-          300: '#fde047',
-          400: '#facc15',
-          500: '#eab308',
-          600: '#ca8a04',
-          700: '#a16207',
-          800: '#854d0e',
-          900: '#713f12',
-        },
-      },
-      fontFamily: {
-        sans: [
-          '-apple-system',
-          'BlinkMacSystemFont',
-          'SF Pro Display',
-          'Segoe UI',
-          'Roboto',
-          'Helvetica Neue',
-          'Arial',
-          'sans-serif',
-        ],
-      },
-      fontSize: {
-        'xs': ['0.6875rem', { lineHeight: '1rem' }],      // 11px
-        'sm': ['0.75rem', { lineHeight: '1.25rem' }],     // 12px
-        'base': ['0.875rem', { lineHeight: '1.5rem' }],   // 14px
-        'lg': ['0.9375rem', { lineHeight: '1.625rem' }],  // 15px
-        'xl': ['1rem', { lineHeight: '1.75rem' }],        // 16px
-        '2xl': ['1.25rem', { lineHeight: '1.875rem' }],   // 20px
-        '3xl': ['1.5rem', { lineHeight: '2rem' }],        // 24px
-        '4xl': ['1.875rem', { lineHeight: '2.25rem' }],   // 30px
-        '5xl': ['2.25rem', { lineHeight: '2.5rem' }],     // 36px
-        '6xl': ['3rem', { lineHeight: '1' }],             // 48px
-        '7xl': ['3.75rem', { lineHeight: '1' }],          // 60px
-        '8xl': ['4.5rem', { lineHeight: '1' }],           // 72px
-      },
-      spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
-        '112': '28rem',
-        '128': '32rem',
       },
       borderRadius: {
         '4xl': '2rem',
@@ -133,6 +89,7 @@ export default {
         'apple': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         'apple-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
         'apple-xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        'apple-2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
@@ -161,22 +118,13 @@ export default {
           '100%': { transform: 'scale(1)', opacity: '1' },
         },
         blob: {
-          '0%': {
-            transform: 'translate(0px, 0px) scale(1)',
-          },
-          '33%': {
-            transform: 'translate(30px, -50px) scale(1.1)',
-          },
-          '66%': {
-            transform: 'translate(-20px, 20px) scale(0.9)',
-          },
-          '100%': {
-            transform: 'translate(0px, 0px) scale(1)',
-          },
+          '0%': { transform: 'translate(0px, 0px) scale(1)' },
+          '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+          '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+          '100%': { transform: 'translate(0px, 0px) scale(1)' },
         },
       },
     },
   },
   plugins: [],
-  darkMode: 'class',
 }

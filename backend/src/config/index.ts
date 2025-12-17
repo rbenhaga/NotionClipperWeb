@@ -36,7 +36,7 @@ function validateEnv(): void {
   if (missing.length > 0) {
     throw new Error(
       `Missing required environment variables: ${missing.join(', ')}\n` +
-        'Please check your .env file and ensure all required variables are set.'
+      'Please check your .env file and ensure all required variables are set.'
     );
   }
 
@@ -64,10 +64,10 @@ export const config: AppConfig = {
   allowedOrigins: process.env.ALLOWED_ORIGINS
     ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim())
     : [
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'notion-clipper://localhost',
-      ],
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'notion-clipper://localhost',
+    ],
 
   supabase: {
     url: process.env.SUPABASE_URL!,
@@ -132,10 +132,18 @@ export async function initializeSecrets(): Promise<void> {
     config.oauth.notion.clientId = secrets.NOTION_CLIENT_ID || config.oauth.notion.clientId;
     config.oauth.notion.clientSecret = secrets.NOTION_CLIENT_SECRET || config.oauth.notion.clientSecret;
     config.stripe.secretKey = secrets.STRIPE_SECRET_KEY || config.stripe.secretKey;
-    config.stripe.webhookSecret = secrets.STRIPE_WEBHOOK_SECRET || config.stripe.webhookSecret;
+    
+    // For webhook secret: prefer .env in development (stripe listen generates unique secrets)
+    // In production, use Vault secret
+    if (config.env === 'development' && process.env.STRIPE_WEBHOOK_SECRET) {
+      console.log('   Using local STRIPE_WEBHOOK_SECRET from .env (dev mode)');
+    } else {
+      config.stripe.webhookSecret = secrets.STRIPE_WEBHOOK_SECRET || config.stripe.webhookSecret;
+    }
+    
     config.stripe.prices.monthly = secrets.STRIPE_PRICE_MONTHLY || config.stripe.prices.monthly;
     config.stripe.prices.annual = secrets.STRIPE_PRICE_ANNUAL || config.stripe.prices.annual;
-    
+
     // Set TOKEN_ENCRYPTION_KEY in process.env so crypto service can access it
     if (secrets.TOKEN_ENCRYPTION_KEY) {
       process.env.TOKEN_ENCRYPTION_KEY = secrets.TOKEN_ENCRYPTION_KEY;
@@ -155,6 +163,14 @@ export async function initializeSecrets(): Promise<void> {
       throw new Error(
         'Missing OAuth credentials. Please configure them in Supabase Vault or .env file.'
       );
+    }
+
+    // Verify Stripe Price IDs (Critical for checkout flow)
+    if (!config.stripe.prices.monthly || !config.stripe.prices.annual) {
+      console.warn('⚠️  Stripe Price IDs are missing! Checkout flow will fail.');
+      console.warn('   Please add STRIPE_PRICE_MONTHLY and STRIPE_PRICE_ANNUAL to Supabase Vault or .env');
+    } else {
+      console.log('✅ Stripe Price IDs configured');
     }
   }
 }

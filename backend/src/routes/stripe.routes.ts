@@ -7,6 +7,11 @@ import { Router } from 'express';
 import {
   createCheckout,
   createPortal,
+  syncSubscription,
+  verifySession,
+  getPaymentMethod,
+  reactivateSubscription,
+  getBetaSpots,
 } from '../controllers/stripe.controller.js';
 import { authenticateToken, authenticateOptional } from '../middleware/auth.middleware.js';
 
@@ -25,5 +30,40 @@ router.post('/create-checkout-session', authenticateOptional, createCheckout);
  * Requires authentication
  */
 router.post('/create-portal', authenticateToken, createPortal);
+
+/**
+ * Sync subscription from Stripe (manual webhook alternative)
+ * POST /api/stripe/sync-subscription
+ * Requires authentication
+ */
+router.post('/sync-subscription', authenticateToken, syncSubscription);
+
+/**
+ * Verify checkout session and activate subscription
+ * POST /api/stripe/verify-session
+ * Requires authentication
+ */
+router.post('/verify-session', authenticateToken, verifySession);
+
+/**
+ * Get payment method info
+ * GET /api/stripe/payment-method
+ * Requires authentication
+ */
+router.get('/payment-method', authenticateToken, getPaymentMethod);
+
+/**
+ * Reactivate canceled subscription
+ * POST /api/stripe/reactivate-subscription
+ * Requires authentication
+ */
+router.post('/reactivate-subscription', authenticateToken, reactivateSubscription);
+
+/**
+ * Get remaining beta spots
+ * GET /api/stripe/beta-spots
+ * Public endpoint - no auth required
+ */
+router.get('/beta-spots', getBetaSpots);
 
 export default router;

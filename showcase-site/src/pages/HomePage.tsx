@@ -1,133 +1,422 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, Sparkles, WifiOff, Clock, TrendingUp } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
+import {
+  Zap, WifiOff, TrendingUp, Chrome, Monitor, Apple,
+  ArrowRight, Check, Download, Image, Play,
+  FileText, Layers, Layout
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import ComparisonTable from '../components/ComparisonTable';
-import SocialProof from '../components/SocialProof';
-import { containerVariants, itemVariants } from '../lib/animations';
-import { Badge } from '../components/ui';
+
+// Download Modal Component
+function DownloadModal({ 
+  isOpen, 
+  onClose,
+  t 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void;
+  t: (key: string) => string;
+}) {
+  const downloads = [
+    { os: 'macOS', icon: Apple, available: true },
+    { os: 'Windows', icon: Monitor, available: true },
+    { os: 'Linux', icon: Monitor, available: true },
+  ];
+
+  if (!isOpen) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+          className="bg-white dark:bg-neutral-900 rounded-2xl p-8 max-w-md w-full border border-neutral-200 dark:border-neutral-800"
+          onClick={e => e.stopPropagation()}
+        >
+          <h3 className="text-xl font-semibold text-neutral-900 dark:text-white mb-2">
+            {t('home:download.title')}
+          </h3>
+          <p className="text-neutral-500 dark:text-neutral-400 text-sm mb-6">
+            {t('home:download.subtitle')}
+          </p>
+          
+          <div className="space-y-2">
+            {downloads.map((item) => (
+              <button
+                key={item.os}
+                className="w-full flex items-center justify-between p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 hover:bg-violet-50 dark:hover:bg-violet-500/10 border border-transparent hover:border-violet-200 dark:hover:border-violet-800 transition-all"
+              >
+                <div className="flex items-center gap-3">
+                  <item.icon className="w-5 h-5 text-neutral-600 dark:text-neutral-400" />
+                  <span className="font-medium text-neutral-900 dark:text-white">{item.os}</span>
+                </div>
+                <Download className="w-4 h-4 text-violet-600" />
+              </button>
+            ))}
+          </div>
+          
+          <button
+            onClick={onClose}
+            className="w-full mt-6 py-3 text-neutral-500 hover:text-neutral-900 dark:hover:text-white transition-colors text-sm"
+          >
+            {t('home:download.close')}
+          </button>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+// Media Placeholder Component
+function MediaPlaceholder({ type, label, className = '' }: { type: 'image' | 'gif' | 'video'; label: string; className?: string }) {
+  return (
+    <div className={`relative rounded-2xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900 flex flex-col items-center justify-center ${className}`}>
+      <div className="w-12 h-12 rounded-full bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center mb-3">
+        {type === 'video' || type === 'gif' ? (
+          <Play className="w-5 h-5 text-neutral-400" />
+        ) : (
+          <Image className="w-5 h-5 text-neutral-400" />
+        )}
+      </div>
+      <p className="text-sm text-neutral-500 font-medium">{label}</p>
+      <p className="text-xs text-neutral-400 mt-1">{type.toUpperCase()}</p>
+    </div>
+  );
+}
 
 export default function HomePage() {
+  const { t } = useTranslation(['home', 'common']);
+  const [betaSpots, setBetaSpots] = useState({ remaining: 347, total: 500 });
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+  
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+  useEffect(() => {
+    fetch(`${apiUrl}/stripe/beta-spots`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.data) setBetaSpots({ remaining: data.data.remaining, total: data.data.total });
+      })
+      .catch(() => {});
+  }, [apiUrl]);
+
+  const features = [
+    { icon: WifiOff, key: 'offline' },
+    { icon: Zap, key: 'instant' },
+    { icon: TrendingUp, key: 'analytics' },
+    { icon: FileText, key: 'files' },
+    { icon: Layers, key: 'multiselect' },
+    { icon: Layout, key: 'modes' },
+  ];
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-white dark:bg-neutral-950">
       <Header />
+      <DownloadModal isOpen={showDownloadModal} onClose={() => setShowDownloadModal(false)} t={t} />
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
-        {/* Gradient Orb */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl" />
-
-        <motion.div
-          className="max-w-5xl mx-auto text-center relative z-10"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {/* Beta Badge */}
-          <motion.div variants={itemVariants} className="flex justify-center mb-6">
-            <Badge variant="gradient" size="lg">
-              <Sparkles className="w-4 h-4" />
-              <span className="font-bold">Beta - First 500 Users Get $2.99/mo Forever</span>
-            </Badge>
-          </motion.div>
-
-          {/* Main Headline */}
-          <motion.h1
-            variants={itemVariants}
-            className="text-6xl sm:text-7xl lg:text-8xl font-bold tracking-tight mb-6"
-          >
-            <span className="text-gray-900 dark:text-white">Save to Notion.</span>
-            <br />
-            <span className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              Even Offline.
-            </span>
-          </motion.h1>
-
-          {/* Subheadline */}
-          <motion.p
-            variants={itemVariants}
-            className="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 leading-relaxed max-w-3xl mx-auto mb-10"
-          >
-            The only Notion clipper with a real offline queue.
-            No more <span className="font-semibold text-red-600 dark:text-red-400">"go online"</span> errors. Ever.
-          </motion.p>
-
-          {/* CTA Buttons */}
-          <motion.div
-            variants={itemVariants}
-            className="flex flex-col sm:flex-row gap-4 justify-center mb-12"
-          >
-            <Link to="/auth" className="btn-primary px-10 py-5 text-lg">
-              Start Free Trial
-            </Link>
-            <Link to="/pricing" className="btn-secondary px-10 py-5 text-lg">
-              See Pricing
-            </Link>
-          </motion.div>
-
-          {/* Social Proof */}
-          <motion.div variants={itemVariants}>
-            <SocialProof />
-          </motion.div>
-        </motion.div>
-      </section>
-
-      {/* Feature Highlights */}
-      <section className="py-20 px-6">
+      {/* HERO */}
+      <section className="pt-32 pb-20 px-6">
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            className="grid md:grid-cols-3 gap-8"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {/* Feature 1: Offline Mode */}
-            <motion.div variants={itemVariants} className="card-interactive text-center p-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <WifiOff className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                Works Offline
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Local queue syncs automatically when you're back online. Never lose a clip again.
-              </p>
-            </motion.div>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left: Copy */}
+            <div>
+              {/* Beta badge */}
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="inline-flex items-center gap-2 px-3 py-1.5 bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-full mb-8"
+              >
+                <span className="w-1.5 h-1.5 bg-violet-500 rounded-full animate-pulse" />
+                <span className="text-sm font-medium text-violet-700 dark:text-violet-300">
+                  {t('home:hero.badge', { remaining: betaSpots.remaining })}
+                </span>
+              </motion.div>
 
-            {/* Feature 2: Instant Capture */}
-            <motion.div variants={itemVariants} className="card-interactive text-center p-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <Zap className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                Instant Capture
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                One keyboard shortcut. Clipboard to Notion in under 2 seconds. Simple as copy-paste.
-              </p>
-            </motion.div>
+              {/* Headline */}
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="text-5xl sm:text-6xl font-semibold tracking-tight text-neutral-900 dark:text-white mb-6"
+              >
+                {t('home:hero.title.line1')}
+                <br />
+                <span className="text-violet-600 dark:text-violet-400">{t('home:hero.title.line2')}</span>
+              </motion.h1>
 
-            {/* Feature 3: Usage Analytics */}
-            <motion.div variants={itemVariants} className="card-interactive text-center p-8">
-              <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <TrendingUp className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
-                Usage Analytics
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Track your clipping activity. See patterns. Optimize your workflow.
-              </p>
+              {/* Subheadline */}
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-xl text-neutral-500 dark:text-neutral-400 mb-10 max-w-xl"
+              >
+                {t('home:hero.subtitle')}
+              </motion.p>
+
+              {/* CTAs */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="flex flex-col sm:flex-row gap-3 mb-6"
+              >
+                <button
+                  onClick={() => setShowDownloadModal(true)}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  {t('home:hero.cta.download')}
+                </button>
+                
+                <a
+                  href="https://chrome.google.com/webstore"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl font-medium hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
+                >
+                  <Chrome className="w-4 h-4" />
+                  {t('home:hero.cta.extension')}
+                </a>
+              </motion.div>
+
+              {/* Secondary CTA */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.35 }}
+                className="mb-8"
+              >
+                <Link
+                  to="/auth"
+                  className="inline-flex items-center gap-1 text-sm text-violet-600 dark:text-violet-400 font-medium hover:underline"
+                >
+                  {t('home:hero.cta.freeTrial')}
+                  <ArrowRight className="w-3 h-3" />
+                </Link>
+              </motion.div>
+
+              {/* Trust */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+                className="flex flex-wrap gap-6 text-sm text-neutral-500"
+              >
+                <span className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-violet-500" />
+                  {t('home:hero.trust.platforms')}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-violet-500" />
+                  {t('home:hero.trust.offline')}
+                </span>
+                <span className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-violet-500" />
+                  {t('home:hero.trust.free')}
+                </span>
+              </motion.div>
+            </div>
+
+            {/* Right: App Preview */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              <MediaPlaceholder 
+                type="gif" 
+                label="App Demo" 
+                className="aspect-[4/3] p-8"
+              />
             </motion.div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 px-6 bg-white dark:bg-gray-900">
+      {/* Section Divider */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center px-6">
+          <div className="w-full border-t border-neutral-200 dark:border-neutral-800" />
+        </div>
+        <div className="relative flex justify-center">
+          <div className="bg-white dark:bg-neutral-950 px-4">
+            <div className="w-2 h-2 rounded-full bg-violet-500/50" />
+          </div>
+        </div>
+      </div>
+
+      {/* FEATURES */}
+      <section className="py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-3xl sm:text-4xl font-semibold text-neutral-900 dark:text-white mb-4">
+              {t('home:sections.features.title')}
+            </h2>
+            <p className="text-lg text-neutral-500 max-w-2xl mx-auto">
+              {t('home:sections.features.subtitle')}
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {features.map((feature, i) => (
+              <motion.div
+                key={feature.key}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 hover:border-violet-200 dark:hover:border-violet-800 transition-colors"
+              >
+                <div className="w-10 h-10 rounded-xl bg-violet-50 dark:bg-violet-500/10 flex items-center justify-center mb-4">
+                  <feature.icon className="w-5 h-5 text-violet-600 dark:text-violet-400" />
+                </div>
+                <h3 className="font-semibold text-neutral-900 dark:text-white mb-2">
+                  {t(`home:features.${feature.key}.title`)}
+                </h3>
+                <p className="text-neutral-500 text-sm">
+                  {t(`home:features.${feature.key}.description`)}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* EXTENSION PREVIEW */}
+      <section className="relative py-24 px-6 bg-neutral-50 dark:bg-neutral-900/50">
+        {/* Top wave separator */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-300 dark:via-violet-700 to-transparent" />
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <MediaPlaceholder 
+                type="gif" 
+                label="Extension Demo" 
+                className="aspect-video p-8"
+              />
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-full mb-4">
+                <Chrome className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                <span className="text-sm font-medium text-violet-700 dark:text-violet-300">
+                  {t('home:sections.extension.badge')}
+                </span>
+              </div>
+              <h2 className="text-3xl font-semibold text-neutral-900 dark:text-white mb-4">
+                {t('home:sections.extension.title')}
+              </h2>
+              <p className="text-neutral-500 mb-6">
+                {t('home:sections.extension.subtitle')}
+              </p>
+              <ul className="space-y-2 mb-6">
+                {(t('home:sections.extension.features', { returnObjects: true }) as string[]).map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                    <Check className="w-4 h-4 text-violet-500" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <a
+                href="https://chrome.google.com/webstore"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-xl font-medium hover:bg-neutral-800 dark:hover:bg-neutral-100 transition-colors"
+              >
+                <Chrome className="w-4 h-4" />
+                {t('home:sections.extension.cta')}
+              </a>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* DESKTOP APP PREVIEW */}
+      <section className="relative py-24 px-6">
+        {/* Top gradient line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-300 dark:via-violet-700 to-transparent" />
+        <div className="max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="order-2 lg:order-1"
+            >
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-full mb-4">
+                <Monitor className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+                <span className="text-sm font-medium text-violet-700 dark:text-violet-300">
+                  {t('home:sections.desktop.badge')}
+                </span>
+              </div>
+              <h2 className="text-3xl font-semibold text-neutral-900 dark:text-white mb-4">
+                {t('home:sections.desktop.title')}
+              </h2>
+              <p className="text-neutral-500 mb-6">
+                {t('home:sections.desktop.subtitle')}
+              </p>
+              <ul className="space-y-2 mb-6">
+                {(t('home:sections.desktop.features', { returnObjects: true }) as string[]).map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+                    <Check className="w-4 h-4 text-violet-500" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <button
+                onClick={() => setShowDownloadModal(true)}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-colors"
+              >
+                <Download className="w-4 h-4" />
+                {t('home:sections.desktop.cta')}
+              </button>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              className="order-1 lg:order-2"
+            >
+              <MediaPlaceholder 
+                type="image" 
+                label="Desktop App Screenshot" 
+                className="aspect-[4/3] p-8"
+              />
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="relative py-24 px-6 bg-neutral-50 dark:bg-neutral-900/50">
+        {/* Top gradient line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-300 dark:via-violet-700 to-transparent" />
         <div className="max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -135,141 +424,88 @@ export default function HomePage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <Badge variant="secondary" size="lg" className="mb-4">
-              <Clock className="w-4 h-4" />
-              <span>Simple Workflow</span>
-            </Badge>
-            <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Simple as Copy-Paste
+            <h2 className="text-3xl sm:text-4xl font-semibold text-neutral-900 dark:text-white mb-4">
+              {t('home:sections.howItWorks.title')}
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400">
-              Three steps. Zero friction. Maximum productivity.
+            <p className="text-lg text-neutral-500">
+              {t('home:sections.howItWorks.subtitle')}
             </p>
           </motion.div>
 
-          <motion.div
-            className="space-y-6"
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            {/* Step 1 */}
-            <motion.div
-              variants={itemVariants}
-              className="flex items-start gap-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl"
-            >
-              <div className="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-xl">1</span>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  Copy anything
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Text, images, links. Use <kbd className="kbd">Ctrl+C</kbd> like normal.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Step 2 */}
-            <motion.div
-              variants={itemVariants}
-              className="flex items-start gap-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl"
-            >
-              <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-xl">2</span>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  Auto-detection
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Clipper Pro instantly detects new clipboard content.
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Step 3 */}
-            <motion.div
-              variants={itemVariants}
-              className="flex items-start gap-6 p-6 bg-gray-50 dark:bg-gray-800 rounded-2xl"
-            >
-              <div className="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                <span className="text-white font-bold text-xl">3</span>
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                  Send to Notion
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400">
-                  Press <kbd className="kbd">Ctrl+Shift+C</kbd>. Done. Saved to Notion in under 2 seconds.
-                </p>
-              </div>
-            </motion.div>
-          </motion.div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {(t('home:sections.howItWorks.steps', { returnObjects: true }) as Array<{ title: string; desc: string }>).map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="text-center"
+              >
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-violet-600 flex items-center justify-center text-white font-semibold">
+                  {i + 1}
+                </div>
+                <h3 className="font-semibold text-neutral-900 dark:text-white mb-1">{item.title}</h3>
+                <p className="text-neutral-500 text-sm mb-3">{item.desc}</p>
+                {i === 0 && (
+                  <kbd className="inline-flex px-2.5 py-1 bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded text-xs font-mono border border-neutral-200 dark:border-neutral-700">
+                    Ctrl+C
+                  </kbd>
+                )}
+                {i === 2 && (
+                  <kbd className="inline-flex px-2.5 py-1 bg-white dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 rounded text-xs font-mono border border-neutral-200 dark:border-neutral-700">
+                    Ctrl+Shift+C
+                  </kbd>
+                )}
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Comparison Table */}
-      <section className="py-20 px-6">
-        <div className="max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Why Choose Clipper Pro?
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400">
-              Built for people who work offline. Not another browser extension.
-            </p>
-          </motion.div>
-          <ComparisonTable variant="condensed" />
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-24 px-6">
+      {/* FINAL CTA */}
+      <section className="relative py-24 px-6">
+        {/* Top gradient line */}
+        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-300 dark:via-violet-700 to-transparent" />
         <motion.div
-          className="max-w-4xl mx-auto text-center"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
+          className="max-w-3xl mx-auto text-center"
         >
-          <div className="bg-gradient-to-br from-purple-600 via-blue-600 to-indigo-600 rounded-3xl p-16 shadow-apple-2xl relative overflow-hidden">
-            {/* Gradient Orbs */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-
-            <div className="relative z-10">
-              <h2 className="text-4xl sm:text-5xl font-bold text-white mb-4">
-                Ready to clip offline?
-              </h2>
-              <p className="text-xl text-purple-100 mb-10 max-w-2xl mx-auto">
-                Join 200+ beta users. Lock in $2.99/mo forever.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to="/auth"
-                  className="inline-flex items-center justify-center px-10 py-5 bg-white text-purple-600 rounded-2xl font-bold text-lg shadow-apple-xl hover:scale-105 transition-all"
-                >
-                  Start Free Trial
-                </Link>
-                <Link
-                  to="/pricing"
-                  className="inline-flex items-center justify-center px-10 py-5 bg-white/10 backdrop-blur-sm text-white border-2 border-white rounded-2xl font-bold text-lg hover:bg-white/20 transition-all"
-                >
-                  See Pricing
-                </Link>
-              </div>
-              <p className="text-sm text-purple-200 mt-6">
-                No credit card • Cancel anytime
-              </p>
-            </div>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-violet-50 dark:bg-violet-500/10 border border-violet-200 dark:border-violet-500/20 rounded-full mb-6">
+            <span className="w-1.5 h-1.5 bg-violet-500 rounded-full animate-pulse" />
+            <span className="text-sm font-medium text-violet-700 dark:text-violet-300">
+              {t('home:cta.spotsRemaining', { remaining: betaSpots.remaining })}
+            </span>
           </div>
+          
+          <h2 className="text-4xl sm:text-5xl font-semibold text-neutral-900 dark:text-white mb-4">
+            {t('home:cta.title')}
+          </h2>
+          <p className="text-lg text-neutral-500 mb-8">
+            {t('home:cta.subtitle')}
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              onClick={() => setShowDownloadModal(true)}
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-violet-600 text-white rounded-xl font-medium hover:bg-violet-700 transition-colors"
+            >
+              <Download className="w-4 h-4" />
+              {t('home:cta.download')}
+            </button>
+            <Link
+              to="/pricing"
+              className="inline-flex items-center justify-center px-8 py-4 bg-neutral-100 dark:bg-neutral-800 text-neutral-900 dark:text-white rounded-xl font-medium hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+            >
+              {t('home:cta.pricing')}
+            </Link>
+          </div>
+          
+          <p className="text-neutral-400 text-sm mt-6">
+            {t('home:cta.trust')}
+          </p>
         </motion.div>
       </section>
 
