@@ -7,8 +7,11 @@ Dashboard Grafana + Prometheus pour surveiller la fiabilité Notion (P0).
 ```bash
 cd monitoring
 
-# Set your metrics token
-export METRICS_TOKEN=42ea9ab1a3e801a3c2e6c5332fbb2ab97d9102c948fa7d05f50365ffdce0323f
+# Set your metrics token (from Supabase secrets or .env)
+export METRICS_TOKEN=your_metrics_token_here
+
+# Update json-exporter.yml with your token
+# Update prometheus.yml with your backend URL if not localhost
 
 # Start the stack
 docker compose up -d

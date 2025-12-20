@@ -1,7 +1,7 @@
 modules:
   notionclipper:
     headers:
-      Authorization: Bearer ${METRICS_TOKEN}
+      Authorization: Bearer YOUR_METRICS_TOKEN_HERE
     metrics:
       - name: notion_cooldown_active_count
         path: '{ .metrics.notions.cooldownActiveCount }'
