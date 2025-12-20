@@ -1,37 +1,114 @@
 /**
  * Notion Routes
- * Handles Notion-specific operations (tokens, connections, workspace lookups)
+ * Handles Notion-specific operations (connections, workspace lookups, API proxy)
+ * 
+ * 🔒 SECURITY (2025-12-18): 
+ * - NO endpoint returns Notion tokens to clients
+ * - All Notion API calls go through proxy endpoints
+ * - Token stays server-side only
  */
 
 import { Router } from 'express';
 import {
-  getNotionToken,
   saveNotionConnection,
   getUserByWorkspace,
+  // Proxy endpoints
+  proxySearch,
+  proxyGetDatabase,
+  proxyQueryDatabase,
+  proxyGetPage,
+  proxyCreatePage,
+  proxyUpdatePage,
+  proxyGetBlockChildren,
+  proxyAppendBlockChildren,
+  proxyGetMe,
 } from '../controllers/notion.controller.js';
-import { generalRateLimiter } from '../middleware/rate-limit.middleware.js';
+import { authenticateToken } from '../middleware/auth.middleware.js';
+import { generalRateLimiter, authRateLimiter } from '../middleware/rate-limit.middleware.js';
 
 const router = Router();
 
-/**
- * POST /api/notion/get-token
- * Get and decrypt Notion access token for a user
- * Body: { userId: string }
- */
-router.post('/get-token', generalRateLimiter, getNotionToken);
+// ============================================
+// CONNECTION MANAGEMENT
+// ============================================
 
 /**
  * POST /api/notion/save-connection
  * Encrypt and save Notion connection
- * Body: { userId, workspaceId, workspaceName, workspaceIcon?, accessToken, isActive? }
+ * 🔒 Token is NEVER returned in response
  */
-router.post('/save-connection', generalRateLimiter, saveNotionConnection);
+router.post('/save-connection', authenticateToken, generalRateLimiter, saveNotionConnection);
 
 /**
  * POST /api/notion/get-user-by-workspace
  * Find user by Notion workspace ID
- * Body: { workspaceId: string }
+ * 🔒 Requires authentication
  */
-router.post('/get-user-by-workspace', generalRateLimiter, getUserByWorkspace);
+router.post('/get-user-by-workspace', authenticateToken, authRateLimiter, getUserByWorkspace);
+
+// ============================================
+// 🔒 NOTION API PROXY
+// Token NEVER leaves the server - all calls proxied
+// ============================================
+
+/**
+ * POST /api/notion/proxy/search
+ * Search Notion pages/databases
+ */
+router.post('/proxy/search', authenticateToken, generalRateLimiter, proxySearch);
+
+/**
+ * GET /api/notion/proxy/databases/:id
+ * Get a database
+ */
+router.get('/proxy/databases/:id', authenticateToken, generalRateLimiter, proxyGetDatabase);
+
+/**
+ * POST /api/notion/proxy/databases/:id/query
+ * Query a database
+ */
+router.post('/proxy/databases/:id/query', authenticateToken, generalRateLimiter, proxyQueryDatabase);
+
+/**
+ * GET /api/notion/proxy/pages/:id
+ * Get a page
+ */
+router.get('/proxy/pages/:id', authenticateToken, generalRateLimiter, proxyGetPage);
+
+/**
+ * POST /api/notion/proxy/pages
+ * Create a page
+ */
+router.post('/proxy/pages', authenticateToken, generalRateLimiter, proxyCreatePage);
+
+/**
+ * PATCH /api/notion/proxy/pages/:id
+ * Update a page
+ */
+router.patch('/proxy/pages/:id', authenticateToken, generalRateLimiter, proxyUpdatePage);
+
+/**
+ * GET /api/notion/proxy/blocks/:id/children
+ * Get block children
+ */
+router.get('/proxy/blocks/:id/children', authenticateToken, generalRateLimiter, proxyGetBlockChildren);
+
+/**
+ * PATCH /api/notion/proxy/blocks/:id/children
+ * Append block children
+ */
+router.patch('/proxy/blocks/:id/children', authenticateToken, generalRateLimiter, proxyAppendBlockChildren);
+
+/**
+ * GET /api/notion/proxy/users/me
+ * Get current user (bot user)
+ */
+router.get('/proxy/users/me', authenticateToken, generalRateLimiter, proxyGetMe);
+
+// ============================================
+// 🚫 REMOVED ENDPOINTS (security risk)
+// ============================================
+// GET /api/notion/get-token - REMOVED: Token should never be sent to client
+// Clients should use proxy endpoints instead
 
 export default router;

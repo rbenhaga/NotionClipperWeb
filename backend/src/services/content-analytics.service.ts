@@ -540,6 +540,9 @@ export async function generateInsights(userId: string): Promise<void> {
 
 /**
  * Dismiss an insight
+ * 🔒 SECURITY (2025-12-18): Environment-aware error handling
+ * - PROD: PGRST205/PGRST204 → 503 + log ERROR (infra issue)
+ * - DEV/TEST: swallow OK only if CONTENT_INSIGHTS_OPTIONAL=true
  */
 export async function dismissInsight(userId: string, insightId: string): Promise<void> {
   const db = getSupabase();
@@ -551,6 +554,32 @@ export async function dismissInsight(userId: string, insightId: string): Promise
     .eq('user_id', userId);
 
   if (error) {
+    const isProd = process.env.NODE_ENV === 'production';
+    const isFeatureOptional = process.env.CONTENT_INSIGHTS_OPTIONAL === 'true';
+    
+    // PGRST116 = "no rows returned" - always OK for update (row doesn't exist)
+    if (error.code === 'PGRST116') {
+      logger.debug(`dismissInsight: no matching row (${error.code}), ignoring`);
+      return;
+    }
+    
+    // 42P01 = PostgreSQL "relation does not exist"
+    // PGRST204 = PostgREST "Could not find a relationship"
+    // PGRST205 = PostgREST "Could not find the table in schema cache"
+    const schemaErrors = ['42P01', 'PGRST204', 'PGRST205'];
+    if (schemaErrors.includes(error.code)) {
+      if (isProd && !isFeatureOptional) {
+        // 🚨 PROD: This is an infra error - table should exist
+        logger.error(`CRITICAL: content_insights table missing in schema cache (${error.code})`);
+        const err = new Error('Service temporarily unavailable') as Error & { statusCode: number };
+        err.statusCode = 503;
+        throw err;
+      }
+      // DEV/TEST or feature explicitly optional
+      logger.warn(`dismissInsight: table not found (${error.code}), feature ${isFeatureOptional ? 'optional' : 'disabled in dev'}`);
+      return;
+    }
+    
     logger.error('Error dismissing insight:', error);
     throw new Error('Failed to dismiss insight');
   }
@@ -558,6 +587,9 @@ export async function dismissInsight(userId: string, insightId: string): Promise
 
 /**
  * Mark insight as read
+ * 🔒 SECURITY (2025-12-18): Environment-aware error handling
+ * - PROD: PGRST205/PGRST204 → 503 + log ERROR (infra issue)
+ * - DEV/TEST: swallow OK only if CONTENT_INSIGHTS_OPTIONAL=true
  */
 export async function markInsightRead(userId: string, insightId: string): Promise<void> {
   const db = getSupabase();
@@ -569,6 +601,33 @@ export async function markInsightRead(userId: string, insightId: string): Promis
     .eq('user_id', userId);
 
   if (error) {
+    const isProd = process.env.NODE_ENV === 'production';
+    const isFeatureOptional = process.env.CONTENT_INSIGHTS_OPTIONAL === 'true';
+    
+    // PGRST116 = "no rows returned" - always OK for update (row doesn't exist)
+    if (error.code === 'PGRST116') {
+      logger.debug(`markInsightRead: no matching row (${error.code}), ignoring`);
+      return;
+    }
+    
+    // 42P01 = PostgreSQL "relation does not exist"
+    // PGRST204 = PostgREST "Could not find a relationship"
+    // PGRST205 = PostgREST "Could not find the table in schema cache"
+    const schemaErrors = ['42P01', 'PGRST204', 'PGRST205'];
+    if (schemaErrors.includes(error.code)) {
+      if (isProd && !isFeatureOptional) {
+        // 🚨 PROD: This is an infra error - table should exist
+        logger.error(`CRITICAL: content_insights table missing in schema cache (${error.code})`);
+        const err = new Error('Service temporarily unavailable') as Error & { statusCode: number };
+        err.statusCode = 503;
+        throw err;
+      }
+      // DEV/TEST or feature explicitly optional
+      logger.warn(`markInsightRead: table not found (${error.code}), feature ${isFeatureOptional ? 'optional' : 'disabled in dev'}`);
+      return;
+    }
+    
     logger.error('Error marking insight as read:', error);
+    throw new Error('Failed to mark insight as read');
   }
 }

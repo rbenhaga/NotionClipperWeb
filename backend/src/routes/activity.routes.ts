@@ -1,6 +1,7 @@
 /**
  * Activity Routes
  * Activity logs endpoints
+ * 🔒 SECURITY: All routes require auth + rate limiting
  */
 
 import { Router } from 'express';
@@ -10,11 +11,13 @@ import {
   exportActivity,
 } from '../controllers/activity.controller.js';
 import { authenticateToken } from '../middleware/auth.middleware.js';
+import { generalRateLimiter } from '../middleware/rate-limit.middleware.js';
 
 const router = Router();
 
-// All activity routes require authentication
+// All activity routes require authentication + rate limiting
 router.use(authenticateToken);
+router.use(generalRateLimiter);
 
 /**
  * Get activity list with pagination

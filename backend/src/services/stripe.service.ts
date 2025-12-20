@@ -20,7 +20,7 @@ export function getStripeClient(): Stripe {
     stripe = new Stripe(config.stripe.secretKey, {
       apiVersion: '2023-10-16',
     });
-    logger.info('Stripe client initialized with key: ' + config.stripe.secretKey.substring(0, 20) + '...');
+    logger.info('Stripe client initialized');
   }
   return stripe;
 }
@@ -158,25 +158,37 @@ function extractCustomerId(customerData: string): string {
 
 /**
  * Create Stripe Customer Portal session
+ * 🔒 SECURITY: Returns proper 4xx errors, never 500 on user input
  */
 export async function createPortalSession(userId: string, returnUrl: string) {
+  // Get subscription - handle missing gracefully
+  let subscription;
   try {
-    const subscription = await db.getSubscription(userId);
-
-    if (!subscription?.stripe_customer_id) {
-      throw new AppError('No active subscription found', 404);
+    subscription = await db.getSubscription(userId);
+  } catch (error: any) {
+    // Handle Supabase "no rows" error
+    if (error?.code === 'PGRST116') {
+      throw new AppError('No subscription found. Please subscribe first.', 404);
     }
+    logger.error('Database error fetching subscription:', error);
+    throw new AppError('Failed to fetch subscription', 500);
+  }
 
-    // Extract clean customer ID (in case corrupted data was stored)
-    const customerId = extractCustomerId(subscription.stripe_customer_id);
-    
-    if (!customerId || !customerId.startsWith('cus_')) {
-      logger.error(`Invalid customer ID format: ${subscription.stripe_customer_id?.substring(0, 50)}...`);
-      throw new AppError('Invalid customer ID in database', 500);
-    }
+  if (!subscription?.stripe_customer_id) {
+    throw new AppError('No Stripe customer found. Please complete a purchase first.', 404);
+  }
 
-    logger.info(`Creating portal session for customer: ${customerId}`);
+  // Extract clean customer ID (in case corrupted data was stored)
+  const customerId = extractCustomerId(subscription.stripe_customer_id);
+  
+  if (!customerId || !customerId.startsWith('cus_')) {
+    logger.error(`Invalid customer ID format: ${subscription.stripe_customer_id?.substring(0, 50)}...`);
+    throw new AppError('Invalid payment configuration. Please contact support.', 409);
+  }
 
+  logger.info(`Creating portal session for customer: ${customerId}`);
+
+  try {
     const session = await getStripeClient().billingPortal.sessions.create({
       customer: customerId,
       return_url: returnUrl,
@@ -187,20 +199,69 @@ export async function createPortalSession(userId: string, returnUrl: string) {
     return {
       url: session.url,
     };
-  } catch (error) {
-    logger.error('Failed to create portal session:', error);
-    throw new AppError('Failed to create portal session', 500);
+  } catch (error: any) {
+    // Handle Stripe-specific errors with proper status codes
+    if (error?.type === 'StripeInvalidRequestError') {
+      logger.warn(`Stripe invalid request for user ${userId}: ${error.message}`);
+      throw new AppError('Unable to access billing portal. Please contact support.', 400);
+    }
+    logger.error('Stripe API error creating portal session:', error);
+    throw new AppError('Payment service temporarily unavailable', 503);
   }
 }
 
 /**
  * Handle Stripe webhook events
+ * 🔒 SECURITY: Implements idempotency to prevent replay attacks and double-processing
+ * 
+ * Flow:
+ * 1. Check if event.id already exists in DB
+ * 2. If exists and processed → skip (return { skipped: true })
+ * 3. If exists and processing → skip (race condition)
+ * 4. If not exists → insert with status='processing', process, then mark 'processed'
  */
-export async function handleWebhookEvent(event: Stripe.Event) {
-  logger.info(`Processing Stripe webhook: ${event.type}`);
+export async function handleWebhookEvent(event: Stripe.Event): Promise<{ processed: boolean; skipped: boolean }> {
+  const eventId = event.id;
+  const eventType = event.type;
+
+  logger.info(`[webhook] Received: ${eventType} (${eventId})`);
+
+  // 🔒 IDEMPOTENCY CHECK: Has this event already been processed?
+  const { exists, status, isStale } = await db.checkWebhookEventExists(eventId);
+
+  if (exists) {
+    if (status === 'processed') {
+      logger.info(`[webhook-idempotency] Event ${eventId} already processed, skipping`);
+      return { processed: false, skipped: true };
+    }
+    if (status === 'processing' && !isStale) {
+      logger.info(`[webhook-idempotency] Event ${eventId} currently being processed, skipping`);
+      return { processed: false, skipped: true };
+    }
+    if (status === 'processing' && isStale) {
+      // 🔒 TTL: Event stuck in 'processing' for > 5 min, allow retry
+      logger.warn(`[webhook-idempotency] Event ${eventId} stuck in processing > 5 min, allowing retry`);
+      // Delete stale record so we can re-insert
+      const supabase = (await import('../config/database.js')).getSupabaseClient();
+      await supabase.from('stripe_webhook_events').delete().eq('event_id', eventId);
+    } else if (status === 'failed') {
+      // status === 'failed' → we could retry, but for now skip to avoid loops
+      logger.warn(`[webhook-idempotency] Event ${eventId} previously failed, skipping`);
+      return { processed: false, skipped: true };
+    }
+  }
+
+  // 🔒 IDEMPOTENCY: Mark as processing (atomic insert with unique constraint)
+  const inserted = await db.markWebhookEventProcessing(eventId, eventType);
+  if (!inserted) {
+    // Race condition: another process already inserted
+    logger.info(`[webhook-idempotency] Event ${eventId} race condition, skipping`);
+    return { processed: false, skipped: true };
+  }
 
   try {
-    switch (event.type) {
+    // Process the event
+    switch (eventType) {
       case 'checkout.session.completed':
         await handleCheckoutCompleted(event.data.object as Stripe.Checkout.Session);
         break;
@@ -219,10 +280,19 @@ export async function handleWebhookEvent(event: Stripe.Event) {
         break;
 
       default:
-        logger.debug(`Unhandled webhook event: ${event.type}`);
+        logger.debug(`[webhook] Unhandled event type: ${eventType}`);
     }
+
+    // 🔒 IDEMPOTENCY: Mark as processed
+    await db.markWebhookEventProcessed(eventId);
+    logger.info(`[webhook] ✅ Successfully processed: ${eventType} (${eventId})`);
+
+    return { processed: true, skipped: false };
   } catch (error) {
-    logger.error(`Error processing webhook ${event.type}:`, error);
+    // 🔒 IDEMPOTENCY: Mark as failed
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    await db.markWebhookEventFailed(eventId, errorMessage);
+    logger.error(`[webhook] ❌ Failed to process ${eventType} (${eventId}):`, error);
     throw error;
   }
 }

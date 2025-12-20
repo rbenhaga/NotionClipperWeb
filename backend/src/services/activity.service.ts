@@ -35,8 +35,17 @@ export interface ActivityLog {
   created_at: string;
 }
 
+// Custom error class for validation errors (to distinguish from DB errors)
+export class ActivityValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ActivityValidationError';
+  }
+}
+
 /**
  * Get user activity with pagination
+ * 🔒 SECURITY: Validates dates strictly - returns 400 on invalid dates
  */
 export async function getUserActivity(
   userId: string,
@@ -46,6 +55,26 @@ export async function getUserActivity(
   endDate?: Date
 ): Promise<ActivityLog[]> {
   const db = getSupabase();
+
+  // 🔒 VALIDATION: Invalid dates → 400 error (not silently ignored)
+  if (startDate !== undefined && isNaN(startDate.getTime())) {
+    throw new ActivityValidationError('Invalid startDate format');
+  }
+  if (endDate !== undefined && isNaN(endDate.getTime())) {
+    throw new ActivityValidationError('Invalid endDate format');
+  }
+
+  // 🔒 VALIDATION: Date range too large → 400 error (max 90 days)
+  if (startDate && endDate) {
+    const MAX_RANGE_MS = 90 * 24 * 60 * 60 * 1000; // 90 days
+    const rangeMs = endDate.getTime() - startDate.getTime();
+    if (rangeMs > MAX_RANGE_MS) {
+      throw new ActivityValidationError('Date range too large (max 90 days)');
+    }
+    if (rangeMs < 0) {
+      throw new ActivityValidationError('startDate must be before endDate');
+    }
+  }
 
   let query = db
     .from('activity_logs')

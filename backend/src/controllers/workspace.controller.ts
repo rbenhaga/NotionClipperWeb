@@ -9,7 +9,7 @@ import { asyncHandler } from '../middleware/error.middleware.js';
 import { sendSuccess } from '../utils/response.js';
 import { logger } from '../utils/logger.js';
 import * as workspaceService from '../services/workspace.service.js';
-import { decryptToken } from '../services/crypto.service.js';
+// 🔒 SECURITY: decryptToken removed - tokens are never sent to client
 
 /**
  * GET /api/workspace/list
@@ -44,7 +44,11 @@ export const listWorkspaces = asyncHandler(
 
 /**
  * GET /api/workspace/active
- * Get the active (default) workspace with decrypted token
+ * Get the active (default) workspace info
+ * 
+ * 🔒 SECURITY (2025-12-18): Token is NEVER returned to client
+ * - Use /api/notion/proxy/* endpoints for Notion API calls
+ * - Token stays server-side only
  */
 export const getActiveWorkspace = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
@@ -61,14 +65,14 @@ export const getActiveWorkspace = asyncHandler(
       return;
     }
 
-    // Decrypt the token
-    let decryptedToken = null;
-    if (workspace.access_token_encrypted) {
-      try {
-        decryptedToken = decryptToken(workspace.access_token_encrypted);
-      } catch (err) {
-        logger.error('Failed to decrypt workspace token:', err);
-      }
+    // 🔒 SECURITY: Token is NOT included in response
+    // Client should use /api/notion/proxy/* endpoints for Notion API calls
+    // The backend will inject the token server-side
+    
+    // Check if token exists (for connection status) without exposing it
+    const hasValidToken = !!workspace.access_token_encrypted;
+    if (!hasValidToken) {
+      logger.warn(`Workspace ${workspace.workspace_id} has no encrypted token`);
     }
 
     sendSuccess(res, {
@@ -78,9 +82,10 @@ export const getActiveWorkspace = asyncHandler(
         workspace_name: workspace.workspace_name,
         workspace_icon: workspace.workspace_icon,
         is_default: workspace.is_default,
-        connection_status: workspace.connection_status
+        connection_status: hasValidToken ? workspace.connection_status : 'disconnected',
       },
-      token: decryptedToken
+      // 🔒 SECURITY: token field REMOVED - never expose OAuth tokens to client
+      hasValidConnection: hasValidToken,
     });
   }
 );

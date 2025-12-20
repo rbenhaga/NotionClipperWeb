@@ -9,10 +9,12 @@ import { asyncHandler } from '../middleware/error.middleware.js';
 import { sendSuccess } from '../utils/response.js';
 import { logger } from '../utils/logger.js';
 import * as activityService from '../services/activity.service.js';
+import { ActivityValidationError } from '../services/activity.service.js';
 
 /**
  * GET /api/activity/list
  * Get paginated activity logs for the current user
+ * 🔒 SECURITY: Returns 400 on invalid dates (not 500)
  */
 export const getActivityList = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
@@ -25,17 +27,25 @@ export const getActivityList = asyncHandler(
     const startDate = req.query.startDate as string | undefined;
     const endDate = req.query.endDate as string | undefined;
 
-    const activities = await activityService.getUserActivity(
-      req.user.userId,
-      limit,
-      offset,
-      startDate ? new Date(startDate) : undefined,
-      endDate ? new Date(endDate) : undefined
-    );
+    try {
+      const activities = await activityService.getUserActivity(
+        req.user.userId,
+        limit,
+        offset,
+        startDate ? new Date(startDate) : undefined,
+        endDate ? new Date(endDate) : undefined
+      );
 
-    logger.debug(`Activity list fetched for user: ${req.user.userId}, count: ${activities.length}`);
+      logger.debug(`Activity list fetched for user: ${req.user.userId}, count: ${activities.length}`);
 
-    return sendSuccess(res, { activities });
+      return sendSuccess(res, { activities });
+    } catch (error) {
+      // 🔒 SECURITY: Validation errors → 400, not 500
+      if (error instanceof ActivityValidationError) {
+        throw new AppError(error.message, 400);
+      }
+      throw error;
+    }
   }
 );
 

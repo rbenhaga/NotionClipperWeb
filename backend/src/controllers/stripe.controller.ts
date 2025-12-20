@@ -60,6 +60,7 @@ export const createCheckout = asyncHandler(
 /**
  * POST /api/stripe/create-portal
  * Create Stripe Customer Portal session
+ * 🔒 SECURITY: returnUrl is validated against allowed origins to prevent SSRF
  */
 export const createPortal = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
@@ -71,6 +72,61 @@ export const createPortal = asyncHandler(
 
     if (!returnUrl) {
       throw new AppError('returnUrl is required', 400);
+    }
+
+    // 🔒 SECURITY: Validate returnUrl to prevent SSRF
+    // Only allow redirects to our own frontend or the desktop app
+    const allowedOrigins = [
+      config.frontendUrl,
+      'http://localhost:5173',
+      'http://localhost:3000',
+    ].filter(Boolean);
+
+    let isAllowed = false;
+    try {
+      // 🔒 Allow deep links for desktop app
+      if (returnUrl.startsWith('notion-clipper://')) {
+        isAllowed = true;
+      } else {
+        const parsed = new URL(returnUrl);
+        
+        // 🔒 Block internal IPs in production
+        const hostname = parsed.hostname;
+        const blockedPatterns = [
+          /^127\./,
+          /^10\./,
+          /^172\.(1[6-9]|2[0-9]|3[0-1])\./,
+          /^192\.168\./,
+          /^169\.254\./,
+          /^0\./,
+          /\.internal$/i,
+          /\.local$/i,
+        ];
+        
+        const isInternalIP = blockedPatterns.some(p => p.test(hostname));
+        if (isInternalIP && process.env.NODE_ENV === 'production') {
+          logger.warn(`[create-portal] Blocked internal IP in returnUrl: ${hostname}`);
+          throw new Error('Internal IP blocked');
+        }
+        
+        // 🔒 Compare origins properly (not startsWith - prevents bypass like localhost:5173.evil.com)
+        isAllowed = allowedOrigins.some(origin => {
+          if (!origin) return false;
+          try {
+            const allowedParsed = new URL(origin);
+            return parsed.origin === allowedParsed.origin;
+          } catch {
+            return false;
+          }
+        });
+      }
+    } catch {
+      isAllowed = false;
+    }
+
+    if (!isAllowed) {
+      logger.warn(`[create-portal] Blocked invalid returnUrl: ${returnUrl.substring(0, 100)}`);
+      throw new AppError('Invalid return URL. Must be from an allowed origin.', 400);
     }
 
     const session = await createPortalSession(req.user.userId, returnUrl);
@@ -86,6 +142,7 @@ export const createPortal = asyncHandler(
 /**
  * POST /api/webhooks/stripe
  * Handle Stripe webhooks
+ * 🔒 SECURITY: Implements idempotency - duplicate events are skipped
  */
 export const handleStripeWebhook = asyncHandler(
   async (req: Request, res: Response) => {
@@ -98,13 +155,18 @@ export const handleStripeWebhook = asyncHandler(
     // Construct event from raw body
     const event = constructWebhookEvent(req.body, signature);
 
-    logger.info(`Received Stripe webhook: ${event.type}`);
+    logger.info(`Received Stripe webhook: ${event.type} (${event.id})`);
 
-    // Process webhook event
-    await handleWebhookEvent(event);
+    // Process webhook event (with idempotency)
+    const result = await handleWebhookEvent(event);
 
     // Return 200 immediately to acknowledge receipt
-    res.json({ received: true });
+    // Stripe will retry if we return non-2xx, so always return 200
+    res.json({ 
+      received: true,
+      processed: result.processed,
+      skipped: result.skipped,
+    });
   }
 );
 

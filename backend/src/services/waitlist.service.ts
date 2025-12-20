@@ -158,17 +158,24 @@ export async function registerWaitlist(
 
 /**
  * Get waitlist entry by email
+ * 🔒 SECURITY: Returns null gracefully if email not found (no 500)
  */
 export async function getWaitlistByEmail(email: string): Promise<WaitlistEntry | null> {
+  // 🔧 FIX: Validate email before querying
+  if (!email || typeof email !== 'string') {
+    return null;
+  }
+
   const { data, error } = await db.getSupabaseClient()
     .from('waitlist')
     .select('*')
     .eq('email', email.toLowerCase().trim())
-    .single();
+    .maybeSingle(); // 🔧 FIX: Use maybeSingle() instead of single() to avoid 500 on not found
 
-  if (error && error.code !== 'PGRST116') {
-    logger.error('Failed to get waitlist by email:', error);
-    throw new AppError('Erreur base de données', 500);
+  if (error) {
+    // 🔧 FIX: Handle all errors gracefully - return null instead of 500
+    logger.warn('Failed to get waitlist by email:', error);
+    return null;
   }
 
   return data;
@@ -176,17 +183,24 @@ export async function getWaitlistByEmail(email: string): Promise<WaitlistEntry |
 
 /**
  * Get waitlist entry by referral code
+ * 🔒 SECURITY: Returns null gracefully if code not found (no 500)
  */
 export async function getWaitlistByReferralCode(code: string): Promise<WaitlistEntry | null> {
+  // 🔧 FIX: Validate code before querying
+  if (!code || typeof code !== 'string') {
+    return null;
+  }
+
   const { data, error } = await db.getSupabaseClient()
     .from('waitlist')
     .select('*')
     .eq('referral_code', code.toUpperCase())
-    .single();
+    .maybeSingle(); // 🔧 FIX: Use maybeSingle() instead of single() to avoid 500 on not found
 
-  if (error && error.code !== 'PGRST116') {
-    logger.error('Failed to get waitlist by referral code:', error);
-    throw new AppError('Erreur base de données', 500);
+  if (error) {
+    // 🔧 FIX: Handle all errors gracefully - return null instead of 500
+    logger.warn('Failed to get waitlist by referral code:', error);
+    return null;
   }
 
   return data;

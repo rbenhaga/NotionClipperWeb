@@ -52,6 +52,7 @@ export const db = {
 
   /**
    * Get user by ID
+   * 🔒 SECURITY: Returns null instead of throwing on "no rows" to prevent 500 errors
    */
   async getUserById(userId: string) {
     const supabase = getSupabaseClient();
@@ -60,7 +61,7 @@ export const db = {
       .from('user_profiles')
       .select('*')
       .eq('id', userId)
-      .single();
+      .maybeSingle(); // 🔒 Use maybeSingle() instead of single() to return null on no rows
 
     if (error) {
       logger.error('Database error fetching user:', error);
@@ -768,4 +769,134 @@ export const db = {
    * Get Supabase client instance (for Auth operations)
    */
   getSupabaseClient,
+
+  // ============================================
+  // STRIPE WEBHOOK IDEMPOTENCY
+  // ============================================
+
+  /**
+   * Check if a Stripe webhook event has already been processed
+   * Returns: { exists: boolean, status: string | null, isStale: boolean }
+   * 🔒 SECURITY: Events stuck in 'processing' for > 5 min are considered stale (allow retry)
+   */
+  async checkWebhookEventExists(eventId: string): Promise<{ exists: boolean; status: string | null; isStale: boolean }> {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('stripe_webhook_events')
+      .select('status, created_at')
+      .eq('event_id', eventId)
+      .maybeSingle();
+
+    if (error) {
+      logger.error('Database error checking webhook event:', error);
+      throw error;
+    }
+
+    if (!data) {
+      return { exists: false, status: null, isStale: false };
+    }
+
+    // 🔒 TTL: If status is 'processing' and created_at > 5 minutes ago, consider stale
+    const STALE_THRESHOLD_MS = 5 * 60 * 1000; // 5 minutes
+    const isStale = data.status === 'processing' && 
+      data.created_at && 
+      (Date.now() - new Date(data.created_at).getTime()) > STALE_THRESHOLD_MS;
+
+    return {
+      exists: true,
+      status: data.status,
+      isStale,
+    };
+  },
+
+  /**
+   * Mark a webhook event as processing (insert with status='processing')
+   * Returns true if inserted, false if already exists (race condition protection)
+   */
+  async markWebhookEventProcessing(eventId: string, eventType: string): Promise<boolean> {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase
+      .from('stripe_webhook_events')
+      .insert({
+        event_id: eventId,
+        event_type: eventType,
+        status: 'processing',
+      });
+
+    if (error) {
+      // Unique constraint violation = already exists
+      if (error.code === '23505') {
+        logger.info(`[webhook-idempotency] Event ${eventId} already being processed (race condition)`);
+        return false;
+      }
+      logger.error('Database error marking webhook event processing:', error);
+      throw error;
+    }
+
+    return true;
+  },
+
+  /**
+   * Mark a webhook event as processed (success)
+   */
+  async markWebhookEventProcessed(eventId: string): Promise<void> {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase
+      .from('stripe_webhook_events')
+      .update({
+        status: 'processed',
+        processed_at: new Date().toISOString(),
+      })
+      .eq('event_id', eventId);
+
+    if (error) {
+      logger.error('Database error marking webhook event processed:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Mark a webhook event as failed
+   */
+  async markWebhookEventFailed(eventId: string, errorMessage: string): Promise<void> {
+    const supabase = getSupabaseClient();
+
+    const { error } = await supabase
+      .from('stripe_webhook_events')
+      .update({
+        status: 'failed',
+        processed_at: new Date().toISOString(),
+        error_message: errorMessage.substring(0, 1000), // Limit error message length
+      })
+      .eq('event_id', eventId);
+
+    if (error) {
+      logger.error('Database error marking webhook event failed:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Cleanup old webhook events (older than 30 days)
+   */
+  async cleanupOldWebhookEvents(): Promise<number> {
+    const supabase = getSupabaseClient();
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data, error } = await supabase
+      .from('stripe_webhook_events')
+      .delete()
+      .lt('created_at', thirtyDaysAgo)
+      .select('id');
+
+    if (error) {
+      logger.error('Database error cleaning up old webhook events:', error);
+      return 0;
+    }
+
+    return data?.length || 0;
+  },
 };

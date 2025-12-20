@@ -265,7 +265,11 @@ export const getNotionConnection = asyncHandler(
 /**
  * GET /api/user/app-data
  * Get all data needed for desktop app initialization
- * Returns: user profile, subscription, notion connection status, decrypted token
+ * Returns: user profile, subscription, notion connection status
+ * 
+ * 🔒 SECURITY (2025-12-18): Token is NEVER returned to client
+ * - Desktop app should use /api/notion/proxy/* endpoints
+ * - Token stays server-side only
  * 
  * This endpoint is specifically for the desktop app to get everything in one call
  * after receiving the JWT token via deep link.
@@ -291,7 +295,29 @@ export const getAppData = asyncHandler(
     }
 
     // Prepare response
-    const response: any = {
+    const response: {
+      user: {
+        id: string;
+        email: string;
+        full_name: string | null;
+        avatar_url: string | null;
+        auth_provider: string;
+        email_verified: boolean;
+      };
+      subscription: {
+        tier: string;
+        status: string;
+        current_period_end: string | null;
+        cancel_at_period_end: boolean;
+      };
+      hasNotionWorkspace: boolean;
+      notionWorkspace: {
+        id: string;
+        name: string | null;
+        icon: string | null;
+      } | null;
+      // 🔒 SECURITY: notionToken field REMOVED - never expose OAuth tokens to client
+    } = {
       user: {
         id: user.id,
         email: user.email,
@@ -304,7 +330,7 @@ export const getAppData = asyncHandler(
         tier: subscription.tier?.toUpperCase() || 'FREE',
         status: subscription.status,
         current_period_end: subscription.current_period_end,
-        cancel_at_period_end: subscription.cancel_at_period_end,
+        cancel_at_period_end: subscription.cancel_at_period_end ?? false,
       } : {
         tier: 'FREE',
         status: 'active',
@@ -313,35 +339,20 @@ export const getAppData = asyncHandler(
       },
       hasNotionWorkspace: !!notionConnection && notionConnection.is_active,
       notionWorkspace: null,
-      notionToken: null, // Will be populated if workspace exists
     };
 
-    // If user has a Notion connection, include workspace info and decrypted token
+    // If user has a Notion connection, include workspace info (but NOT the token)
     if (notionConnection && notionConnection.is_active) {
       response.notionWorkspace = {
         id: notionConnection.workspace_id,
         name: notionConnection.workspace_name,
         icon: notionConnection.workspace_icon,
       };
-
-      // Decrypt the Notion token for the desktop app
-      try {
-        const { decryptToken } = await import('../services/crypto.service.js');
-        // Field is named access_token_encrypted in the database
-        const encryptedToken = notionConnection.access_token_encrypted;
-        if (encryptedToken) {
-          const decryptedToken = await decryptToken(encryptedToken);
-          response.notionToken = decryptedToken;
-          logger.info(`[AppData] Notion token decrypted for user: ${userId}`);
-        } else {
-          logger.warn(`[AppData] No encrypted token found for user: ${userId}`);
-          response.notionToken = null;
-        }
-      } catch (error) {
-        logger.error(`[AppData] Failed to decrypt Notion token for user: ${userId}`, error);
-        // Don't fail the request, just don't include the token
-        response.notionToken = null;
-      }
+      
+      // 🔒 SECURITY: Token is NOT included in response
+      // Desktop app should use /api/notion/proxy/* endpoints for Notion API calls
+      // The backend will inject the token server-side
+      logger.info(`[AppData] Workspace info included (token NOT exposed) for user: ${userId}`);
     }
 
     logger.info(`[AppData] App data fetched for user: ${userId}, hasWorkspace: ${response.hasNotionWorkspace}`);

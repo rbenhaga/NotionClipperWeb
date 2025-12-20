@@ -79,6 +79,27 @@ export function errorHandler(
     return;
   }
 
+  // 🔒 SECURITY: Supabase/PostgREST error mapping
+  // Map database errors to appropriate HTTP status codes
+  const errWithCode = err as Error & { code?: string };
+  if (errWithCode.code && typeof errWithCode.code === 'string') {
+    const supabaseErrorMap: Record<string, { status: number; message: string; code: string }> = {
+      'PGRST116': { status: HTTP_STATUS.NOT_FOUND, message: 'Resource not found', code: 'NOT_FOUND' },
+      'PGRST204': { status: HTTP_STATUS.NOT_FOUND, message: 'Resource not found', code: 'NOT_FOUND' },
+      'PGRST205': { status: 503, message: 'Service temporarily unavailable', code: 'SERVICE_UNAVAILABLE' },
+      '23505': { status: 409, message: 'Resource already exists', code: 'CONFLICT' },
+      '23503': { status: HTTP_STATUS.BAD_REQUEST, message: 'Invalid reference', code: 'INVALID_REFERENCE' },
+      '42P01': { status: 503, message: 'Service temporarily unavailable', code: 'SERVICE_UNAVAILABLE' },
+      '42501': { status: 403, message: 'Permission denied', code: 'FORBIDDEN' },
+    };
+    
+    const mapped = supabaseErrorMap[errWithCode.code];
+    if (mapped) {
+      sendError(res, mapped.message, mapped.status, mapped.code);
+      return;
+    }
+  }
+
   // Default internal server error
   sendError(
     res,

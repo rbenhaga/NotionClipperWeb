@@ -13,9 +13,10 @@ const router = Router();
 /**
  * POST /api/usage/track
  * Track usage increment for a specific feature
- * Body: { userId: string, feature: 'clips' | 'files' | 'focus_mode_minutes' | 'compact_mode_minutes', increment?: number, metadata?: any }
+ * 🔒 SECURITY FIX: Now requires JWT authentication
+ * userId is extracted from token, not from body (prevents forgery)
  */
-router.post('/track', generalRateLimiter, trackUsage);
+router.post('/track', authenticateToken, generalRateLimiter, trackUsage);
 
 /**
  * GET /api/usage/current
@@ -27,8 +28,9 @@ router.get('/current', authenticateToken, generalRateLimiter, getCurrentUsage);
 /**
  * POST /api/usage/check-quota
  * Check if user has reached quota limit for a specific feature
- * Body: { userId: string, feature: 'clips' | 'files' | 'focus_mode_minutes' | 'compact_mode_minutes' }
+ * 🔒 SECURITY FIX: Now requires JWT authentication
+ * userId is extracted from token, not from body (prevents forgery)
  */
-router.post('/check-quota', generalRateLimiter, checkQuota);
+router.post('/check-quota', authenticateToken, generalRateLimiter, checkQuota);
 
 export default router;

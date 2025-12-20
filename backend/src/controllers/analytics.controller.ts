@@ -10,6 +10,9 @@ import { sendSuccess } from '../utils/response.js';
 import { logger } from '../utils/logger.js';
 import * as analyticsService from '../services/content-analytics.service.js';
 
+// 🔒 SECURITY: Maximum content size (1MB) to prevent DoS
+const MAX_CONTENT_SIZE = 1 * 1024 * 1024; // 1MB
+
 /**
  * POST /api/analytics/content
  * Store content for analysis
@@ -33,6 +36,14 @@ export const storeContent = asyncHandler(
 
     if (!contentType || !rawContent) {
       throw new AppError('contentType and rawContent are required', 400);
+    }
+
+    // 🔒 SECURITY: Validate content size to prevent DoS
+    if (typeof rawContent === 'string' && rawContent.length > MAX_CONTENT_SIZE) {
+      throw new AppError(`Content too large. Maximum ${MAX_CONTENT_SIZE / 1024 / 1024}MB allowed`, 400);
+    }
+    if (parsedContent && typeof parsedContent === 'string' && parsedContent.length > MAX_CONTENT_SIZE) {
+      throw new AppError(`Parsed content too large. Maximum ${MAX_CONTENT_SIZE / 1024 / 1024}MB allowed`, 400);
     }
 
     const contentId = await analyticsService.storeContent({
@@ -67,6 +78,11 @@ export const analyzeContent = asyncHandler(
 
     if (!content) {
       throw new AppError('content is required', 400);
+    }
+
+    // 🔒 SECURITY: Validate content size to prevent DoS
+    if (typeof content === 'string' && content.length > MAX_CONTENT_SIZE) {
+      throw new AppError(`Content too large. Maximum ${MAX_CONTENT_SIZE / 1024 / 1024}MB allowed`, 400);
     }
 
     const analysis = analyticsService.analyzeContent(content);
@@ -129,9 +145,13 @@ export const generateInsights = asyncHandler(
   }
 );
 
+// 🔒 SECURITY: UUID validation regex
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 /**
  * POST /api/analytics/insights/:id/dismiss
  * Dismiss an insight
+ * 🔒 SECURITY: Service layer verifies ownership (user_id match)
  */
 export const dismissInsight = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
@@ -145,6 +165,11 @@ export const dismissInsight = asyncHandler(
       throw new AppError('Insight ID is required', 400);
     }
 
+    // 🔒 SECURITY: Validate UUID format to prevent DB errors
+    if (!UUID_REGEX.test(id)) {
+      throw new AppError('Invalid insight ID format', 400);
+    }
+
     await analyticsService.dismissInsight(req.user.userId, id);
 
     return sendSuccess(res, { message: 'Insight dismissed' });
@@ -154,6 +179,7 @@ export const dismissInsight = asyncHandler(
 /**
  * POST /api/analytics/insights/:id/read
  * Mark an insight as read
+ * 🔒 SECURITY: Service layer verifies ownership (user_id match)
  */
 export const markInsightRead = asyncHandler(
   async (req: AuthenticatedRequest, res: Response) => {
@@ -165,6 +191,11 @@ export const markInsightRead = asyncHandler(
 
     if (!id) {
       throw new AppError('Insight ID is required', 400);
+    }
+
+    // 🔒 SECURITY: Validate UUID format to prevent DB errors
+    if (!UUID_REGEX.test(id)) {
+      throw new AppError('Invalid insight ID format', 400);
     }
 
     await analyticsService.markInsightRead(req.user.userId, id);

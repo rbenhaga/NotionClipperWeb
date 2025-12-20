@@ -1,6 +1,7 @@
 /**
  * Analytics Routes
  * Content analytics and productivity metrics endpoints
+ * 🔒 SECURITY: All routes require auth + rate limiting
  */
 
 import { Router } from 'express';
@@ -15,11 +16,13 @@ import {
   refreshMetrics,
 } from '../controllers/analytics.controller.js';
 import { authenticateToken } from '../middleware/auth.middleware.js';
+import { generalRateLimiter } from '../middleware/rate-limit.middleware.js';
 
 const router = Router();
 
-// All analytics routes require authentication
+// All analytics routes require authentication + rate limiting
 router.use(authenticateToken);
+router.use(generalRateLimiter);
 
 /**
  * Store content for analysis

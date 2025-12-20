@@ -1,6 +1,11 @@
 /**
  * Secrets Service
  * Retrieves secrets from Supabase Vault via Edge Function
+ * 
+ * 🔒 SECURITY (2025-12-18):
+ * - Uses BACKEND_SHARED_SECRET (not SERVICE_ROLE_KEY)
+ * - POST method only (Edge Function rejects GET)
+ * - No Origin header (Edge Function rejects browser requests)
  */
 
 import { config } from '../config/index.js';
@@ -25,6 +30,8 @@ const CACHE_TTL = 3600000; // 1 hour in milliseconds
 /**
  * Get secrets from Supabase Vault via Edge Function
  * Uses caching to avoid excessive calls
+ * 
+ * 🔒 SECURITY: Uses BACKEND_SHARED_SECRET for authentication
  */
 export async function getSecrets(): Promise<SecretsCache> {
   // Return cached secrets if still valid
@@ -38,14 +45,25 @@ export async function getSecrets(): Promise<SecretsCache> {
     // Call Supabase Edge Function to get secrets
     const edgeFunctionUrl = `${config.supabase.url}/functions/v1/get-oauth-secrets`;
 
-    logger.info(`Calling Edge Function: ${edgeFunctionUrl}`);
-    logger.debug(`Using SERVICE_ROLE_KEY: ${config.supabase.serviceRoleKey.substring(0, 20)}...`);
+    // 🔒 SECURITY: Use dedicated BACKEND_SHARED_SECRET
+    // This secret is ONLY for backend-to-edge communication
+    // It is NOT the same as SERVICE_ROLE_KEY
+    const backendSecret = process.env.BACKEND_SHARED_SECRET;
+    
+    if (!backendSecret) {
+      logger.error('CRITICAL: BACKEND_SHARED_SECRET not configured in environment');
+      throw new Error('BACKEND_SHARED_SECRET not configured');
+    }
 
+    logger.info(`Calling Edge Function: ${edgeFunctionUrl}`);
+
+    // 🔒 SECURITY: POST method, no Origin header (anti-browser)
     const response = await fetch(edgeFunctionUrl, {
-      method: 'GET',
+      method: 'POST',
       headers: {
-        'Authorization': `Bearer ${config.supabase.serviceRoleKey}`,
+        'Authorization': `Bearer ${backendSecret}`,
         'Content-Type': 'application/json',
+        // 🔒 Explicitly NOT setting Origin header
       },
     });
 
@@ -99,16 +117,27 @@ export async function getSecrets(): Promise<SecretsCache> {
     };
 
     logger.info('Secrets successfully fetched from Supabase Vault');
-    logger.info(`  Google Client ID: ${secrets.GOOGLE_CLIENT_ID?.substring(0, 20) || '(empty)'}...`);
-    logger.info(`  Notion Client ID: ${secrets.NOTION_CLIENT_ID?.substring(0, 20) || '(empty)'}...`);
-    logger.info(`  Stripe Secret Key: ${secrets.STRIPE_SECRET_KEY?.substring(0, 20) || '(empty)'}...`);
+    logger.info(`  Google Client ID: ${secrets.GOOGLE_CLIENT_ID ? '✓ loaded' : '✗ missing'}`);
+    logger.info(`  Notion Client ID: ${secrets.NOTION_CLIENT_ID ? '✓ loaded' : '✗ missing'}`);
+    logger.info(`  Stripe Secret Key: ${secrets.STRIPE_SECRET_KEY ? '✓ loaded' : '✗ missing'}`);
 
     return secretsCache;
   } catch (error) {
     logger.error('Error fetching secrets from Edge Function:', error);
 
-    // Fallback to environment variables if Edge Function fails
-    logger.warn('Falling back to environment variables for secrets');
+    // 🔒 SECURITY: In PRODUCTION, fail hard - no fallback
+    // This prevents running with incomplete security config
+    const isProd = process.env.NODE_ENV === 'production';
+    
+    if (isProd) {
+      logger.error('🚨 FATAL: Cannot start in production without Edge Function secrets');
+      logger.error('   Ensure BACKEND_SHARED_SECRET is set and Edge Function is deployed');
+      throw new Error('FATAL: Secrets not available in production - refusing to start');
+    }
+
+    // DEV/TEST only: Fallback to environment variables
+    logger.warn('⚠️  DEV MODE: Falling back to environment variables for secrets');
+    logger.warn('   This fallback is DISABLED in production');
 
     secretsCache = {
       GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID || '',

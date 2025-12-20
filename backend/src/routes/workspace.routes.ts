@@ -1,6 +1,7 @@
 /**
  * Workspace Routes
  * Manages Notion workspace connections
+ * 🔒 SECURITY: All routes require auth + rate limiting
  */
 
 import { Router } from 'express';
@@ -14,8 +15,12 @@ import {
   reconnectWorkspace
 } from '../controllers/workspace.controller.js';
 import { authenticateToken } from '../middleware/auth.middleware.js';
+import { generalRateLimiter } from '../middleware/rate-limit.middleware.js';
 
 const router = Router();
+
+// 🔒 SECURITY: Apply rate limiting to all workspace routes
+router.use(generalRateLimiter);
 
 /**
  * GET /api/workspace/list

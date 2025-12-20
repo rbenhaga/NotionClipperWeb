@@ -150,9 +150,9 @@ export async function initializeSecrets(): Promise<void> {
     }
 
     console.log('✅ Secrets loaded successfully from Supabase Vault');
-    console.log(`   Google Client ID: ${config.oauth.google.clientId.substring(0, 20)}...`);
-    console.log(`   Notion Client ID: ${config.oauth.notion.clientId.substring(0, 20)}...`);
-    console.log(`   Stripe Secret Key: ${config.stripe.secretKey.substring(0, 20)}...`);
+    console.log(`   Google Client ID: ${config.oauth.google.clientId ? '✓ loaded' : '✗ missing'}`);
+    console.log(`   Notion Client ID: ${config.oauth.notion.clientId ? '✓ loaded' : '✗ missing'}`);
+    console.log(`   Stripe Secret Key: ${config.stripe.secretKey ? '✓ loaded' : '✗ missing'}`);
     console.log(`   Token Encryption Key: ${secrets.TOKEN_ENCRYPTION_KEY ? '✓ loaded' : '✗ missing'}`);
   } catch (error) {
     console.error('❌ Failed to load secrets from Vault:', error);

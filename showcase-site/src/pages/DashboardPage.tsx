@@ -27,7 +27,7 @@ import { authService } from '../services/auth.service';
 import { subscriptionService } from '../services/subscription.service';
 import type { Subscription, UsageRecord } from '../services/subscription.service';
 import type { AuthUser } from '../services/auth.service';
-import { NotionClipperLogo } from '../assets/Logo.tsx';
+import { ClipperProLogo } from '../assets/Logo.tsx';
 import { Button, Badge } from '../components/ui';
 import { containerVariants, itemVariants } from '../lib/animations';
 
@@ -127,7 +127,7 @@ export default function DashboardPage() {
               damping: 20,
             }}
           >
-            <NotionClipperLogo size={96} />
+            <ClipperProLogo size={96} />
           </motion.div>
           <div className="w-80 h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden">
             <motion.div
@@ -171,7 +171,7 @@ export default function DashboardPage() {
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group">
               <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
-                <NotionClipperLogo size={40} />
+                <ClipperProLogo size={40} />
               </motion.div>
               <span className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white group-hover:opacity-70 transition-opacity">
                 NotionClipper

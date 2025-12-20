@@ -1,6 +1,7 @@
 /**
  * User Routes
  * User profile and data endpoints
+ * 🔒 SECURITY: All routes require auth + rate limiting
  */
 
 import { Router } from 'express';
@@ -14,11 +15,13 @@ import {
   getAppData,
 } from '../controllers/user.controller.js';
 import { authenticateToken } from '../middleware/auth.middleware.js';
+import { generalRateLimiter } from '../middleware/rate-limit.middleware.js';
 
 const router = Router();
 
-// All user routes require authentication
+// All user routes require authentication + rate limiting
 router.use(authenticateToken);
+router.use(generalRateLimiter);
 
 /**
  * Get user profile
@@ -59,7 +62,8 @@ router.delete('/avatar', deleteAvatar);
 /**
  * Get all app data (for desktop app initialization)
  * GET /api/user/app-data
- * Returns: user, subscription, notionWorkspace, notionToken (decrypted)
+ * Returns: user, subscription, notionWorkspace (NO token - use proxy endpoints)
+ * 🔒 SECURITY: Token is never returned to client
  */
 router.get('/app-data', getAppData);
 
