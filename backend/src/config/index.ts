@@ -9,11 +9,19 @@ import { AppConfig } from '../types/index.js';
 // Load .env file
 dotenv.config();
 
+const isTestEnvironment = process.env.NODE_ENV === 'test';
+
 /**
  * Validate required environment variables
  * Note: OAuth secrets are loaded from Supabase Vault, not .env
  */
 function validateEnv(): void {
+  if (isTestEnvironment) {
+    process.env.SUPABASE_URL = process.env.SUPABASE_URL || 'http://localhost';
+    process.env.SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || 'test-key';
+    process.env.JWT_SECRET = process.env.JWT_SECRET || 'test-secret';
+    return;
+  }
   const required = [
     'SUPABASE_URL',
     'SUPABASE_SERVICE_ROLE_KEY',
@@ -111,6 +119,48 @@ export const config: AppConfig = {
   logging: {
     level: process.env.LOG_LEVEL || 'info',
     file: process.env.LOG_FILE || './logs/backend.log',
+  },
+
+  notion: {
+    maxInFlightRequests: parseInt(process.env.NOTION_MAX_INFLIGHT || '50', 10),
+    cooldownMinSeconds: parseInt(process.env.NOTION_COOLDOWN_MIN_SECONDS || '5', 10),
+    maxRetryAfterSeconds: parseInt(process.env.NOTION_MAX_RETRY_AFTER_SECONDS || '300', 10),
+    readMaxRetries: parseInt(process.env.NOTION_READ_MAX_RETRIES || '2', 10),
+    backoffBaseMs: parseInt(process.env.NOTION_BACKOFF_BASE_MS || '500', 10),
+    backoffMaxMs: parseInt(process.env.NOTION_BACKOFF_MAX_MS || '10000', 10),
+    circuitBreaker: {
+      failureThreshold: parseInt(process.env.NOTION_BREAKER_THRESHOLD || '5', 10),
+      resetMs: parseInt(process.env.NOTION_BREAKER_RESET_MS || '60000', 10),
+      halfOpenMaxCalls: parseInt(process.env.NOTION_BREAKER_HALF_OPEN_CALLS || '1', 10),
+    },
+  },
+
+  redis: {
+    url: process.env.REDIS_URL,
+    enableQueue: process.env.ENABLE_REDIS_QUEUE !== 'false',
+  },
+
+  queue: {
+    notionWrites: {
+      attempts: parseInt(process.env.NOTION_WRITE_ATTEMPTS || '5', 10),
+      backoffDelayMs: parseInt(process.env.NOTION_WRITE_BACKOFF_MS || '2000', 10),
+      maxBackoffMs: parseInt(process.env.NOTION_WRITE_BACKOFF_MAX_MS || '30000', 10),
+      maxAttempts: parseInt(process.env.NOTION_WRITE_MAX_ATTEMPTS || '8', 10),
+      concurrency: parseInt(process.env.NOTION_WRITE_CONCURRENCY || '3', 10),
+      removeOnComplete: parseInt(process.env.NOTION_WRITE_REMOVE_ON_COMPLETE || '50', 10),
+      removeOnFail: parseInt(process.env.NOTION_WRITE_REMOVE_ON_FAIL || '200', 10),
+    },
+  },
+
+  featureFlags: {
+    notionDegradedMode: process.env.NOTION_DEGRADED_MODE === 'true',
+    proxyWritesAsync: process.env.PROXY_WRITES_ASYNC !== 'false',
+  },
+
+  observability: {
+    enablePrometheus: process.env.ENABLE_PROM_METRICS !== 'false',
+    metricsRoute: process.env.METRICS_ROUTE || '/metrics',
+    metricsToken: process.env.METRICS_TOKEN,
   },
 };
 

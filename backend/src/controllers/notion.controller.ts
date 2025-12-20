@@ -24,6 +24,8 @@ import { logger } from '../utils/logger.js';
 import { sendSuccess } from '../utils/response.js';
 import { asyncHandler } from '../middleware/error.middleware.js';
 import { AppError, AuthenticatedRequest } from '../types/index.js';
+import { config } from '../config/index.js';
+import { enqueueNotionWrite } from '../services/notion-write.service.js';
 
 // 🔒 SECURITY: UUID validation regex
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -445,11 +447,34 @@ export const proxyCreatePage = asyncHandler(
     // 🔒 Security checks
     validatePayloadSize(req.body);
     
-    const { client, workspaceId } = await getNotionClient(userId);
-    checkRateLimitAndLog(userId, '/pages', 'POST', workspaceId);
-    
-    const response = await client.createPage(req.body);
-    sendSuccess(res, response.data);
+    if (!config.featureFlags.proxyWritesAsync) {
+      const { client, workspaceId } = await getNotionClient(userId);
+      checkRateLimitAndLog(userId, '/pages', 'POST', workspaceId);
+      const response = await client.createPage(req.body || {});
+      sendSuccess(res, response.data);
+      return;
+    }
+
+    checkRateLimitAndLog(userId, '/pages', 'POST');
+
+    const targetId =
+      (req.body?.parent?.database_id as string) ||
+      (req.body?.parent?.page_id as string) ||
+      'create_page';
+
+    const queued = await enqueueNotionWrite(userId, {
+      operation: 'create_page',
+      targetId,
+      payload: req.body || {},
+      insertionMode: 'create',
+    });
+
+    res.status(202);
+    sendSuccess(res, {
+      jobId: queued.jobId,
+      status: queued.status,
+      retryAt: queued.retryAt,
+    });
   }
 );
 
@@ -470,12 +495,30 @@ export const proxyUpdatePage = asyncHandler(
     // 🔒 Security checks
     validateNotionId(id, 'Page ID');
     validatePayloadSize(req.body);
+
+    if (!config.featureFlags.proxyWritesAsync) {
+      const { client, workspaceId } = await getNotionClient(userId);
+      checkRateLimitAndLog(userId, '/pages', 'PATCH', workspaceId);
+      const response = await client.updatePage(id, req.body || {});
+      sendSuccess(res, response.data);
+      return;
+    }
+
+    checkRateLimitAndLog(userId, '/pages', 'PATCH');
     
-    const { client, workspaceId } = await getNotionClient(userId);
-    checkRateLimitAndLog(userId, '/pages', 'PATCH', workspaceId);
-    
-    const response = await client.updatePage(id, req.body);
-    sendSuccess(res, response.data);
+    const queued = await enqueueNotionWrite(userId, {
+      operation: 'update_page',
+      targetId: id,
+      payload: req.body || {},
+      insertionMode: 'update',
+    });
+
+    res.status(202);
+    sendSuccess(res, {
+      jobId: queued.jobId,
+      status: queued.status,
+      retryAt: queued.retryAt,
+    });
   }
 );
 
@@ -532,11 +575,29 @@ export const proxyAppendBlockChildren = asyncHandler(
     validateNotionId(id, 'Block ID');
     validatePayloadSize(req.body);
     
-    const { client, workspaceId } = await getNotionClient(userId);
-    checkRateLimitAndLog(userId, '/blocks', 'PATCH', workspaceId);
-    
-    const response = await client.appendBlockChildren(id, req.body);
-    sendSuccess(res, response.data);
+    if (!config.featureFlags.proxyWritesAsync) {
+      const { client, workspaceId } = await getNotionClient(userId);
+      checkRateLimitAndLog(userId, '/blocks', 'PATCH', workspaceId);
+      const response = await client.appendBlockChildren(id, req.body || {});
+      sendSuccess(res, response.data);
+      return;
+    }
+
+    checkRateLimitAndLog(userId, '/blocks', 'PATCH');
+
+    const queued = await enqueueNotionWrite(userId, {
+      operation: 'append_block_children',
+      targetId: id,
+      payload: req.body || {},
+      insertionMode: 'append',
+    });
+
+    res.status(202);
+    sendSuccess(res, {
+      jobId: queued.jobId,
+      status: queued.status,
+      retryAt: queued.retryAt,
+    });
   }
 );
 

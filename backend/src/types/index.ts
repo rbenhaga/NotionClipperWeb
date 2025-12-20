@@ -246,6 +246,43 @@ export interface AppConfig {
     level: string;
     file: string;
   };
+  notion: {
+    maxInFlightRequests: number;
+    cooldownMinSeconds: number;
+    maxRetryAfterSeconds: number;
+    readMaxRetries: number;
+    backoffBaseMs: number;
+    backoffMaxMs: number;
+    circuitBreaker: {
+      failureThreshold: number;
+      resetMs: number;
+      halfOpenMaxCalls: number;
+    };
+  };
+  redis: {
+    url?: string;
+    enableQueue: boolean;
+  };
+  queue: {
+    notionWrites: {
+      attempts: number;
+      backoffDelayMs: number;
+      maxBackoffMs: number;
+      maxAttempts: number;
+      concurrency: number;
+      removeOnComplete: number;
+      removeOnFail: number;
+    };
+  };
+  featureFlags: {
+    notionDegradedMode: boolean;
+    proxyWritesAsync: boolean;
+  };
+  observability: {
+    enablePrometheus: boolean;
+    metricsRoute: string;
+    metricsToken?: string;
+  };
 }
 
 // ============================================

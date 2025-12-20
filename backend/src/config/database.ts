@@ -361,6 +361,250 @@ export const db = {
     return data || [];
   },
 
+  // ============================================
+  // NOTION WRITE IDEMPOTENCY & JOBS
+  // ============================================
+
+  async getNotionIdempotency(idempotencyKey: string) {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('notion_idempotency')
+      .select('*')
+      .eq('idempotency_key', idempotencyKey)
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      logger.error('Database error fetching notion idempotency:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  async insertNotionIdempotency(entry: {
+    idempotencyKey: string;
+    userId: string;
+    workspaceId: string;
+    targetId: string;
+    insertionMode?: string | null;
+    requestHash: string;
+    jobId: string | null;
+    status: 'queued' | 'running' | 'succeeded' | 'failed';
+  }) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('notion_idempotency')
+      .insert({
+        idempotency_key: entry.idempotencyKey,
+        user_id: entry.userId,
+        workspace_id: entry.workspaceId,
+        target_id: entry.targetId,
+        insertion_mode: entry.insertionMode || null,
+        request_hash: entry.requestHash,
+        job_id: entry.jobId,
+        status: entry.status,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Database error inserting notion idempotency:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  async updateNotionIdempotency(idempotencyKey: string, updates: {
+    status?: 'queued' | 'running' | 'succeeded' | 'failed';
+    error_code?: string | null;
+    result_metadata?: Record<string, unknown> | null;
+    retry_at?: string | null;
+    job_id?: string | null;
+  }) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('notion_idempotency')
+      .update({
+        status: updates.status,
+        error_code: updates.error_code ?? null,
+        result_metadata: updates.result_metadata ?? null,
+        retry_at: updates.retry_at ?? null,
+        job_id: updates.job_id ?? undefined,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('idempotency_key', idempotencyKey)
+      .select()
+      .maybeSingle();
+
+    if (error) {
+      logger.error('Database error updating notion idempotency:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  async insertNotionWriteJob(job: {
+    userId: string;
+    workspaceId: string;
+    idempotencyKey: string;
+    operation: string;
+    targetId: string;
+    insertionMode?: string | null;
+    payload: Record<string, unknown>;
+    retryAt?: string | null;
+    maxAttempts: number;
+  }) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('notion_write_jobs')
+      .insert({
+        user_id: job.userId,
+        workspace_id: job.workspaceId,
+        idempotency_key: job.idempotencyKey,
+        operation: job.operation,
+        target_id: job.targetId,
+        insertion_mode: job.insertionMode ?? null,
+        payload: job.payload,
+        status: 'queued',
+        retry_at: job.retryAt ?? null,
+        max_attempts: job.maxAttempts,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Database error inserting notion write job:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  async updateNotionWriteJob(jobId: string, updates: {
+    status?: 'queued' | 'running' | 'succeeded' | 'failed';
+    retry_at?: string | null;
+    error_code?: string | null;
+    result_metadata?: Record<string, unknown> | null;
+    started_at?: string | null;
+    completed_at?: string | null;
+  }) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('notion_write_jobs')
+      .update({
+        status: updates.status,
+        retry_at: updates.retry_at ?? null,
+        error_code: updates.error_code ?? null,
+        result_metadata: updates.result_metadata ?? null,
+        started_at: updates.started_at ?? null,
+        completed_at: updates.completed_at ?? null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', jobId)
+      .select()
+      .maybeSingle();
+
+    if (error) {
+      logger.error('Database error updating notion write job:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  async getNotionWriteJob(jobId: string) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('notion_write_jobs')
+      .select('*')
+      .eq('id', jobId)
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      logger.error('Database error fetching notion write job:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  async getNotionWriteJobByIdempotency(idempotencyKey: string) {
+    const supabase = getSupabaseClient();
+
+    const { data, error } = await supabase
+      .from('notion_write_jobs')
+      .select('*')
+      .eq('idempotency_key', idempotencyKey)
+      .maybeSingle();
+
+    if (error && error.code !== 'PGRST116') {
+      logger.error('Database error fetching notion write job by idempotency:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  async getQueuedNotionWriteJobs(limit: number) {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase.rpc('claim_notion_write_jobs', { p_limit: limit });
+    if (error) {
+      logger.error('Database error claiming notion write jobs:', error);
+      throw error;
+    }
+    return (data as any[]) || [];
+  },
+
+  async markJobRunning(jobId: string) {
+    const supabase = getSupabaseClient();
+    const nowIso = new Date().toISOString();
+
+    const { data, error } = await supabase
+      .from('notion_write_jobs')
+      .update({
+        status: 'running',
+        started_at: nowIso,
+        updated_at: nowIso,
+      })
+      .eq('id', jobId)
+      .eq('status', 'queued')
+      .select()
+      .maybeSingle();
+
+    if (error) {
+      logger.error('Database error marking job running:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  async getQueueDepth() {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from('notion_write_jobs')
+      .select('status');
+
+    if (error) {
+      logger.error('Database error fetching queue depth:', error);
+      throw error;
+    }
+
+    const counts: Record<string, number> = {};
+    (data || []).forEach((row: { status: string }) => {
+      counts[row.status] = (counts[row.status] || 0) + 1;
+    });
+
+    return counts;
+  },
+
   /**
    * Get connection by workspace ID
    */

@@ -13,6 +13,7 @@ import activityRoutes from './activity.routes.js';
 import workspaceRoutes from './workspace.routes.js';
 import analyticsRoutes from './analytics.routes.js';
 import waitlistRoutes from './waitlist.routes.js';
+import notionWriteRoutes from './notion-write.routes.js';
 
 const router = Router();
 
@@ -31,6 +32,7 @@ router.use('/stripe', stripeRoutes);
 router.use('/user', userRoutes);
 // NOTE: Webhook routes are mounted separately in server.ts BEFORE body parsers
 // This is critical for Stripe signature verification which needs raw body
+router.use('/notion/write', notionWriteRoutes);
 router.use('/notion', notionRoutes);
 router.use('/usage', usageRoutes);
 router.use('/activity', activityRoutes);

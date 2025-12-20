@@ -25,6 +25,7 @@ import {
 } from '../controllers/notion.controller.js';
 import { authenticateToken } from '../middleware/auth.middleware.js';
 import { generalRateLimiter, authRateLimiter } from '../middleware/rate-limit.middleware.js';
+import { notionDegradedGuard } from '../middleware/notion-mode.middleware.js';
 
 const router = Router();
 
@@ -55,25 +56,25 @@ router.post('/get-user-by-workspace', authenticateToken, authRateLimiter, getUse
  * POST /api/notion/proxy/search
  * Search Notion pages/databases
  */
-router.post('/proxy/search', authenticateToken, generalRateLimiter, proxySearch);
+router.post('/proxy/search', authenticateToken, generalRateLimiter, notionDegradedGuard, proxySearch);
 
 /**
  * GET /api/notion/proxy/databases/:id
  * Get a database
  */
-router.get('/proxy/databases/:id', authenticateToken, generalRateLimiter, proxyGetDatabase);
+router.get('/proxy/databases/:id', authenticateToken, generalRateLimiter, notionDegradedGuard, proxyGetDatabase);
 
 /**
  * POST /api/notion/proxy/databases/:id/query
  * Query a database
  */
-router.post('/proxy/databases/:id/query', authenticateToken, generalRateLimiter, proxyQueryDatabase);
+router.post('/proxy/databases/:id/query', authenticateToken, generalRateLimiter, notionDegradedGuard, proxyQueryDatabase);
 
 /**
  * GET /api/notion/proxy/pages/:id
  * Get a page
  */
-router.get('/proxy/pages/:id', authenticateToken, generalRateLimiter, proxyGetPage);
+router.get('/proxy/pages/:id', authenticateToken, generalRateLimiter, notionDegradedGuard, proxyGetPage);
 
 /**
  * POST /api/notion/proxy/pages
@@ -91,7 +92,7 @@ router.patch('/proxy/pages/:id', authenticateToken, generalRateLimiter, proxyUpd
  * GET /api/notion/proxy/blocks/:id/children
  * Get block children
  */
-router.get('/proxy/blocks/:id/children', authenticateToken, generalRateLimiter, proxyGetBlockChildren);
+router.get('/proxy/blocks/:id/children', authenticateToken, generalRateLimiter, notionDegradedGuard, proxyGetBlockChildren);
 
 /**
  * PATCH /api/notion/proxy/blocks/:id/children
@@ -103,7 +104,7 @@ router.patch('/proxy/blocks/:id/children', authenticateToken, generalRateLimiter
  * GET /api/notion/proxy/users/me
  * Get current user (bot user)
  */
-router.get('/proxy/users/me', authenticateToken, generalRateLimiter, proxyGetMe);
+router.get('/proxy/users/me', authenticateToken, generalRateLimiter, notionDegradedGuard, proxyGetMe);
 
 // ============================================
 // 🚫 REMOVED ENDPOINTS (security risk)
