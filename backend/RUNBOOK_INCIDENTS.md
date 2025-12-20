@@ -11,7 +11,7 @@ Backend-only (no Electron/app changes). Applies to `/api/notion/*` proxy + `/api
    - API should return `429 NOTION_COOLDOWN` (read) or `202` (write queued).  
 3) Actions  
    - Keep cooldowns; **never** sleep in request handlers.  
-   - If surge persists, toggle `NOTION_DEGRADED_MODE=true` (blocks writes, limits reads).  
+   - If surge persists, toggle `NOTION_DEGRADED_MODE=true` (blocks READ routes only, writes still queue as 202).  
 4) Recovery  
    - Cooldown auto-clears on success.  
    - Verify queue drains (see queue depth below).
@@ -50,4 +50,4 @@ Backend-only (no Electron/app changes). Applies to `/api/notion/*` proxy + `/api
 ## 7. Commands / checks
 * Queue depth (DB): inspect `notion_write_jobs` counts by status.  
 * Metrics endpoint (JSON): `GET /metrics` (if enabled) → contains request samples, queue depths.  
-* Toggle degraded mode: set env `NOTION_DEGRADED_MODE=true` and restart.
+* Toggle degraded mode: set env `NOTION_DEGRADED_MODE=true` and restart. This blocks READ routes (`/proxy/search`, `/proxy/databases`, `/proxy/pages/:id` GET, `/proxy/blocks/:id/children` GET, `/proxy/users/me`) but allows writes to continue queueing (202).
