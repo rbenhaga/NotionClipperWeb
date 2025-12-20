@@ -13,6 +13,8 @@ import { errorHandler, notFoundHandler } from './middleware/error.middleware.js'
 import { generalRateLimiter } from './middleware/rate-limit.middleware.js';
 import routes from './routes/index.js';
 import webhookRoutes from './routes/webhook.routes.js';
+import { startNotionWriteWorker } from './services/notion-write.service.js';
+import { metricsRouter } from './observability/metrics.js';
 
 /**
  * Start the server
@@ -65,6 +67,9 @@ async function startServer() {
   // API routes
   app.use('/api', routes);
 
+  // Metrics endpoint (observability)
+  app.use(metricsRouter());
+
   // ============================================
   // ERROR HANDLING
   // ============================================
@@ -89,6 +94,11 @@ async function startServer() {
     // Log critical configuration status
     const stripeStatus = config.stripe.prices.monthly && config.stripe.prices.annual ? '✅ Ready' : '❌ Missing Price IDs';
     logger.info(`   Stripe Config: ${stripeStatus}`);
+
+    // Start the Notion write queue worker
+    startNotionWriteWorker().catch((err) => {
+      logger.error('Failed to start Notion write worker:', err);
+    });
   });
 
   // Graceful shutdown
