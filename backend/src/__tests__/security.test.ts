@@ -23,7 +23,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET && process.env.CI) {
   throw new Error('JWT_SECRET must be set in CI environment');
 }
-const EFFECTIVE_JWT_SECRET = JWT_SECRET || '4hP2yRdjWyeyLCCx0KMSJD2ID77PkKsja33sdZxi9p4=';
+const EFFECTIVE_JWT_SECRET = JWT_SECRET || 'test-jwt-secret-for-ci-only';
 
 // Generate test tokens
 const TEST_USER_A_ID = randomUUID();

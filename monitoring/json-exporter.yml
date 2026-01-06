@@ -1,7 +1,7 @@
 modules:
   notionclipper:
     headers:
-      Authorization: Bearer 27604485f8b32951f591640227e0303e5aad91ed4a414e509547a157a2e0e650
+      Authorization: Bearer 0dcd69c41c0b9afa4ccade66b6803c3a73f3d38cbfca957d2675c9ec90c30e98
     metrics:
       - name: notion_cooldown_active_count
         path: '{ .metrics.notions.cooldownActiveCount }'
