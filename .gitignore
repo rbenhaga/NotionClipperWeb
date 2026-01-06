@@ -11,6 +11,15 @@ node_modules/
 **/.env.*
 *.env
 **/*.env
+
+# EXCEPTIONS - template files that SHOULD be committed
+!.env.example
+!.env.sample
+!.env.template
+!**/.env.example
+!**/.env.sample
+!**/.env.template
+
 .env.local
 .env.*.local
 .env.prod
