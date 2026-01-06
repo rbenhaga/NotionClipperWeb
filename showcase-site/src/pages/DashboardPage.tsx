@@ -32,7 +32,7 @@ import { Button, Badge } from '../components/ui';
 import { containerVariants, itemVariants } from '../lib/animations';
 
 export default function DashboardPage() {
-  const { t } = useTranslation('dashboard');
+  useTranslation('dashboard');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [authUser, setAuthUser] = useState<AuthUser | null>(null);
@@ -93,8 +93,8 @@ export default function DashboardPage() {
   const quotas = subscription
     ? subscriptionService.getQuotasForTier(subscription.tier)
     : null;
-  const isPremium = subscription?.tier === 'premium';
-  const isFreeTier = subscription?.tier === 'free' || subscription?.tier === 'grace_period';
+  const isPremium = subscription?.tier === 'PREMIUM';
+  const isFreeTier = subscription?.tier === 'FREE' || subscription?.tier === 'GRACE_PERIOD';
 
   const clipsUsagePercent = quotas?.clips
     ? Math.min(((usage?.clips_count || 0) / quotas.clips) * 100, 100)

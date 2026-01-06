@@ -1,13 +1,18 @@
 /**
- * Security Tests Suite
+ * Security Tests Suite (Integration Tests)
  * 
  * DoD: 0 input user → 500
  * All tests must pass for deployment
  * 
- * Run: pnpm test
+ * Run: pnpm test:integration (requires server running on localhost:3001)
+ * Skip: pnpm test (unit tests only)
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
+
+// Skip entire suite if RUN_INTEGRATION_TESTS is not set
+const SKIP_INTEGRATION = !process.env.RUN_INTEGRATION_TESTS;
+const describeIntegration = SKIP_INTEGRATION ? describe.skip : describe;
 import jwt from 'jsonwebtoken';
 import { randomUUID } from 'crypto';
 
@@ -76,7 +81,7 @@ async function req(
   return { status: res.status, text, json };
 }
 
-describe('Security Tests', () => {
+describeIntegration('Security Tests', () => {
   beforeAll(async () => {
     // Verify server is running
     try {

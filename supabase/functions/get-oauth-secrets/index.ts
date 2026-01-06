@@ -183,19 +183,21 @@ serve(async (req) => {
   }
 
   try {
-    // 🔒 SECURITY: Verify authorization
-    const authHeader = req.headers.get('Authorization') || '';
+    // 🔒 SECURITY: Verify authorization via X-Backend-Secret header
+    // Note: Authorization header contains Supabase anon key (required by gateway)
+    // Our custom auth is in X-Backend-Secret header
+    const backendSecretHeader = req.headers.get('X-Backend-Secret') || '';
     
-    if (!authHeader) {
-      logSecurity('WARN', 'Missing authorization header', { requestId });
+    if (!backendSecretHeader) {
+      logSecurity('WARN', 'Missing X-Backend-Secret header', { requestId });
       recordFailedAuth(rateLimitKey); // Record failure for rate limiting
       return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
+        JSON.stringify({ error: 'Missing authorization' }),
         { status: 401, headers: { 'Content-Type': 'application/json' } }
       );
     }
 
-    const token = authHeader.replace('Bearer ', '');
+    const token = backendSecretHeader;
     
     // 🔒 SECURITY: Use ONLY BACKEND_SHARED_SECRET - NO FALLBACK
     // This is a dedicated secret for backend-to-edge communication

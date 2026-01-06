@@ -10,7 +10,9 @@
     "start": "node dist/server.js",
     "lint": "eslint src --ext .ts",
     "format": "prettier --write \"src/**/*.ts\"",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:integration": "RUN_INTEGRATION_TESTS=1 vitest run",
     "typecheck": "tsc --noEmit"
   },
   "keywords": [

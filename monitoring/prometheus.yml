@@ -16,10 +16,8 @@ scrape_configs:
     metrics_path: /probe
     params:
       module: [notionclipper]
-      # Target is your backend /metrics endpoint
-      target: ['http://host.docker.internal:3001/metrics']
     static_configs:
-      - targets: ['json_exporter:7979']
+      - targets: ['https://api.clipperpro.app/metrics']
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target

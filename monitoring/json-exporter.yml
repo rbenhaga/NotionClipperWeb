@@ -1,34 +1,28 @@
 modules:
   notionclipper:
     headers:
-      Authorization: Bearer YOUR_METRICS_TOKEN_HERE
+      Authorization: Bearer 27604485f8b32951f591640227e0303e5aad91ed4a414e509547a157a2e0e650
     metrics:
       - name: notion_cooldown_active_count
         path: '{ .metrics.notions.cooldownActiveCount }'
         help: "Number of tokens currently in cooldown"
-        type: gauge
 
       - name: notion_circuit_open_count
         path: '{ .metrics.notions.circuitOpenCount }'
         help: "Number of tokens with open circuit breaker"
-        type: gauge
 
       - name: notion_inflight_requests
         path: '{ .metrics.notions.inFlight }'
         help: "Current number of in-flight Notion requests"
-        type: gauge
 
       - name: notion_queue_depth_queued
         path: '{ .metrics.queue.depths.queued }'
         help: "Number of jobs in queued state"
-        type: gauge
 
       - name: notion_queue_depth_running
         path: '{ .metrics.queue.depths.running }'
         help: "Number of jobs in running state"
-        type: gauge
 
       - name: notion_queue_depth_failed
         path: '{ .metrics.queue.depths.failed }'
         help: "Number of jobs in failed state"
-        type: gauge

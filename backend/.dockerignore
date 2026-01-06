@@ -1,0 +1,11 @@
+node_modules
+dist
+logs
+*.log
+.env
+.env.local
+.git
+.gitignore
+*.md
+src/**/*.test.ts
+src/**/__tests__

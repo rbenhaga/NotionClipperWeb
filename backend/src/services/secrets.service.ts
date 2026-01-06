@@ -58,10 +58,13 @@ export async function getSecrets(): Promise<SecretsCache> {
     logger.info(`Calling Edge Function: ${edgeFunctionUrl}`);
 
     // 🔒 SECURITY: POST method, no Origin header (anti-browser)
+    // Supabase Edge Functions require a valid JWT (anon key) to pass the gateway
+    // Our custom auth (BACKEND_SHARED_SECRET) is passed in X-Backend-Secret header
     const response = await fetch(edgeFunctionUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${backendSecret}`,
+        'Authorization': `Bearer ${config.supabase.anonKey}`,
+        'X-Backend-Secret': backendSecret,
         'Content-Type': 'application/json',
         // 🔒 Explicitly NOT setting Origin header
       },
