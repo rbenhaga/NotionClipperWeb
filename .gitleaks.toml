@@ -1,43 +1,93 @@
 # Gitleaks configuration for NotionClipperWeb
-# Run: gitleaks detect --source . --config .gitleaks.toml
+# https://github.com/gitleaks/gitleaks
 
-title = "NotionClipperWeb Secret Scanner"
+title = "NotionClipperWeb Gitleaks Config"
 
 [extend]
 useDefault = true
 
+# =============================================================================
+# ALLOWLIST - Faux positifs et exemples dans la documentation
+# =============================================================================
+
 [allowlist]
-description = "Allowlist for false positives"
+description = "Allowlist for false positives and documentation examples"
+
+# Paths to ignore (local env files, build artifacts)
 paths = [
-  '''node_modules''',
-  '''\.git''',
-  '''dist''',
-  '''build''',
-  '''pnpm-lock\.yaml''',
-  '''package-lock\.json''',
-  '''.*AUDIT.*\.md''',
-  '''.*GUIDE.*\.md''',
-  '''.*SETUP.*\.md''',
-  '''.*VAULT.*\.md''',
-  '''.*README\.md''',
-  '''monitoring/README\.md''',
+  '''(^|/)\.env$''',
+  '''(^|/)\.env\..*$''',
+  '''(^|/)\.secrets\.local$''',
+  '''(^|/)node_modules/''',
+  '''(^|/)dist/''',
+  '''(^|/)build/''',
+  '''(^|/)\.next/''',
+  '''(^|/)coverage/''',
 ]
 
-# Custom rules
+# Specific commits with known false positives (historical)
+commits = [
+  # VAULT_SETUP.md - truncated JWT examples (not real secrets)
+  "90eecb9b82a3b726fd7d3f1e8cf4941cf0e57755",
+  "e36751b6edcae4ba2878211b5bb3d9ce91934ddd",
+  # supabase/functions/README.md - placeholder "VOTRE_SERVICE_ROLE_KEY"
+  "57198b05c8c32c5b54daa09fdbf353c95295abc6",
+  # PROD_SECURITY_AUDIT.md - example "wrong_secret"
+  "a27e5ae397bc9384b83197315cd1905541ac14b0",
+  # monitoring/README.md - old METRICS_TOKEN (rotated)
+  "7dcec468c1424d1325bff0b6b2ab05f05590ede2",
+  # ACTIONS_VAULT.md - old TOKEN_ENCRYPTION_KEY (rotated)
+  "0cfcd5070159cc912f5183a6061c38a0cf27b1e0",
+]
+
+# Regex patterns for known false positives
+regexes = [
+  # Placeholder patterns in documentation
+  '''VOTRE_SERVICE_ROLE_KEY''',
+  '''YOUR_.*_HERE''',
+  '''your_.*_here''',
+  '''wrong_secret''',
+  # Truncated examples with "..."
+  '''eyJhbGciOiJIUzI1NiIs\.\.\.''',
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.\.\.''',
+]
+
+# =============================================================================
+# CUSTOM RULES - Secrets spécifiques à NotionClipper
+# =============================================================================
+
+[[rules]]
+id = "supabase-service-role-key"
+description = "Supabase Service Role Key"
+regex = '''sb_secret_[a-zA-Z0-9_-]{20,}'''
+keywords = ["sb_secret_"]
+
 [[rules]]
 id = "supabase-anon-key"
-description = "Supabase Anon Key"
-regex = '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+'''
-tags = ["supabase", "jwt"]
+description = "Supabase Anon/Publishable Key"
+regex = '''sb_publishable_[a-zA-Z0-9_-]{20,}'''
+keywords = ["sb_publishable_"]
 
 [[rules]]
-id = "supabase-service-role"
-description = "Supabase Service Role Key"
-regex = '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6.+'''
-tags = ["supabase", "jwt", "critical"]
+id = "notion-client-secret"
+description = "Notion OAuth Client Secret"
+regex = '''secret_[a-zA-Z0-9]{32,}'''
+keywords = ["NOTION_CLIENT_SECRET", "secret_"]
 
 [[rules]]
-id = "stripe-secret"
+id = "stripe-secret-key"
 description = "Stripe Secret Key"
-regex = '''sk_(live|test)_[A-Za-z0-9]{20,}'''
-tags = ["stripe", "critical"]
+regex = '''sk_live_[a-zA-Z0-9]{20,}'''
+keywords = ["sk_live_", "STRIPE_SECRET"]
+
+[[rules]]
+id = "stripe-webhook-secret"
+description = "Stripe Webhook Secret"
+regex = '''whsec_[a-zA-Z0-9]{20,}'''
+keywords = ["whsec_", "STRIPE_WEBHOOK"]
+
+[[rules]]
+id = "google-api-key"
+description = "Google API Key"
+regex = '''AIza[0-9A-Za-z\-_]{35}'''
+keywords = ["AIza"]
