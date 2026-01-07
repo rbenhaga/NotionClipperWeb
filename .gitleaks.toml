@@ -1,0 +1,43 @@
+# Gitleaks configuration for NotionClipperWeb
+# Run: gitleaks detect --source . --config .gitleaks.toml
+
+title = "NotionClipperWeb Secret Scanner"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlist for false positives"
+paths = [
+  '''node_modules''',
+  '''\.git''',
+  '''dist''',
+  '''build''',
+  '''pnpm-lock\.yaml''',
+  '''package-lock\.json''',
+  '''.*AUDIT.*\.md''',
+  '''.*GUIDE.*\.md''',
+  '''.*SETUP.*\.md''',
+  '''.*VAULT.*\.md''',
+  '''.*README\.md''',
+  '''monitoring/README\.md''',
+]
+
+# Custom rules
+[[rules]]
+id = "supabase-anon-key"
+description = "Supabase Anon Key"
+regex = '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+'''
+tags = ["supabase", "jwt"]
+
+[[rules]]
+id = "supabase-service-role"
+description = "Supabase Service Role Key"
+regex = '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6.+'''
+tags = ["supabase", "jwt", "critical"]
+
+[[rules]]
+id = "stripe-secret"
+description = "Stripe Secret Key"
+regex = '''sk_(live|test)_[A-Za-z0-9]{20,}'''
+tags = ["stripe", "critical"]
